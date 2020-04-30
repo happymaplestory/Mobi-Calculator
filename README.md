@@ -1,2 +1,1 @@
-# -
-이곳은 깃허브를 배우는 동안 다양한 실험 자료가 갇혀있을 희생양입니다.
+"This is a space for basic studying for github and etc"
