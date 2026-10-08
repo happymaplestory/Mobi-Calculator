@@ -140,16 +140,8 @@
 
   <script src="test-data.js"></script>
   <script>
-    const requiredItems = [
-      { category: "공격력", description: "공격력 +" },
-      { category: "공격력", description: "공격력 %" },
-      { category: "치명타", description: "치명타 +" },
-      { category: "치명타", description: "치명타 %" },
-      { category: "치명타", description: "치명타 데미지 %" },
-      { category: "치명타", description: "치명타 확률 %" }
-    ];
-
     const groups = new Map();
+    const optionalItemCounts = new Map();
 
     function setColumnWidths() {
       const canvas = document.createElement("canvas");
@@ -157,7 +149,10 @@
       context.font = '16px Arial, "Noto Sans KR", sans-serif';
 
       const categoryTexts = CALCULATOR_DATA.categories;
-      const descriptionTexts = Object.values(CALCULATOR_DATA.descriptions).flat();
+      const descriptionTexts = [
+        ...Object.values(CALCULATOR_DATA.requiredDescriptions).flat(),
+        ...Object.values(CALCULATOR_DATA.optionalDescriptions).flat()
+      ];
 
       const categoryWidth = Math.ceil(
         Math.max(...categoryTexts.map(text => context.measureText(text).width)) + 80
@@ -181,6 +176,7 @@
       group.className = "category-group";
       group.dataset.category = category;
       groups.set(category, group);
+      optionalItemCounts.set(category, new Map());
       document.getElementById("test-area").appendChild(group);
       return group;
     }
@@ -229,6 +225,13 @@
       return row;
     }
 
+    function getOptionalLabel(category, description) {
+      const counts = optionalItemCounts.get(category);
+      const currentCount = (counts.get(description) || 0) + 1;
+      counts.set(description, currentCount);
+      return `${description} (${currentCount})`;
+    }
+
     function createOptionalRow(category) {
       const row = document.createElement("div");
       row.className = "optional-row";
@@ -240,8 +243,8 @@
       );
 
       const descriptionSelect = createSelect(
-        CALCULATOR_DATA.descriptions[category],
-        CALCULATOR_DATA.descriptions[category][0],
+        CALCULATOR_DATA.optionalDescriptions[category],
+        CALCULATOR_DATA.optionalDescriptions[category][0],
         null
       );
 
@@ -265,6 +268,21 @@
         row.remove();
       });
 
+      descriptionSelect.dataset.baseDescription = descriptionSelect.value;
+      descriptionSelect.dataset.displayDescription = getOptionalLabel(
+        category,
+        descriptionSelect.value
+      );
+
+      const originalText = descriptionSelect.value;
+      descriptionSelect.addEventListener("change", () => {
+        descriptionSelect.dataset.baseDescription = descriptionSelect.value;
+        descriptionSelect.dataset.displayDescription = getOptionalLabel(
+          category,
+          descriptionSelect.value
+        );
+      });
+
       row.append(categorySelect, descriptionSelect, valueInput, deleteButton);
       return row;
     }
@@ -278,7 +296,11 @@
 
       const oldDescriptionSelect = row.children[1];
       const selectedDescription = oldDescriptionSelect.value;
-      const availableDescriptions = CALCULATOR_DATA.descriptions[category];
+      const availableDescriptions = CALCULATOR_DATA.optionalDescriptions[category];
+
+      if (availableDescriptions.length === 0) {
+        return;
+      }
 
       oldDescriptionSelect.replaceWith(
         createSelect(
@@ -290,11 +312,24 @@
         )
       );
 
+      const newDescriptionSelect = row.children[1];
+      newDescriptionSelect.dataset.baseDescription = newDescriptionSelect.value;
+      newDescriptionSelect.dataset.displayDescription = getOptionalLabel(
+        category,
+        newDescriptionSelect.value
+      );
+
       const addButton = targetGroup.querySelector(".add-button");
       targetGroup.insertBefore(row, addButton);
     }
 
     function addOptionalRow(category) {
+      const availableDescriptions = CALCULATOR_DATA.optionalDescriptions[category];
+
+      if (availableDescriptions.length === 0) {
+        return;
+      }
+
       const targetGroup = groups.get(category);
       const addButton = targetGroup.querySelector(".add-button");
       const row = createOptionalRow(category);
@@ -314,8 +349,12 @@
       setColumnWidths();
       CALCULATOR_DATA.categories.forEach(createGroup);
 
-      requiredItems.forEach(item => {
-        groups.get(item.category).appendChild(createRequiredRow(item));
+      CALCULATOR_DATA.categories.forEach(category => {
+        CALCULATOR_DATA.requiredDescriptions[category].forEach(description => {
+          groups.get(category).appendChild(
+            createRequiredRow({ category, description })
+          );
+        });
       });
 
       CALCULATOR_DATA.categories.forEach(category => {
