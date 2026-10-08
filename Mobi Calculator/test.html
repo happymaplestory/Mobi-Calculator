@@ -290,7 +290,7 @@
       const rows = group.querySelectorAll(".optional-row");
 
       rows.forEach(row => {
-        const descriptionSelect = row.children[1];
+        const descriptionSelect = row.children[0];
         const baseDescription =
           descriptionSelect.dataset.baseDescription || descriptionSelect.value;
 
@@ -312,6 +312,11 @@
 
     function getOptionalRows(group) {
       return Array.from(group.querySelectorAll(".optional-row:not(.dragging)"));
+    }
+
+    function getDragGroup(clientX, clientY) {
+      const element = document.elementFromPoint(clientX, clientY);
+      return element ? element.closest(".category-group") : null;
     }
 
     function getDragTarget(group, pointerY) {
@@ -364,8 +369,10 @@
         placeholder,
         offsetX: event.clientX - rect.left,
         offsetY: event.clientY - rect.top,
+        originalGroup: row.parentElement,
+        originalNextSibling: placeholder.nextElementSibling,
         group: row.parentElement,
-        category: row.children[0].value,
+        category: row.parentElement.dataset.category,
         pointerId: event.pointerId
       };
 
@@ -392,11 +399,25 @@
         return;
       }
 
-      const { row, placeholder, group, offsetX, offsetY } = dragState;
+      const { row, placeholder, offsetX, offsetY } = dragState;
 
       row.style.left = event.clientX - offsetX + "px";
       row.style.top = event.clientY - offsetY + "px";
 
+      const targetGroup = getDragGroup(event.clientX, event.clientY);
+
+      if (!targetGroup) {
+        return;
+      }
+
+      if (targetGroup !== dragState.group) {
+        dragState.group = targetGroup;
+        const addButton = targetGroup.querySelector(".add-button");
+        targetGroup.insertBefore(placeholder, addButton);
+        return;
+      }
+
+      const group = dragState.group;
       const target = getDragTarget(group, event.clientY);
 
       if (target === placeholder) {
@@ -440,6 +461,35 @@
       });
     }
 
+    function resetOptionalRowCategory(row, category) {
+      const descriptionSelect = row.children[0];
+      const availableDescriptions = CALCULATOR_DATA.optionalDescriptions[category];
+      const currentDescriptionSelect = row.children[1];
+      const currentValue = row.children[2];
+
+      const nextDescription = availableDescriptions[0];
+
+      currentDescriptionSelect.replaceWith(
+        createSelect(
+          availableDescriptions,
+          nextDescription,
+          null
+        )
+      );
+
+      const newDescriptionSelect = row.children[1];
+      newDescriptionSelect.dataset.baseDescription = nextDescription;
+
+      newDescriptionSelect.addEventListener("change", () => {
+        newDescriptionSelect.dataset.baseDescription = newDescriptionSelect.value;
+        renumberOptionalRows(row.parentElement.dataset.category);
+      });
+
+      row.dataset.category = category;
+      row.dataset.previousValue = currentValue.value;
+      return descriptionSelect;
+    }
+
     function finishOptionalDrag(event) {
       if (pendingDrag && (!event || event.pointerId === pendingDrag.pointerId)) {
         pendingDrag = null;
@@ -449,10 +499,37 @@
         return;
       }
 
-      const { row, placeholder, category } = dragState;
-      const targetGroup = row.parentElement;
+      const {
+        row,
+        placeholder,
+        originalGroup,
+        originalNextSibling,
+        group: targetGroup
+      } = dragState;
 
-      targetGroup.insertBefore(row, placeholder);
+      const crossedCategory = targetGroup !== originalGroup;
+
+      if (crossedCategory) {
+        const shouldMove = window.confirm(
+          "다른 목차로 이동 시 종류 구분이 초기화됩니다. 진행하시겠습니까?"
+        );
+
+        if (!shouldMove) {
+          if (originalNextSibling && originalNextSibling.parentElement === originalGroup) {
+            originalGroup.insertBefore(placeholder, originalNextSibling);
+          } else {
+            originalGroup.appendChild(placeholder);
+          }
+
+          originalGroup.insertBefore(row, placeholder);
+        } else {
+          targetGroup.insertBefore(row, placeholder);
+          resetOptionalRowCategory(row, targetGroup.dataset.category);
+        }
+      } else {
+        targetGroup.insertBefore(row, placeholder);
+      }
+
       placeholder.remove();
 
       row.classList.remove("dragging");
@@ -462,8 +539,13 @@
       row.style.top = "";
       row.style.transform = "";
 
+      const finalCategory = row.parentElement.dataset.category;
       dragState = null;
-      renumberOptionalRows(category);
+
+      renumberOptionalRows(finalCategory);
+      if (crossedCategory && finalCategory !== originalGroup.dataset.category) {
+        renumberOptionalRows(originalGroup.dataset.category);
+      }
     }
 
     document.addEventListener("pointermove", updateOptionalDrag);
@@ -473,12 +555,6 @@
     function createOptionalRow(category) {
       const row = document.createElement("div");
       row.className = "optional-row";
-
-      const categorySelect = createSelect(
-        CALCULATOR_DATA.categories,
-        category,
-        () => moveOptionalRow(row, categorySelect.value)
-      );
 
       const descriptionSelect = createSelect(
         CALCULATOR_DATA.optionalDescriptions[category],
@@ -510,55 +586,19 @@
           }
         }
 
+        const category = row.parentElement.dataset.category;
         row.remove();
-        renumberOptionalRows(categorySelect.value);
+        renumberOptionalRows(category);
       });
 
-      row.append(categorySelect, descriptionSelect, valueInput, deleteButton);
+      row.append(descriptionSelect, valueInput, deleteButton);
+      row.dataset.category = category;
 
       row.addEventListener("pointerdown", event => {
         startOptionalDrag(row, event);
       });
 
       return row;
-    }
-
-    function moveOptionalRow(row, category) {
-      const targetGroup = groups.get(category);
-
-      if (!targetGroup) {
-        return;
-      }
-
-      const oldDescriptionSelect = row.children[1];
-      const selectedDescription = oldDescriptionSelect.value;
-      const availableDescriptions = CALCULATOR_DATA.optionalDescriptions[category];
-
-      if (availableDescriptions.length === 0) {
-        return;
-      }
-
-      oldDescriptionSelect.replaceWith(
-        createSelect(
-          availableDescriptions,
-          availableDescriptions.includes(selectedDescription)
-            ? selectedDescription
-            : availableDescriptions[0],
-          null
-        )
-      );
-
-      const newDescriptionSelect = row.children[1];
-      newDescriptionSelect.dataset.baseDescription = newDescriptionSelect.value;
-
-      newDescriptionSelect.addEventListener("change", () => {
-        newDescriptionSelect.dataset.baseDescription = newDescriptionSelect.value;
-        renumberOptionalRows(category);
-      });
-
-      const addButton = targetGroup.querySelector(".add-button");
-      targetGroup.insertBefore(row, addButton);
-      renumberOptionalRows(category);
     }
 
     function addOptionalRow(category) {
