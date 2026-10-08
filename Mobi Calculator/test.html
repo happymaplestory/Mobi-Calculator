@@ -394,7 +394,29 @@
       }
 
       if (target !== row && target !== placeholder.nextElementSibling) {
+        const rowsBefore = getOptionalRows(group);
+        const positions = new Map(
+          rowsBefore.map(item => [item, item.getBoundingClientRect().top])
+        );
+
         group.insertBefore(placeholder, target);
+
+        rowsBefore.forEach(item => {
+          const previousTop = positions.get(item);
+          const currentTop = item.getBoundingClientRect().top;
+          const offset = previousTop - currentTop;
+
+          if (offset === 0) {
+            return;
+          }
+
+          item.style.transition = "none";
+          item.style.transform = `translateY(${offset}px)`;
+          requestAnimationFrame(() => {
+            item.style.transition = "transform 120ms ease";
+            item.style.transform = "";
+          });
+        });
       }
     }
 
@@ -416,6 +438,7 @@
       row.style.height = "";
       row.style.left = "";
       row.style.top = "";
+      row.style.transform = "";
 
       dragState = null;
       renumberOptionalRows(category);
