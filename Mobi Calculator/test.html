@@ -51,8 +51,16 @@
       border: var(--border-width) solid var(--border-color);
       border-radius: 16px;
       background: var(--surface-color);
-      grid-template-columns: var(--category-column-width) var(--description-column-width) 130px 42px;
+      grid-template-columns: var(--description-column-width) 130px 42px;
       gap: 8px;
+    }
+
+    .category-title {
+      grid-column: 1 / -1;
+      margin: 0 0 4px;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: var(--field-height);
     }
 
     .input-row,
@@ -61,7 +69,7 @@
       isolation: isolate;
       display: grid;
       grid-column: 1 / -1;
-      grid-template-columns: var(--category-column-width) var(--description-column-width) 130px 42px;
+      grid-template-columns: var(--description-column-width) 130px 42px;
       gap: 8px;
       min-height: var(--row-height);
       border-radius: var(--field-radius);
@@ -205,23 +213,15 @@
       const context = canvas.getContext("2d");
       context.font = '16px Arial, "Noto Sans KR", sans-serif';
 
-      const categoryTexts = CALCULATOR_DATA.categories;
       const descriptionTexts = [
         ...Object.values(CALCULATOR_DATA.requiredDescriptions).flat(),
         ...Object.values(CALCULATOR_DATA.optionalDescriptions).flat()
       ];
 
-      const categoryWidth = Math.ceil(
-        Math.max(...categoryTexts.map(text => context.measureText(text).width)) + 80
-      );
       const descriptionWidth = Math.ceil(
         Math.max(...descriptionTexts.map(text => context.measureText(text).width)) + 60
       );
 
-      document.documentElement.style.setProperty(
-        "--category-column-width",
-        categoryWidth + "px"
-      );
       document.documentElement.style.setProperty(
         "--description-column-width",
         descriptionWidth + "px"
@@ -232,6 +232,11 @@
       const group = document.createElement("div");
       group.className = "category-group";
       group.dataset.category = category;
+
+      const title = document.createElement("h2");
+      title.className = "category-title";
+      title.textContent = category;
+      group.appendChild(title);
       groups.set(category, group);
       document.getElementById("test-area").appendChild(group);
       return group;
@@ -266,18 +271,11 @@
       const row = document.createElement("div");
       row.className = "input-row";
 
-      const category = document.createElement("div");
-      category.className = "field";
-      category.textContent = item.category;
-
       const description = document.createElement("div");
       description.className = "field";
       description.textContent = item.description;
 
-      const layoutPlaceholder = document.createElement("div");
-      layoutPlaceholder.className = "required-placeholder";
-
-      row.append(category, description, createValueInput(), layoutPlaceholder);
+      row.append(description, createValueInput(), document.createElement("div"));
       return row;
     }
 
@@ -476,12 +474,6 @@
       const row = document.createElement("div");
       row.className = "optional-row";
 
-      const categorySelect = createSelect(
-        CALCULATOR_DATA.categories,
-        category,
-        () => moveOptionalRow(row, categorySelect.value)
-      );
-
       const descriptionSelect = createSelect(
         CALCULATOR_DATA.optionalDescriptions[category],
         CALCULATOR_DATA.optionalDescriptions[category][0],
@@ -513,54 +505,17 @@
         }
 
         row.remove();
-        renumberOptionalRows(categorySelect.value);
+        renumberOptionalRows(row.dataset.category);
       });
 
-      row.append(categorySelect, descriptionSelect, valueInput, deleteButton);
+      row.dataset.category = category;
+      row.append(descriptionSelect, valueInput, deleteButton);
 
       row.addEventListener("pointerdown", event => {
         startOptionalDrag(row, event);
       });
 
       return row;
-    }
-
-    function moveOptionalRow(row, category) {
-      const targetGroup = groups.get(category);
-
-      if (!targetGroup) {
-        return;
-      }
-
-      const oldDescriptionSelect = row.children[1];
-      const selectedDescription = oldDescriptionSelect.value;
-      const availableDescriptions = CALCULATOR_DATA.optionalDescriptions[category];
-
-      if (availableDescriptions.length === 0) {
-        return;
-      }
-
-      oldDescriptionSelect.replaceWith(
-        createSelect(
-          availableDescriptions,
-          availableDescriptions.includes(selectedDescription)
-            ? selectedDescription
-            : availableDescriptions[0],
-          null
-        )
-      );
-
-      const newDescriptionSelect = row.children[1];
-      newDescriptionSelect.dataset.baseDescription = newDescriptionSelect.value;
-
-      newDescriptionSelect.addEventListener("change", () => {
-        newDescriptionSelect.dataset.baseDescription = newDescriptionSelect.value;
-        renumberOptionalRows(category);
-      });
-
-      const addButton = targetGroup.querySelector(".add-button");
-      targetGroup.insertBefore(row, addButton);
-      renumberOptionalRows(category);
     }
 
     function addOptionalRow(category) {
