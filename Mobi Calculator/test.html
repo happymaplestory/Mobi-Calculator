@@ -463,19 +463,18 @@
 
     function resetOptionalRowCategory(row, category) {
       const availableDescriptions = CALCULATOR_DATA.optionalDescriptions[category];
-      const currentDescriptionSelect = row.children[0];
+
+      if (availableDescriptions.length === 0) {
+        return;
+      }
 
       const nextDescription = availableDescriptions[0];
-
-      currentDescriptionSelect.replaceWith(
-        createSelect(
-          availableDescriptions,
-          nextDescription,
-          null
-        )
+      const newDescriptionSelect = createSelect(
+        availableDescriptions,
+        nextDescription,
+        null
       );
 
-      const newDescriptionSelect = row.children[1];
       newDescriptionSelect.dataset.baseDescription = nextDescription;
 
       newDescriptionSelect.addEventListener("change", () => {
@@ -483,9 +482,8 @@
         renumberOptionalRows(row.parentElement.dataset.category);
       });
 
+      row.children[0].replaceWith(newDescriptionSelect);
       row.dataset.category = category;
-      row.dataset.previousValue = currentValue.value;
-      return descriptionSelect;
     }
 
     function finishOptionalDrag(event) {
