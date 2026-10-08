@@ -235,16 +235,56 @@
       background: var(--surface-color);
     }
 
-    .delete-button {
-      font-size: 20px;
-      line-height: 1;
+    .delete-button,
+    .add-button {
+      position: relative;
+      font-size: 0;
+    }
+
+    .delete-button::before,
+    .delete-button::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 18px;
+      height: 2px;
+      border-radius: 1px;
+      background: #666666;
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .delete-button::after {
+      transform: translate(-50%, -50%) rotate(-45deg);
     }
 
     .add-button {
       grid-column: 1 / -1;
       width: 42px;
-      font-size: 24px;
-      line-height: 1;
+    }
+
+    .add-button::before,
+    .add-button::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 18px;
+      height: 2px;
+      border-radius: 1px;
+      background: #666666;
+      transform: translate(-50%, -50%);
+    }
+
+    .add-button::after {
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+
+    .delete-button:hover::before,
+    .delete-button:hover::after,
+    .add-button:hover::before,
+    .add-button:hover::after {
+      background: #444444;
     }
 
     .required-placeholder {
@@ -624,7 +664,7 @@
       const deleteButton = document.createElement("button");
       deleteButton.type = "button";
       deleteButton.className = "action-button delete-button";
-      deleteButton.textContent = "X";
+      deleteButton.setAttribute("aria-label", "선택 항목 삭제");
       deleteButton.addEventListener("click", () => {
         if (valueInput.value.trim() !== "") {
           const shouldDelete = window.confirm(
@@ -669,7 +709,7 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = "action-button add-button";
-      button.textContent = "+";
+      button.setAttribute("aria-label", "선택 항목 추가");
       button.addEventListener("click", () => addOptionalRow(category));
       return button;
     }
