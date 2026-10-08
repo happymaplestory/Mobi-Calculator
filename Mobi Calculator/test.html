@@ -141,8 +141,6 @@
   <script src="test-data.js"></script>
   <script>
     const groups = new Map();
-    const optionalItemCounts = new Map();
-
     function setColumnWidths() {
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
@@ -225,11 +223,33 @@
       return row;
     }
 
-    function getOptionalLabel(category, description) {
-      const counts = optionalItemCounts.get(category);
-      const currentCount = (counts.get(description) || 0) + 1;
-      counts.set(description, currentCount);
-      return `${description} (${currentCount})`;
+    function renumberOptionalRows(category) {
+      const group = groups.get(category);
+
+      if (!group) {
+        return;
+      }
+
+      const counts = new Map();
+      const rows = group.querySelectorAll(".optional-row");
+
+      rows.forEach(row => {
+        const descriptionSelect = row.children[1];
+        const baseDescription = descriptionSelect.dataset.baseDescription || descriptionSelect.value;
+        const count = (counts.get(baseDescription) || 0) + 1;
+        counts.set(baseDescription, count);
+
+        Array.from(descriptionSelect.options).forEach(option => {
+          const optionCount = option.value === baseDescription
+            ? count
+            : "";
+          option.textContent = optionCount
+            ? `${option.value} (${optionCount})`
+            : option.value;
+        });
+
+        descriptionSelect.dataset.displayDescription = `${baseDescription} (${count})`;
+      });
     }
 
     function createOptionalRow(category) {
@@ -247,6 +267,13 @@
         CALCULATOR_DATA.optionalDescriptions[category][0],
         null
       );
+
+      descriptionSelect.dataset.baseDescription = descriptionSelect.value;
+
+      descriptionSelect.addEventListener("change", () => {
+        descriptionSelect.dataset.baseDescription = descriptionSelect.value;
+        renumberOptionalRows(category);
+      });
 
       const valueInput = createValueInput();
 
@@ -266,21 +293,7 @@
         }
 
         row.remove();
-      });
-
-      descriptionSelect.dataset.baseDescription = descriptionSelect.value;
-      descriptionSelect.dataset.displayDescription = getOptionalLabel(
-        category,
-        descriptionSelect.value
-      );
-
-      const originalText = descriptionSelect.value;
-      descriptionSelect.addEventListener("change", () => {
-        descriptionSelect.dataset.baseDescription = descriptionSelect.value;
-        descriptionSelect.dataset.displayDescription = getOptionalLabel(
-          category,
-          descriptionSelect.value
-        );
+        renumberOptionalRows(categorySelect.value);
       });
 
       row.append(categorySelect, descriptionSelect, valueInput, deleteButton);
@@ -314,13 +327,15 @@
 
       const newDescriptionSelect = row.children[1];
       newDescriptionSelect.dataset.baseDescription = newDescriptionSelect.value;
-      newDescriptionSelect.dataset.displayDescription = getOptionalLabel(
-        category,
-        newDescriptionSelect.value
-      );
+
+      newDescriptionSelect.addEventListener("change", () => {
+        newDescriptionSelect.dataset.baseDescription = newDescriptionSelect.value;
+        renumberOptionalRows(category);
+      });
 
       const addButton = targetGroup.querySelector(".add-button");
       targetGroup.insertBefore(row, addButton);
+      renumberOptionalRows(category);
     }
 
     function addOptionalRow(category) {
@@ -334,6 +349,7 @@
       const addButton = targetGroup.querySelector(".add-button");
       const row = createOptionalRow(category);
       targetGroup.insertBefore(row, addButton);
+      renumberOptionalRows(category);
     }
 
     function createAddButton(category) {
