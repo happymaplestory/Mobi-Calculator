@@ -287,9 +287,6 @@
       background: #444444;
     }
 
-    .required-placeholder {
-      min-height: var(--field-height);
-    }
   </style>
 </head>
 <body>
@@ -682,8 +679,6 @@
       });
 
       row.append(descriptionSelect, valueInput, deleteButton);
-      row.dataset.category = category;
-
       row.addEventListener("pointerdown", event => {
         startOptionalDrag(row, event);
       });
