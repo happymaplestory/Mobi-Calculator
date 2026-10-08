@@ -474,6 +474,12 @@
       const row = document.createElement("div");
       row.className = "optional-row";
 
+      const categorySelect = createSelect(
+        CALCULATOR_DATA.categories,
+        category,
+        () => moveOptionalRow(row, categorySelect.value)
+      );
+
       const descriptionSelect = createSelect(
         CALCULATOR_DATA.optionalDescriptions[category],
         CALCULATOR_DATA.optionalDescriptions[category][0],
@@ -505,17 +511,54 @@
         }
 
         row.remove();
-        renumberOptionalRows(row.dataset.category);
+        renumberOptionalRows(categorySelect.value);
       });
 
-      row.dataset.category = category;
-      row.append(descriptionSelect, valueInput, deleteButton);
+      row.append(categorySelect, descriptionSelect, valueInput, deleteButton);
 
       row.addEventListener("pointerdown", event => {
         startOptionalDrag(row, event);
       });
 
       return row;
+    }
+
+    function moveOptionalRow(row, category) {
+      const targetGroup = groups.get(category);
+
+      if (!targetGroup) {
+        return;
+      }
+
+      const oldDescriptionSelect = row.children[1];
+      const selectedDescription = oldDescriptionSelect.value;
+      const availableDescriptions = CALCULATOR_DATA.optionalDescriptions[category];
+
+      if (availableDescriptions.length === 0) {
+        return;
+      }
+
+      oldDescriptionSelect.replaceWith(
+        createSelect(
+          availableDescriptions,
+          availableDescriptions.includes(selectedDescription)
+            ? selectedDescription
+            : availableDescriptions[0],
+          null
+        )
+      );
+
+      const newDescriptionSelect = row.children[1];
+      newDescriptionSelect.dataset.baseDescription = newDescriptionSelect.value;
+
+      newDescriptionSelect.addEventListener("change", () => {
+        newDescriptionSelect.dataset.baseDescription = newDescriptionSelect.value;
+        renumberOptionalRows(category);
+      });
+
+      const addButton = targetGroup.querySelector(".add-button");
+      targetGroup.insertBefore(row, addButton);
+      renumberOptionalRows(category);
     }
 
     function addOptionalRow(category) {
