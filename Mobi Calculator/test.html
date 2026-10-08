@@ -6,7 +6,8 @@
   <title>Mobi Calculator 개발 테스트</title>
   <style>
     :root {
-      --field-height: 42px;
+      --field-height: 38px;
+      --row-height: 38px;
       --field-radius: 10px;
       --border-color: #8f8f8f;
       --border-width: 2px;
@@ -54,8 +55,48 @@
       gap: 8px;
     }
 
-    .input-row {
-      display: contents;
+    .input-row,
+    .optional-row {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-template-columns: var(--category-column-width) var(--description-column-width) 130px 42px;
+      gap: 8px;
+      min-height: var(--row-height);
+      border-radius: var(--field-radius);
+      background: transparent;
+      transition: transform 120ms ease;
+    }
+
+    .input-row:hover,
+    .optional-row:hover {
+      background: var(--hover-color);
+    }
+
+    .optional-row {
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .optional-row.dragging {
+      position: fixed;
+      z-index: 1000;
+      margin: 0;
+      pointer-events: none;
+      cursor: grabbing;
+      transition: none;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+    }
+
+    .optional-row.dragging:hover {
+      background: var(--surface-color);
+    }
+
+    .drag-placeholder {
+      grid-column: 1 / -1;
+      min-height: var(--row-height);
+      border-radius: var(--field-radius);
+      background: var(--hover-color);
+      opacity: 0.55;
     }
 
     .field,
@@ -124,10 +165,6 @@
       line-height: 1;
     }
 
-    .optional-row {
-      display: contents;
-    }
-
     .required-placeholder {
       min-height: var(--field-height);
     }
@@ -141,6 +178,8 @@
   <script src="test-data.js"></script>
   <script>
     const groups = new Map();
+    let dragState = null;
+    let pendingDrag = null;
     function setColumnWidths() {
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
@@ -253,6 +292,135 @@
       });
     }
 
+    function getOptionalRows(group) {
+      return Array.from(group.querySelectorAll(".optional-row:not(.dragging)"));
+    }
+
+    function getDragTarget(group, pointerY, draggedRow) {
+      const rows = getOptionalRows(group);
+      let closestRow = null;
+      let closestDistance = Infinity;
+
+      rows.forEach(row => {
+        const rect = row.getBoundingClientRect();
+        const distance = Math.abs(pointerY - (rect.top + rect.height / 2));
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestRow = row;
+        }
+      });
+
+      if (!closestRow) {
+        return null;
+      }
+
+      const rect = closestRow.getBoundingClientRect();
+      return pointerY < rect.top + rect.height / 2
+        ? closestRow
+        : closestRow.nextElementSibling;
+    }
+
+    function startOptionalDrag(row, event) {
+      if (event.button !== 0 || dragState || pendingDrag) {
+        return;
+      }
+
+      pendingDrag = {
+        row,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY
+      };
+    }
+
+    function beginOptionalDrag(row, event) {
+      if (!pendingDrag || pendingDrag.row !== row) {
+        return;
+      }
+
+      const rect = row.getBoundingClientRect();
+      const placeholder = document.createElement("div");
+      placeholder.className = "drag-placeholder";
+      placeholder.style.height = rect.height + "px";
+
+      row.parentElement.insertBefore(placeholder, row);
+
+      row.classList.add("dragging");
+      row.style.width = rect.width + "px";
+      row.style.height = rect.height + "px";
+      row.style.left = rect.left + "px";
+      row.style.top = rect.top + "px";
+
+      dragState = {
+        row,
+        placeholder,
+        offsetX: event.clientX - rect.left,
+        offsetY: event.clientY - rect.top,
+        group: row.parentElement,
+        category: row.children[0].value
+      };
+
+      document.body.setPointerCapture?.(event.pointerId);
+    }
+
+    function updateOptionalDrag(event) {
+      if (!dragState) {
+        if (!pendingDrag || pendingDrag.row === event.currentTarget) {
+          if (pendingDrag && pendingDrag.row === event.currentTarget) {
+            const dx = event.clientX - pendingDrag.startX;
+            const dy = event.clientY - pendingDrag.startY;
+            if (Math.hypot(dx, dy) >= 6) {
+              const row = pendingDrag.row;
+              pendingDrag = null;
+              beginOptionalDrag(row, event);
+            }
+          }
+        }
+      }
+
+      if (!dragState) {
+        return;
+      }
+
+      const { row, placeholder, group, offsetX, offsetY } = dragState;
+      row.style.left = event.clientX - offsetX + "px";
+      row.style.top = event.clientY - offsetY + "px";
+
+      const target = getDragTarget(group, event.clientY, row);
+
+      if (!target || target === placeholder) {
+        return;
+      }
+
+      if (target !== row && target !== placeholder.nextElementSibling) {
+        group.insertBefore(placeholder, target);
+      }
+    }
+
+    function finishOptionalDrag() {
+      pendingDrag = null;
+
+      if (!dragState) {
+        return;
+      }
+
+      const { row, placeholder, category } = dragState;
+      const targetGroup = row.parentElement;
+
+      targetGroup.insertBefore(row, placeholder);
+      placeholder.remove();
+
+      row.classList.remove("dragging");
+      row.style.width = "";
+      row.style.height = "";
+      row.style.left = "";
+      row.style.top = "";
+
+      dragState = null;
+      renumberOptionalRows(category);
+    }
+
     function createOptionalRow(category) {
       const row = document.createElement("div");
       row.className = "optional-row";
@@ -298,6 +466,17 @@
       });
 
       row.append(categorySelect, descriptionSelect, valueInput, deleteButton);
+
+      row.addEventListener("pointerdown", event => {
+        startOptionalDrag(row, event);
+      });
+
+      row.addEventListener("pointermove", event => {
+        updateOptionalDrag(event);
+      });
+
+      row.addEventListener("pointerup", finishOptionalDrag);
+      row.addEventListener("pointercancel", finishOptionalDrag);
       return row;
     }
 
