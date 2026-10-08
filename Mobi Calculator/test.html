@@ -3,11 +3,288 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mobi Calculator 외부 접속 테스트</title>
+  <title>Mobi Calculator 개발 테스트</title>
+  <style>
+    :root {
+      --field-height: 42px;
+      --field-radius: 10px;
+      --border-color: #b8b8b8;
+      --background-color: #f5f5f5;
+      --surface-color: #ffffff;
+      --text-color: #222222;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px;
+      min-width: 700px;
+      min-height: 700px;
+      background: var(--background-color);
+      color: var(--text-color);
+      font-family: Arial, "Noto Sans KR", sans-serif;
+    }
+
+    h1 {
+      margin: 0 0 28px;
+      font-size: 28px;
+    }
+
+    .test-area {
+      display: flex;
+      align-items: flex-start;
+      gap: 48px;
+    }
+
+    .category-group {
+      display: grid;
+      grid-template-columns: max-content max-content max-content 42px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .input-row {
+      display: contents;
+    }
+
+    .field,
+    .value-input,
+    .action-button {
+      min-height: var(--field-height);
+      border: 1px solid var(--border-color);
+      border-radius: var(--field-radius);
+      background: var(--surface-color);
+      color: var(--text-color);
+      font: inherit;
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      white-space: nowrap;
+    }
+
+    select.field {
+      appearance: auto;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    .value-input {
+      width: 130px;
+      padding: 0 12px;
+      outline: none;
+    }
+
+    .value-input:focus,
+    select.field:focus {
+      border-color: #777777;
+    }
+
+    .action-button {
+      width: 42px;
+      padding: 0;
+      cursor: pointer;
+      background: var(--surface-color);
+    }
+
+    .delete-button {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .add-button {
+      grid-column: 1 / -1;
+      width: 42px;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .optional-row {
+      display: contents;
+    }
+
+    .optional-placeholder {
+      color: #777777;
+    }
+
+    @media (max-width: 1100px) {
+      body {
+        padding: 24px;
+      }
+
+      .test-area {
+        gap: 24px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Mobi Calculator 외부 접속 테스트</h1>
-  <p>이 페이지가 정상적으로 표시된다면 GitHub Pages를 통한 정적 웹페이지 외부 접속이 가능한 것입니다.</p>
-  <p>테스트 페이지: <code>Mobi Calculator/test.html</code></p>
+  <h1>마비노기 모바일 계산기 개발 테스트</h1>
+
+  <div id="test-area" class="test-area"></div>
+
+  <script src="test-data.js"></script>
+  <script>
+    const requiredItems = [
+      { category: "공격력", description: "공격력 +" },
+      { category: "공격력", description: "공격력 %" },
+      { category: "치명타", description: "치명타 +" },
+      { category: "치명타", description: "치명타 %" },
+      { category: "치명타", description: "치명타 데미지 %" },
+      { category: "치명타", description: "치명타 확률 %" }
+    ];
+
+    const groups = new Map();
+
+    function createGroup(category) {
+      const group = document.createElement("div");
+      group.className = "category-group";
+      group.dataset.category = category;
+      groups.set(category, group);
+      document.getElementById("test-area").appendChild(group);
+      return group;
+    }
+
+    function createSelect(options, selectedValue, onChange) {
+      const select = document.createElement("select");
+      select.className = "field";
+
+      options.forEach(optionText => {
+        const option = document.createElement("option");
+        option.value = optionText;
+        option.textContent = optionText;
+        select.appendChild(option);
+      });
+
+      select.value = selectedValue;
+      select.addEventListener("change", onChange);
+      return select;
+    }
+
+    function createValueInput() {
+      const input = document.createElement("input");
+      input.className = "value-input";
+      input.type = "text";
+      input.inputMode = "decimal";
+      input.setAttribute("aria-label", "값 입력");
+      return input;
+    }
+
+    function createRequiredRow(item) {
+      const row = document.createElement("div");
+      row.className = "input-row";
+
+      const category = document.createElement("div");
+      category.className = "field";
+      category.textContent = item.category;
+
+      const description = document.createElement("div");
+      description.className = "field";
+      description.textContent = item.description;
+
+      row.append(category, description, createValueInput());
+      return row;
+    }
+
+    function createOptionalRow(category) {
+      const row = document.createElement("div");
+      row.className = "optional-row";
+
+      const categorySelect = createSelect(
+        CALCULATOR_DATA.categories,
+        category,
+        () => moveOptionalRow(row, categorySelect.value)
+      );
+
+      const descriptionSelect = createSelect(
+        CALCULATOR_DATA.descriptions[category],
+        CALCULATOR_DATA.descriptions[category][0],
+        null
+      );
+
+      const valueInput = createValueInput();
+
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "action-button delete-button";
+      deleteButton.textContent = "X";
+      deleteButton.addEventListener("click", () => {
+        if (valueInput.value.trim() !== "") {
+          const shouldDelete = window.confirm(
+            "계산에 적용중인 데이터가 남아 있습니다. 삭제하시겠습니까?"
+          );
+
+          if (!shouldDelete) {
+            return;
+          }
+        }
+
+        row.remove();
+      });
+
+      row.append(categorySelect, descriptionSelect, valueInput, deleteButton);
+      return row;
+    }
+
+    function moveOptionalRow(row, category) {
+      const targetGroup = groups.get(category);
+
+      if (!targetGroup) {
+        return;
+      }
+
+      const oldDescriptionSelect = row.children[1];
+      const selectedDescription = oldDescriptionSelect.value;
+      const availableDescriptions = CALCULATOR_DATA.descriptions[category];
+
+      oldDescriptionSelect.replaceWith(
+        createSelect(
+          availableDescriptions,
+          availableDescriptions.includes(selectedDescription)
+            ? selectedDescription
+            : availableDescriptions[0],
+          null
+        )
+      );
+
+      const addButton = targetGroup.querySelector(".add-button");
+      targetGroup.insertBefore(row, addButton);
+    }
+
+    function addOptionalRow(category) {
+      const targetGroup = groups.get(category);
+      const addButton = targetGroup.querySelector(".add-button");
+      const row = createOptionalRow(category);
+      targetGroup.insertBefore(row, addButton);
+    }
+
+    function createAddButton(category) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "action-button add-button";
+      button.textContent = "+";
+      button.addEventListener("click", () => addOptionalRow(category));
+      return button;
+    }
+
+    function initialize() {
+      CALCULATOR_DATA.categories.forEach(createGroup);
+
+      requiredItems.forEach(item => {
+        groups.get(item.category).appendChild(createRequiredRow(item));
+      });
+
+      CALCULATOR_DATA.categories.forEach(category => {
+        groups.get(category).appendChild(createAddButton(category));
+      });
+    }
+
+    initialize();
+  </script>
 </body>
 </html>
