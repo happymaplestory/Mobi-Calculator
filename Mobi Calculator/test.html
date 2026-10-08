@@ -8,10 +8,12 @@
     :root {
       --field-height: 42px;
       --field-radius: 10px;
-      --border-color: #b8b8b8;
+      --border-color: #8f8f8f;
+      --border-width: 2px;
       --background-color: #f5f5f5;
       --surface-color: #ffffff;
       --text-color: #222222;
+      --hover-color: #eeeeee;
     }
 
     * {
@@ -26,6 +28,8 @@
       background: var(--background-color);
       color: var(--text-color);
       font-family: Arial, "Noto Sans KR", sans-serif;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     h1 {
@@ -43,12 +47,11 @@
     .category-group {
       display: grid;
       padding: 16px;
-      border: 1px solid var(--border-color);
+      border: var(--border-width) solid var(--border-color);
       border-radius: 16px;
       background: var(--surface-color);
       grid-template-columns: var(--category-column-width) var(--description-column-width) 130px 42px;
       gap: 8px;
-      align-items: center;
     }
 
     .input-row {
@@ -59,7 +62,7 @@
     .value-input,
     .action-button {
       min-height: var(--field-height);
-      border: 1px solid var(--border-color);
+      border: var(--border-width) solid var(--border-color);
       border-radius: var(--field-radius);
       background: var(--surface-color);
       color: var(--text-color);
@@ -83,6 +86,18 @@
       width: 130px;
       padding: 0 12px;
       outline: none;
+      -webkit-user-select: text;
+      user-select: text;
+    }
+
+    .field:hover,
+    .action-button:hover,
+    .category-group:hover {
+      background: var(--hover-color);
+    }
+
+    .value-input:hover {
+      background: var(--hover-color);
     }
 
     .value-input:focus,
@@ -116,7 +131,6 @@
     .required-placeholder {
       min-height: var(--field-height);
     }
-
   </style>
 </head>
 <body>
