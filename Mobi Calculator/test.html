@@ -462,10 +462,8 @@
     }
 
     function resetOptionalRowCategory(row, category) {
-      const descriptionSelect = row.children[0];
       const availableDescriptions = CALCULATOR_DATA.optionalDescriptions[category];
-      const currentDescriptionSelect = row.children[1];
-      const currentValue = row.children[2];
+      const currentDescriptionSelect = row.children[0];
 
       const nextDescription = availableDescriptions[0];
 
@@ -566,7 +564,7 @@
 
       descriptionSelect.addEventListener("change", () => {
         descriptionSelect.dataset.baseDescription = descriptionSelect.value;
-        renumberOptionalRows(category);
+        renumberOptionalRows(row.parentElement.dataset.category);
       });
 
       const valueInput = createValueInput();
