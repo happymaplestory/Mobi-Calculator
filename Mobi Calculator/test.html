@@ -108,8 +108,8 @@
       display: contents;
     }
 
-    .optional-placeholder {
-      color: #777777;
+    .required-placeholder {
+      min-height: var(--field-height);
     }
 
     @media (max-width: 1100px) {
@@ -187,7 +187,10 @@
       description.className = "field";
       description.textContent = item.description;
 
-      row.append(category, description, createValueInput());
+      const layoutPlaceholder = document.createElement("div");
+      layoutPlaceholder.className = "required-placeholder";
+
+      row.append(category, description, createValueInput(), layoutPlaceholder);
       return row;
     }
 
