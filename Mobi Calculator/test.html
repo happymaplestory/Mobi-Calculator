@@ -316,29 +316,18 @@
       return Array.from(group.querySelectorAll(".optional-row:not(.dragging)"));
     }
 
-    function getDragTarget(group, pointerY, draggedRow) {
+    function getDragTarget(group, pointerY) {
       const rows = getOptionalRows(group);
-      let closestRow = null;
-      let closestDistance = Infinity;
 
-      rows.forEach(row => {
+      for (const row of rows) {
         const rect = row.getBoundingClientRect();
-        const distance = Math.abs(pointerY - (rect.top + rect.height / 2));
 
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestRow = row;
+        if (pointerY < rect.top + rect.height / 2) {
+          return row;
         }
-      });
-
-      if (!closestRow) {
-        return null;
       }
 
-      const rect = closestRow.getBoundingClientRect();
-      return pointerY < rect.top + rect.height / 2
-        ? closestRow
-        : closestRow.nextElementSibling;
+      return null;
     }
 
     function startOptionalDrag(row, event) {
@@ -406,40 +395,51 @@
       }
 
       const { row, placeholder, group, offsetX, offsetY } = dragState;
+
       row.style.left = event.clientX - offsetX + "px";
       row.style.top = event.clientY - offsetY + "px";
 
-      const target = getDragTarget(group, event.clientY, row);
+      const target = getDragTarget(group, event.clientY);
 
-      if (!target || target === placeholder) {
+      if (target === placeholder) {
         return;
       }
 
-      if (target !== row && target !== placeholder.nextElementSibling) {
-        const rowsBefore = getOptionalRows(group);
-        const positions = new Map(
-          rowsBefore.map(item => [item, item.getBoundingClientRect().top])
-        );
+      const currentNext = placeholder.nextElementSibling;
 
-        group.insertBefore(placeholder, target);
-
-        rowsBefore.forEach(item => {
-          const previousTop = positions.get(item);
-          const currentTop = item.getBoundingClientRect().top;
-          const offset = previousTop - currentTop;
-
-          if (offset === 0) {
-            return;
-          }
-
-          item.style.transition = "none";
-          item.style.transform = `translateY(${offset}px)`;
-          requestAnimationFrame(() => {
-            item.style.transition = "transform 120ms ease";
-            item.style.transform = "";
-          });
-        });
+      if (target === currentNext) {
+        return;
       }
+
+      const rows = getOptionalRows(group);
+      const positions = new Map(
+        rows.map(item => [item, item.getBoundingClientRect().top])
+      );
+
+      if (target) {
+        group.insertBefore(placeholder, target);
+      } else {
+        const addButton = group.querySelector(".add-button");
+        group.insertBefore(placeholder, addButton);
+      }
+
+      rows.forEach(item => {
+        const previousTop = positions.get(item);
+        const currentTop = item.getBoundingClientRect().top;
+        const offset = previousTop - currentTop;
+
+        if (offset === 0) {
+          return;
+        }
+
+        item.style.transition = "none";
+        item.style.transform = `translateY(${offset}px)`;
+
+        requestAnimationFrame(() => {
+          item.style.transition = "transform 120ms ease";
+          item.style.transform = "";
+        });
+      });
     }
 
     function finishOptionalDrag(event) {
