@@ -108,7 +108,6 @@ const CALCULATOR_DATA = {
       const input = document.createElement("input");
       input.className = "value-input";
       input.type = "text";
-      input.inputMode = "decimal";
       input.setAttribute("aria-label", "값 입력");
       return input;
     }
