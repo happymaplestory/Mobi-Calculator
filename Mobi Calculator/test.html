@@ -57,6 +57,8 @@
 
     .input-row,
     .optional-row {
+      position: relative;
+      isolation: isolate;
       display: grid;
       grid-column: 1 / -1;
       grid-template-columns: var(--category-column-width) var(--description-column-width) 130px 42px;
@@ -70,6 +72,24 @@
     .input-row:hover,
     .optional-row:hover {
       background: var(--hover-color);
+    }
+
+    .input-row:hover::before,
+    .optional-row:hover::before,
+    .optional-row.dragging::before {
+      content: "";
+      position: absolute;
+      inset: -3px;
+      z-index: -1;
+      border-radius: 13px;
+      background: var(--hover-color);
+      pointer-events: none;
+    }
+
+    .input-row > *,
+    .optional-row > * {
+      position: relative;
+      z-index: 1;
     }
 
     .optional-row {
@@ -335,7 +355,7 @@
     }
 
     function beginOptionalDrag(row, event) {
-      if (!pendingDrag || pendingDrag.row !== row) {
+      if (!pendingDrag || pendingDrag.row !== row || pendingDrag.pointerId !== event.pointerId) {
         return;
       }
 
@@ -358,28 +378,30 @@
         offsetX: event.clientX - rect.left,
         offsetY: event.clientY - rect.top,
         group: row.parentElement,
-        category: row.children[0].value
+        category: row.children[0].value,
+        pointerId: event.pointerId
       };
 
-      document.body.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
     }
 
     function updateOptionalDrag(event) {
-      if (!dragState) {
-        if (!pendingDrag || pendingDrag.row === event.currentTarget) {
-          if (pendingDrag && pendingDrag.row === event.currentTarget) {
-            const dx = event.clientX - pendingDrag.startX;
-            const dy = event.clientY - pendingDrag.startY;
-            if (Math.hypot(dx, dy) >= 6) {
-              const row = pendingDrag.row;
-              pendingDrag = null;
-              beginOptionalDrag(row, event);
-            }
-          }
+      if (!dragState && pendingDrag) {
+        if (event.pointerId !== pendingDrag.pointerId) {
+          return;
+        }
+
+        const dx = event.clientX - pendingDrag.startX;
+        const dy = event.clientY - pendingDrag.startY;
+
+        if (Math.hypot(dx, dy) >= 6) {
+          const row = pendingDrag.row;
+          beginOptionalDrag(row, event);
+          pendingDrag = null;
         }
       }
 
-      if (!dragState) {
+      if (!dragState || event.pointerId !== dragState.pointerId) {
         return;
       }
 
@@ -420,10 +442,12 @@
       }
     }
 
-    function finishOptionalDrag() {
-      pendingDrag = null;
+    function finishOptionalDrag(event) {
+      if (pendingDrag && (!event || event.pointerId === pendingDrag.pointerId)) {
+        pendingDrag = null;
+      }
 
-      if (!dragState) {
+      if (!dragState || (event && event.pointerId !== dragState.pointerId)) {
         return;
       }
 
@@ -443,6 +467,10 @@
       dragState = null;
       renumberOptionalRows(category);
     }
+
+    document.addEventListener("pointermove", updateOptionalDrag);
+    document.addEventListener("pointerup", finishOptionalDrag);
+    document.addEventListener("pointercancel", finishOptionalDrag);
 
     function createOptionalRow(category) {
       const row = document.createElement("div");
@@ -494,12 +522,6 @@
         startOptionalDrag(row, event);
       });
 
-      row.addEventListener("pointermove", event => {
-        updateOptionalDrag(event);
-      });
-
-      row.addEventListener("pointerup", finishOptionalDrag);
-      row.addEventListener("pointercancel", finishOptionalDrag);
       return row;
     }
 
