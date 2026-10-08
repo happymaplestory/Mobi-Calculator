@@ -35,12 +35,17 @@
 
     .test-area {
       display: flex;
+      flex-wrap: wrap;
       align-items: flex-start;
       gap: 24px;
     }
 
     .category-group {
       display: grid;
+      padding: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      background: var(--surface-color);
       grid-template-columns: var(--category-column-width) var(--description-column-width) 130px 42px;
       gap: 8px;
       align-items: center;
