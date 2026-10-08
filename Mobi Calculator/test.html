@@ -229,7 +229,7 @@
         return;
       }
 
-      const counts = new Map();
+      const occurrenceCounts = new Map();
       const rows = group.querySelectorAll(".optional-row");
 
       rows.forEach(row => {
@@ -237,21 +237,19 @@
         const baseDescription =
           descriptionSelect.dataset.baseDescription || descriptionSelect.value;
 
-        counts.set(
-          baseDescription,
-          (counts.get(baseDescription) || 0) + 1
-        );
-      });
-
-      rows.forEach(row => {
-        const descriptionSelect = row.children[1];
+        const occurrence = (occurrenceCounts.get(baseDescription) || 0) + 1;
+        occurrenceCounts.set(baseDescription, occurrence);
 
         Array.from(descriptionSelect.options).forEach(option => {
-          const count = counts.get(option.value) || 0;
-          option.textContent = count > 0
-            ? `${option.value} (${count})`
-            : option.value;
+          option.textContent = option.value;
         });
+
+        const selectedOption = descriptionSelect.options[descriptionSelect.selectedIndex];
+
+        if (selectedOption) {
+          selectedOption.textContent =
+            `${baseDescription} (${occurrence})`;
+        }
       });
     }
 
