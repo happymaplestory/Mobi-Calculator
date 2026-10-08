@@ -174,7 +174,6 @@
       group.className = "category-group";
       group.dataset.category = category;
       groups.set(category, group);
-      optionalItemCounts.set(category, new Map());
       document.getElementById("test-area").appendChild(group);
       return group;
     }
@@ -235,20 +234,24 @@
 
       rows.forEach(row => {
         const descriptionSelect = row.children[1];
-        const baseDescription = descriptionSelect.dataset.baseDescription || descriptionSelect.value;
-        const count = (counts.get(baseDescription) || 0) + 1;
-        counts.set(baseDescription, count);
+        const baseDescription =
+          descriptionSelect.dataset.baseDescription || descriptionSelect.value;
+
+        counts.set(
+          baseDescription,
+          (counts.get(baseDescription) || 0) + 1
+        );
+      });
+
+      rows.forEach(row => {
+        const descriptionSelect = row.children[1];
 
         Array.from(descriptionSelect.options).forEach(option => {
-          const optionCount = option.value === baseDescription
-            ? count
-            : "";
-          option.textContent = optionCount
-            ? `${option.value} (${optionCount})`
+          const count = counts.get(option.value) || 0;
+          option.textContent = count > 0
+            ? `${option.value} (${count})`
             : option.value;
         });
-
-        descriptionSelect.dataset.displayDescription = `${baseDescription} (${count})`;
       });
     }
 
