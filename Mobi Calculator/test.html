@@ -146,7 +146,7 @@
       const descriptionTexts = Object.values(CALCULATOR_DATA.descriptions).flat();
 
       const categoryWidth = Math.ceil(
-        Math.max(...categoryTexts.map(text => context.measureText(text).width)) + 60
+        Math.max(...categoryTexts.map(text => context.measureText(text).width)) + 80
       );
       const descriptionWidth = Math.ceil(
         Math.max(...descriptionTexts.map(text => context.measureText(text).width)) + 60
