@@ -125,7 +125,45 @@ PC 환경에서는 다음 사항이 발생하지 않도록 구성한다.
 
 구체적인 테마 전환 방식과 세부 디자인은 해당 UI 파일에 대응하는 `README_[file_name]` 문서에 정의한다.
 
-## 8. 파일별 요구사항 문서
+## 8. 프로젝트 파일 구조 및 위치
+
+프로젝트의 실제 웹페이지 구성 파일은 역할에 따라 다음 위치에 분리하여 관리한다.
+
+```
+Mobi Calculator/
+├── README.md
+├── *.html
+├── readme_files/
+│   └── README_[file_name]
+├── pages_css/
+│   └── *.css
+└── pages_js/
+    └── *.js
+```
+
+### 파일 위치 규칙
+
+- HTML 페이지 파일은 `Mobi Calculator/` 바로 아래에 둔다.
+- HTML 파일에 대응하는 요구사항 문서는 `Mobi Calculator/readme_files/`에 둔다.
+- CSS 파일은 `Mobi Calculator/pages_css/`에 둔다.
+- JavaScript 파일은 `Mobi Calculator/pages_js/`에 둔다.
+- 프로젝트 전체 요구사항을 관리하는 메인 `README.md`는 HTML 파일과 같은 `Mobi Calculator/` 바로 아래에 유지한다.
+- 파일을 생성할 때는 파일 종류에 따라 위의 위치 규칙을 따른다.
+- 파일을 참조할 때는 실제 저장 위치를 기준으로 경로를 작성한다. 예를 들어 HTML에서 CSS와 JavaScript를 참조할 경우 각각 `pages_css/파일명.css`, `pages_js/파일명.js`를 사용한다.
+- 파일별 요구사항 문서를 확인할 때는 `readme_files/README_[file_name]` 경로를 사용한다.
+- 기존 파일을 이동하거나 위치를 변경하는 경우 HTML의 상대 경로와 관련 요구사항 문서의 파일 경로 설명도 함께 확인한다.
+
+### 현재 파일 구조 예시
+
+| 종류 | 위치 | 예시 |
+|---|---|---|
+| 메인 요구사항 문서 | `Mobi Calculator/` | `README.md` |
+| HTML 페이지 | `Mobi Calculator/` | `table.html`, `test.html` |
+| 파일별 요구사항 문서 | `Mobi Calculator/readme_files/` | `README_table.html` |
+| CSS | `Mobi Calculator/pages_css/` | `table.css` |
+| JavaScript | `Mobi Calculator/pages_js/` | `table.js`, `test-data.js` |
+
+## 9. 파일별 요구사항 문서
 
 웹페이지를 구성하는 각 파일은 해당 파일과 1:1로 대응하는 `README_[file_name]` 문서를 생성하여 관리한다.
 
@@ -171,7 +209,7 @@ README_script.js
 - 코드 수정 시 기존에 구현되어 있는 기능을 불필요하게 제거하거나 변경하지 않는다.
 - 요구사항이 모호하거나 계산 기준을 확인할 수 없는 경우 임의로 추측하지 않고 확인한다.
 
-## 10. ChatGPT를 이용한 개발
+## 13. ChatGPT를 이용한 개발
 
 이 Repository는 ChatGPT가 프로젝트의 현재 소스코드와 요구사항 문서를 확인하면서 개발을 이어갈 수 있도록 구성한다.
 
