@@ -41,7 +41,7 @@
 
     .category-group {
       display: grid;
-      grid-template-columns: max-content max-content max-content 42px;
+      grid-template-columns: var(--category-column-width) var(--description-column-width) 130px 42px;
       gap: 8px;
       align-items: center;
     }
@@ -140,6 +140,31 @@
     ];
 
     const groups = new Map();
+
+    function setColumnWidths() {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      context.font = '16px Arial, "Noto Sans KR", sans-serif';
+
+      const categoryTexts = CALCULATOR_DATA.categories;
+      const descriptionTexts = Object.values(CALCULATOR_DATA.descriptions).flat();
+
+      const categoryWidth = Math.ceil(
+        Math.max(...categoryTexts.map(text => context.measureText(text).width)) + 60
+      );
+      const descriptionWidth = Math.ceil(
+        Math.max(...descriptionTexts.map(text => context.measureText(text).width)) + 60
+      );
+
+      document.documentElement.style.setProperty(
+        "--category-column-width",
+        categoryWidth + "px"
+      );
+      document.documentElement.style.setProperty(
+        "--description-column-width",
+        descriptionWidth + "px"
+      );
+    }
 
     function createGroup(category) {
       const group = document.createElement("div");
@@ -276,6 +301,7 @@
     }
 
     function initialize() {
+      setColumnWidths();
       CALCULATOR_DATA.categories.forEach(createGroup);
 
       requiredItems.forEach(item => {
