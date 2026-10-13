@@ -52,6 +52,7 @@ const CALCULATOR_DATA = {
 };
 
     const groups = new Map();
+    let lastColumnLayout = null;
     let dragState = null;
     let pendingDrag = null;
     function setColumnWidths() {
@@ -79,7 +80,8 @@ const CALCULATOR_DATA = {
       return Array.from(tableArea.querySelectorAll(":scope > .category-column")).map(column => ({
         element: column,
         cards: Array.from(column.querySelectorAll(":scope > .category-card")),
-        rect: column.getBoundingClientRect()
+        // offsetLeft/Top exclude transforms, so snapshots remain stable during animation.
+        rect: { left: column.offsetLeft, top: column.offsetTop }
       }));
     }
 
@@ -87,8 +89,9 @@ const CALCULATOR_DATA = {
       return first.length === second.length && first.every((card, index) => card === second[index]);
     }
 
-    function buildCategoryLayout(previousLayout = captureColumnLayout()) {
+    function buildCategoryLayout(previousLayout) {
       const tableArea = document.getElementById("table-area");
+      previousLayout = previousLayout || lastColumnLayout || captureColumnLayout();
       const cards = Array.from(tableArea.querySelectorAll(".category-card"));
 
       // Record the original column positions before moving cards between wrappers.
@@ -229,9 +232,8 @@ const CALCULATOR_DATA = {
       const movingColumns = [];
       newColumnElements.forEach(({ element, oldColumn }) => {
         if (!oldColumn) return;
-        const nextRect = element.getBoundingClientRect();
-        const dx = oldColumn.rect.left - nextRect.left;
-        const dy = oldColumn.rect.top - nextRect.top;
+        const dx = oldColumn.rect.left - element.offsetLeft;
+        const dy = oldColumn.rect.top - element.offsetTop;
         if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
           element.style.transition = "";
           element.style.transform = "";
@@ -242,6 +244,10 @@ const CALCULATOR_DATA = {
         element.style.transform = `translate(${dx}px, ${dy}px)`;
         movingColumns.push(element);
       });
+
+      // Save the final, untransformed positions. Resize events happen after
+      // the browser has already changed the available layout width.
+      lastColumnLayout = captureColumnLayout();
 
       // Read layout once, then animate moving columns into their final positions.
       movingColumns.forEach(element => { void element.offsetWidth; });
@@ -260,7 +266,7 @@ const CALCULATOR_DATA = {
     }
 
     function layoutCategoryCards(previousLayout) {
-      buildCategoryLayout(previousLayout || captureColumnLayout());
+      buildCategoryLayout(previousLayout || lastColumnLayout || captureColumnLayout());
     }
     function createGroup(category) {
       const card = document.createElement("div");
