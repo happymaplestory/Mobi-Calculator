@@ -97,6 +97,7 @@ function enableRowDragging(tableArea) {
   let startY = 0;
   let pointerId = null;
   let dragging = false;
+  let originalNextSibling = null;
 
   function getDropGroup(target) {
     const column = target?.closest?.(".category-column");
@@ -136,6 +137,7 @@ function enableRowDragging(tableArea) {
     placeholder = null;
     ghost = null;
     pointerId = null;
+    originalNextSibling = null;
     dragging = false;
   }
 
@@ -145,6 +147,7 @@ function enableRowDragging(tableArea) {
     if (!row || !tableArea.contains(row)) return;
 
     active = row;
+    originalNextSibling = row.nextSibling;
     startX = event.clientX;
     startY = event.clientY;
     pointerId = event.pointerId;
@@ -219,10 +222,16 @@ function enableRowDragging(tableArea) {
       if (allowMove) {
         targetGroup.insertBefore(row, placeholder);
       } else {
-        sourceGroup.insertBefore(row, placeholder.nextSibling);
+        const restoreBefore = originalNextSibling && originalNextSibling.parentElement === sourceGroup
+          ? originalNextSibling
+          : sourceGroup.querySelector(".add-row-button");
+        sourceGroup.insertBefore(row, restoreBefore || null);
       }
     } else if (dragging) {
-      sourceGroup.insertBefore(row, placeholder.nextSibling);
+      const restoreBefore = originalNextSibling && originalNextSibling.parentElement === sourceGroup
+        ? originalNextSibling
+        : sourceGroup.querySelector(".add-row-button");
+      sourceGroup.insertBefore(row, restoreBefore || null);
     }
 
     tableArea.querySelectorAll(".category-group.is-drop-target").forEach(group => {
@@ -233,8 +242,12 @@ function enableRowDragging(tableArea) {
 
   document.addEventListener("pointercancel", event => {
     if (!active || event.pointerId !== pointerId) return;
-    if (dragging && placeholder?.parentElement) {
-      placeholder.parentElement.insertBefore(active, placeholder.nextSibling);
+    if (dragging && active) {
+      const sourceGroup = active.parentElement;
+      const restoreBefore = originalNextSibling && originalNextSibling.parentElement === sourceGroup
+        ? originalNextSibling
+        : sourceGroup.querySelector(".add-row-button");
+      sourceGroup.insertBefore(active, restoreBefore || null);
     }
     tableArea.querySelectorAll(".category-group.is-drop-target").forEach(group => {
       group.classList.remove("is-drop-target");
