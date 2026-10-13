@@ -168,7 +168,7 @@ function enableRowDragging(tableArea) {
   }
 
   tableArea.addEventListener("pointerdown", event => {
-    if (event.button !== 0 || event.target.closest("input, select, button, textarea, a")) return;
+    if (event.button !== 0) return;
     const row = event.target.closest(".input-row.custom-row");
     if (!row || !tableArea.contains(row)) return;
 
