@@ -285,6 +285,18 @@ input.section-name {
   border-bottom-color: transparent;
   transition: max-height 240ms ease, opacity 180ms ease, border-color 180ms ease;
 }
+.input-row.custom-row .delete-row-button {
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+.input-row.custom-row.row-entering .delete-row-button {
+  opacity: 0;
+  transform: translate(4px, -50%) scale(0.92);
+  transition-delay: 80ms;
+}
+.input-row.custom-row.row-entering.row-entered .delete-row-button {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
 .input-row.custom-row.row-entering > * {
   min-height: 0;
 }
