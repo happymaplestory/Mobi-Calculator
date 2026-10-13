@@ -110,7 +110,7 @@ function enableRowDragging(tableArea) {
   }
 
   function placePlaceholder(group, clientY) {
-    const rows = getRows(group).filter(row => row !== active && row !== placeholder);
+    const rows = getRows(group).filter(row => row.classList.contains("custom-row") && row !== active && row !== placeholder);
     const nextRow = rows.find(row => {
       const rect = row.getBoundingClientRect();
       return clientY < rect.top + rect.height / 2;
@@ -143,7 +143,7 @@ function enableRowDragging(tableArea) {
 
   tableArea.addEventListener("pointerdown", event => {
     if (event.button !== 0 || event.target.closest("input, select, button, textarea, a")) return;
-    const row = event.target.closest(".input-row");
+    const row = event.target.closest(".input-row.custom-row");
     if (!row || !tableArea.contains(row)) return;
 
     active = row;
