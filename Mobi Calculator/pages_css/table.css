@@ -275,30 +275,6 @@ input.section-name {
 .table-area.is-row-dragging .input-row { transition: background-color 120ms ease, opacity 120ms ease; }
 
 
-/* 추가 행 드래그 핸들 */
-.row-drag-handle {
-  position: absolute;
-  z-index: 2;
-  left: -25px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 21px;
-  height: 25px;
-  border: 1px solid var(--category-border-color, #cfd9e5);
-  border-radius: 6px;
-  background: var(--category-title-color, #eaf0f7);
-  color: var(--text-color);
-  font-size: 14px;
-  line-height: 1;
-  cursor: grab;
-  touch-action: none;
-}
-.row-drag-handle:hover { background: var(--category-hover-color, #dce8f5); }
-.row-drag-handle:active { cursor: grabbing; }
-.row-drag-ghost .row-drag-handle { display: none; }
 .input-row.custom-row { transition: background-color 120ms ease, transform 180ms ease; }
 @media (prefers-reduced-motion: reduce) {
   .input-row.custom-row { transition: none !important; }
