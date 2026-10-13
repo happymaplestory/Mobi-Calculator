@@ -124,11 +124,28 @@ function createSectionRow(section, { custom = false } = {}) {
         row.style.borderBottomWidth = "0";
       });
 
-      row.addEventListener("transitionend", function finishRemoval(event) {
-        if (event.propertyName !== "height") return;
-        row.removeEventListener("transitionend", finishRemoval);
+      // 행 접힘과 X 버튼 페이드아웃이 모두 끝난 뒤 제거합니다.
+      // 행의 height 전환만 기다리면 버튼 전환이 끝나기 전에 DOM에서 제거될 수 있습니다.
+      let rowHeightFinished = false;
+      let buttonFadeFinished = !deleteButton;
+      const finishRemoval = () => {
+        if (!rowHeightFinished || !buttonFadeFinished) return;
+        row.removeEventListener("transitionend", onRowTransitionEnd);
+        deleteButton?.removeEventListener("transitionend", onButtonTransitionEnd);
         row.remove();
-      });
+      };
+      const onRowTransitionEnd = event => {
+        if (event.target !== row || event.propertyName !== "height") return;
+        rowHeightFinished = true;
+        finishRemoval();
+      };
+      const onButtonTransitionEnd = event => {
+        if (event.target !== deleteButton || event.propertyName !== "opacity") return;
+        buttonFadeFinished = true;
+        finishRemoval();
+      };
+      row.addEventListener("transitionend", onRowTransitionEnd);
+      deleteButton?.addEventListener("transitionend", onButtonTransitionEnd);
     });
     row.appendChild(deleteButton);
   }
