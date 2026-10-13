@@ -10,7 +10,6 @@ function setDescriptionColumnWidth() {
 
   const labels = MOBI_DATA_MODEL.sectionTable.map(section => section.name);
   const width = Math.ceil(Math.max(...labels.map(label => context.measureText(label).width)) + 28);
-
   document.documentElement.style.setProperty("--description-column-width", width + "px");
 }
 
@@ -47,6 +46,7 @@ function createApplicationSelect() {
 function createSectionRow(section, { custom = false } = {}) {
   const row = document.createElement("div");
   row.className = "input-row" + (custom ? " custom-row" : "");
+  row.draggable = false;
   if (section?.id != null) row.dataset.sectionId = String(section.id);
 
   let name;
@@ -89,6 +89,160 @@ function createSectionRow(section, { custom = false } = {}) {
   return row;
 }
 
+function enableRowDragging(tableArea) {
+  let active = null;
+  let placeholder = null;
+  let ghost = null;
+  let startX = 0;
+  let startY = 0;
+  let pointerId = null;
+  let dragging = false;
+
+  function getDropGroup(target) {
+    const column = target?.closest?.(".category-column");
+    const group = column?.querySelector(".category-group");
+    return group && group.querySelector(".add-row-button") ? group : null;
+  }
+
+  function getRows(group) {
+    return [...group.querySelectorAll(":scope > .input-row")];
+  }
+
+  function placePlaceholder(group, clientY) {
+    const rows = getRows(group).filter(row => row !== active && row !== placeholder);
+    const nextRow = rows.find(row => {
+      const rect = row.getBoundingClientRect();
+      return clientY < rect.top + rect.height / 2;
+    });
+    const addButton = group.querySelector(".add-row-button");
+    group.insertBefore(placeholder, nextRow || addButton);
+  }
+
+  function moveGhost(clientX, clientY) {
+    if (!ghost) return;
+    ghost.style.left = (clientX - active.offsetWidth / 2) + "px";
+    ghost.style.top = (clientY - active.offsetHeight / 2) + "px";
+  }
+
+  function cleanup() {
+    if (ghost) ghost.remove();
+    if (placeholder) placeholder.remove();
+    if (active) {
+      active.classList.remove("is-dragging");
+      active.style.removeProperty("visibility");
+    }
+    tableArea.classList.remove("is-row-dragging");
+    active = null;
+    placeholder = null;
+    ghost = null;
+    pointerId = null;
+    dragging = false;
+  }
+
+  tableArea.addEventListener("pointerdown", event => {
+    if (event.button !== 0 || event.target.closest("input, select, button, textarea, a")) return;
+    const row = event.target.closest(".input-row");
+    if (!row || !tableArea.contains(row)) return;
+
+    active = row;
+    startX = event.clientX;
+    startY = event.clientY;
+    pointerId = event.pointerId;
+  });
+
+  document.addEventListener("pointermove", event => {
+    if (!active || event.pointerId !== pointerId) return;
+    const distance = Math.hypot(event.clientX - startX, event.clientY - startY);
+
+    if (!dragging && distance < 5) return;
+
+    if (!dragging) {
+      dragging = true;
+      const rect = active.getBoundingClientRect();
+      const sourceGroup = active.parentElement;
+      placeholder = document.createElement("div");
+      placeholder.className = "row-placeholder";
+      placeholder.style.height = rect.height + "px";
+      placeholder.style.gridColumn = "1 / -1";
+      sourceGroup.insertBefore(placeholder, active.nextSibling);
+
+      ghost = active.cloneNode(true);
+      ghost.classList.add("row-drag-ghost");
+      ghost.style.width = rect.width + "px";
+      ghost.style.height = rect.height + "px";
+      ghost.style.left = rect.left + "px";
+      ghost.style.top = rect.top + "px";
+      document.body.appendChild(ghost);
+
+      active.classList.add("is-dragging");
+      active.style.visibility = "hidden";
+      tableArea.classList.add("is-row-dragging");
+    }
+
+    event.preventDefault();
+    moveGhost(event.clientX, event.clientY);
+
+    const elementUnderPointer = document.elementFromPoint(event.clientX, event.clientY);
+    const targetGroup = getDropGroup(elementUnderPointer);
+    if (targetGroup) {
+      targetGroup.classList.add("is-drop-target");
+      tableArea.querySelectorAll(".category-group.is-drop-target").forEach(group => {
+        if (group !== targetGroup) group.classList.remove("is-drop-target");
+      });
+      placePlaceholder(targetGroup, event.clientY);
+    } else {
+      tableArea.querySelectorAll(".category-group.is-drop-target").forEach(group => {
+        group.classList.remove("is-drop-target");
+      });
+    }
+  }, { passive: false });
+
+  document.addEventListener("pointerup", event => {
+    if (!active || event.pointerId !== pointerId) return;
+    const row = active;
+    const sourceGroup = row.parentElement;
+    const targetGroup = dragging ? placeholder?.parentElement : sourceGroup;
+
+    if (dragging && targetGroup && targetGroup.classList.contains("category-group")) {
+      const sourceLocationId = sourceGroup.dataset.locationId;
+      const targetLocationId = targetGroup.dataset.locationId;
+      let allowMove = true;
+
+      if (sourceLocationId !== targetLocationId) {
+        const sourceName = sourceGroup.querySelector(".category-title")?.textContent || "현재 위치";
+        const targetName = targetGroup.querySelector(".category-title")?.textContent || "대상 위치";
+        allowMove = window.confirm(
+          "\"" + sourceName + "\"의 행을 \"" + targetName + "\"으로 이동하시겠습니까?\n이동하면 대상 위치의 행 목록에 포함됩니다."
+        );
+      }
+
+      if (allowMove) {
+        targetGroup.insertBefore(row, placeholder);
+      } else {
+        sourceGroup.insertBefore(row, placeholder.nextSibling);
+      }
+    } else if (dragging) {
+      sourceGroup.insertBefore(row, placeholder.nextSibling);
+    }
+
+    tableArea.querySelectorAll(".category-group.is-drop-target").forEach(group => {
+      group.classList.remove("is-drop-target");
+    });
+    cleanup();
+  });
+
+  document.addEventListener("pointercancel", event => {
+    if (!active || event.pointerId !== pointerId) return;
+    if (dragging && placeholder?.parentElement) {
+      placeholder.parentElement.insertBefore(active, placeholder.nextSibling);
+    }
+    tableArea.querySelectorAll(".category-group.is-drop-target").forEach(group => {
+      group.classList.remove("is-drop-target");
+    });
+    cleanup();
+  });
+}
+
 function createLocationColumn(location) {
   const column = document.createElement("div");
   column.className = "category-column";
@@ -113,9 +267,7 @@ function createLocationColumn(location) {
       .filter(section => location.attributeGroups.includes(section.group))
       .sort((a, b) => a.id - b.id);
 
-    sectionRows.forEach(section => {
-      group.appendChild(createSectionRow(section));
-    });
+    sectionRows.forEach(section => group.appendChild(createSectionRow(section)));
 
     const addButton = document.createElement("button");
     addButton.type = "button";
@@ -143,6 +295,7 @@ function initializeTable() {
     .sort((a, b) => a.id - b.id);
 
   tableArea.replaceChildren(...locations.map(createLocationColumn));
+  enableRowDragging(tableArea);
 }
 
 initializeTable();
