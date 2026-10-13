@@ -91,25 +91,80 @@ const CALCULATOR_DATA = {
       const availableWidth = tableArea.clientWidth;
       const maxColumns = Math.max(1, Math.floor((availableWidth + columnGap) / (cardWidth + columnGap)));
       const cardHeights = cards.map(card => card.getBoundingClientRect().height);
-      const columns = Array.from({ length: Math.min(maxColumns, cards.length) }, () => ({
+      const columnCount = Math.min(maxColumns, cards.length);
+      const columns = Array.from({ length: columnCount }, () => ({
         cards: [],
         height: 0
       }));
 
-      // Put taller cards into the currently shortest column to reduce the total layout height.
       const orderedCards = cards
         .map((card, index) => ({ card, index, height: cardHeights[index] }))
         .sort((a, b) => b.height - a.height || a.index - b.index);
 
-      orderedCards.forEach(item => {
-        let targetColumn = columns[0];
-        for (const column of columns) {
-          if (column.height < targetColumn.height) targetColumn = column;
-        }
-        targetColumn.cards.push(item);
-        targetColumn.height += item.height + (targetColumn.cards.length > 1 ? cardGap : 0);
-      });
+      // Find the lowest possible tallest-column height for the current card count.
+      // The number of category cards is small, so use exhaustive search for up to 10 cards.
+      let bestHeight = Infinity;
+      let bestColumns = null;
 
+      if (orderedCards.length <= 10) {
+        function searchAssignments(cardIndex) {
+          if (cardIndex === orderedCards.length) {
+            const tallestColumn = Math.max(...columns.map(column => column.height));
+            if (tallestColumn < bestHeight) {
+              bestHeight = tallestColumn;
+              bestColumns = columns.map(column => ({
+                cards: [...column.cards],
+                height: column.height
+              }));
+            }
+            return;
+          }
+
+          const item = orderedCards[cardIndex];
+          const triedHeights = new Set();
+
+          for (const column of columns) {
+            // Columns with equal current heights are interchangeable at this step.
+            if (triedHeights.has(column.height)) continue;
+            triedHeights.add(column.height);
+
+            const nextHeight = column.height
+              + (column.cards.length > 0 ? cardGap : 0)
+              + item.height;
+            if (nextHeight > bestHeight) continue;
+
+            column.cards.push(item);
+            const previousHeight = column.height;
+            column.height = nextHeight;
+            searchAssignments(cardIndex + 1);
+            column.height = previousHeight;
+            column.cards.pop();
+          }
+        }
+
+        searchAssignments(0);
+      } else {
+        // Keep recalculation responsive if many more categories are added in the future.
+        orderedCards.forEach(item => {
+          let targetColumn = columns[0];
+          for (const column of columns) {
+            if (column.height < targetColumn.height) targetColumn = column;
+          }
+          targetColumn.cards.push(item);
+          targetColumn.height += item.height + (targetColumn.cards.length > 1 ? cardGap : 0);
+        });
+        bestColumns = columns.map(column => ({
+          cards: [...column.cards],
+          height: column.height
+        }));
+      }
+
+      if (bestColumns) {
+        columns.forEach((column, index) => {
+          column.cards = bestColumns[index].cards;
+          column.height = bestColumns[index].height;
+        });
+      }
       // Keep category order within columns and order columns by their first original card.
       columns.forEach(column => {
         column.cards.sort((a, b) => a.index - b.index);
