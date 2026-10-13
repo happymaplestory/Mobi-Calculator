@@ -78,74 +78,16 @@ const CALCULATOR_DATA = {
       const tableArea = document.getElementById("table-area");
       const cards = Array.from(tableArea.querySelectorAll(".category-card"));
 
-      tableArea.replaceChildren(...cards);
-      if (cards.length === 0) return;
-
-      const isMobile = window.matchMedia("(max-width: 760px)").matches;
-      const columnGap = isMobile ? 80 : 44;
-      const cardGap = isMobile ? 20 : 24;
-      const cardWidths = cards.map(card => card.getBoundingClientRect().width);
-      const cardWidth = Math.max(...cardWidths);
-      const availableWidth = tableArea.getBoundingClientRect().width;
-      const maxColumns = Math.max(1, Math.min(
-        cards.length,
-        Math.floor((availableWidth + columnGap) / (cardWidth + columnGap))
-      ));
-      const cardHeights = cards.map(card => card.getBoundingClientRect().height);
-      const columnCount = Math.min(maxColumns, cards.length);
-      const orderedCards = cards.map((card, index) => ({
-        card,
-        index,
-        height: cardHeights[index]
-      }));
-
-      // Keep each column contiguous in the original category order.
-      let bestHeight = Infinity;
-      let bestColumns = null;
-
-      function searchPartitions(startIndex, partition) {
-        if (partition.length === columnCount) {
-          if (startIndex !== orderedCards.length) return;
-          const tallestColumn = Math.max(...partition.map(column => column.height));
-          if (tallestColumn < bestHeight) {
-            bestHeight = tallestColumn;
-            bestColumns = partition.map(column => ({
-              cards: [...column.cards],
-              height: column.height
-            }));
-          }
-          return;
-        }
-
-        const remainingColumns = columnCount - partition.length - 1;
-        const maxEnd = orderedCards.length - remainingColumns;
-        for (let endIndex = startIndex + 1; endIndex <= maxEnd; endIndex++) {
-          const partitionCards = orderedCards.slice(startIndex, endIndex);
-          const height = partitionCards.reduce((sum, item) => sum + item.height, 0)
-            + Math.max(0, partitionCards.length - 1) * cardGap;
-          if (height > bestHeight) continue;
-          searchPartitions(endIndex, [...partition, { cards: partitionCards, height }]);
-        }
-      }
-
-      searchPartitions(0, []);
-      if (!bestColumns) return;
-
-      const columns = bestColumns.map(column => {
-        const element = document.createElement("div");
-        element.className = "category-column";
-        element.append(...column.cards
-          .sort((a, b) => a.index - b.index)
-          .map(item => item.card));
-        return element;
+      const columns = cards.map(card => {
+        const column = document.createElement("div");
+        column.className = "category-column";
+        column.appendChild(card);
+        return column;
       });
 
       tableArea.replaceChildren(...columns);
     }
 
-    function layoutCategoryCards() {
-      buildCategoryLayout();
-    }
     function createGroup(category) {
       const card = document.createElement("div");
       card.className = "category-card";
@@ -460,7 +402,6 @@ const CALCULATOR_DATA = {
       updateOptionalSeparator(finalGroup);
       updateOptionalSeparator(originalGroup);
       renumberOptionalRows(finalCategory);
-      layoutCategoryCards();
       if (crossedCategory && finalCategory !== originalGroup.dataset.category) {
         renumberOptionalRows(originalGroup.dataset.category);
       }
@@ -526,7 +467,6 @@ const CALCULATOR_DATA = {
         row.remove();
         updateOptionalSeparator(group);
         renumberOptionalRows(category);
-        layoutCategoryCards();
       });
 
       row.append(descriptionSelect, valueInput, deleteButton);
@@ -548,7 +488,6 @@ const CALCULATOR_DATA = {
       targetGroup.appendChild(row);
       updateOptionalSeparator(targetGroup);
       renumberOptionalRows(category);
-      layoutCategoryCards();
     }
 
     function createAddButton(category) {
@@ -576,8 +515,7 @@ const CALCULATOR_DATA = {
         groups.get(category).parentElement.appendChild(createAddButton(category));
       });
 
-      layoutCategoryCards();
-      window.addEventListener("resize", layoutCategoryCards);
+      buildCategoryLayout();
     }
 
     initialize();
