@@ -32,7 +32,7 @@ h1 { margin: 0 0 28px; font-size: 28px; }
   flex-wrap: wrap;
   align-items: flex-start;
   row-gap: 24px;
-  column-gap: 88px;
+  column-gap: 44px;
 }
 
 .category-card {
