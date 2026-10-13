@@ -149,6 +149,7 @@ Mobi Calculator/
 - HTML 파일에 대응하는 요구사항 문서는 `Mobi Calculator/readme_files/`에 둔다.
 - CSS 파일은 `Mobi Calculator/pages_css/`에 둔다.
 - JavaScript 파일은 `Mobi Calculator/pages_js/`에 둔다.
+- `data-model.js`는 위치·속성·구분·적용의 네 데이터 표를 ID로 연결해 정의한다. 세부 요구사항은 `readme_files/README_data-model.js`에서 관리한다.
 - 프로젝트 전체 요구사항을 관리하는 메인 `README.md`는 HTML 파일과 같은 `Mobi Calculator/` 바로 아래에 유지한다.
 - 파일을 생성할 때는 파일 종류에 따라 위의 위치 규칙을 따른다.
 - 파일을 참조할 때는 실제 저장 위치를 기준으로 경로를 작성한다. 예를 들어 HTML에서 CSS와 JavaScript를 참조할 경우 각각 `pages_css/파일명.css`, `pages_js/파일명.js`를 사용한다.
@@ -163,7 +164,7 @@ Mobi Calculator/
 | HTML 페이지 | `Mobi Calculator/` | `table.html`, `test.html` |
 | 파일별 요구사항 문서 | `Mobi Calculator/readme_files/` | `README_table.html` |
 | CSS | `Mobi Calculator/pages_css/` | `table.css` |
-| JavaScript | `Mobi Calculator/pages_js/` | `table.js` |
+| JavaScript | `Mobi Calculator/pages_js/` | `table.js`, `data-model.js` |
 
 ## 9. 파일별 요구사항 문서
 
