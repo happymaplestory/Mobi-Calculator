@@ -183,8 +183,9 @@ input.section-name {
 .delete-row-button {
   position: absolute;
   z-index: 1;
-  top: 3px;
+  top: 50%;
   right: -25px;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -235,3 +236,40 @@ input.section-name {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }
 }
+
+
+/* 행 드래그 및 이동 효과 */
+.input-row { cursor: grab; }
+.input-row:active { cursor: grabbing; }
+.input-row.is-dragging { opacity: 0.35; }
+.row-drag-ghost {
+  position: fixed;
+  z-index: 10000;
+  pointer-events: none;
+  display: grid;
+  grid-template-columns: var(--description-column-width) var(--application-column-width) var(--value-column-width);
+  overflow: visible;
+  opacity: 0.94;
+  background: var(--surface-color);
+  border: 1px solid var(--category-border-color, #cfd9e5);
+  border-radius: 5px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  transform: scale(1.015);
+}
+.row-drag-ghost > * { min-width: 0; overflow: hidden; }
+.row-drag-ghost .delete-row-button { display: none; }
+.row-placeholder {
+  position: relative;
+  min-height: var(--row-height);
+  border: 2px dashed var(--category-border-color, #cfd9e5);
+  border-radius: 5px;
+  background: var(--category-hover-color, #eaf0f7);
+  opacity: 0.95;
+}
+.category-group.is-drop-target {
+  outline: 2px dashed var(--category-border-color, #cfd9e5);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+.table-area.is-row-dragging { cursor: grabbing; }
+.table-area.is-row-dragging .input-row { transition: background-color 120ms ease, opacity 120ms ease; }
