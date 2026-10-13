@@ -180,7 +180,7 @@ select.field option:checked {
   z-index: 3;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.12);
   top: 50%;
-  right: -48px;
+  right: -38px;
   transform: translateY(-50%);
   font-size: 0;
 }
