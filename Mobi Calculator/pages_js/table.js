@@ -75,6 +75,9 @@ const CALCULATOR_DATA = {
     }
 
     function createGroup(category) {
+      const card = document.createElement("div");
+      card.className = "category-card";
+
       const group = document.createElement("div");
       group.className = "category-group";
       group.dataset.category = category;
@@ -84,7 +87,8 @@ const CALCULATOR_DATA = {
       title.textContent = category;
       group.appendChild(title);
       groups.set(category, group);
-      document.getElementById("table-area").appendChild(group);
+      card.appendChild(group);
+      document.getElementById("table-area").appendChild(card);
       return group;
     }
 
@@ -120,7 +124,7 @@ const CALCULATOR_DATA = {
       description.className = "field";
       description.textContent = item.description;
 
-      row.append(description, createValueInput(), document.createElement("div"));
+      row.append(description, createValueInput());
       return row;
     }
 
@@ -257,8 +261,7 @@ const CALCULATOR_DATA = {
 
       if (targetGroup !== dragState.group) {
         dragState.group = targetGroup;
-        const addButton = targetGroup.querySelector(".add-button");
-        targetGroup.insertBefore(placeholder, addButton);
+        targetGroup.appendChild(placeholder);
         return;
       }
 
@@ -283,8 +286,7 @@ const CALCULATOR_DATA = {
       if (target) {
         group.insertBefore(placeholder, target);
       } else {
-        const addButton = group.querySelector(".add-button");
-        group.insertBefore(placeholder, addButton);
+        group.appendChild(placeholder);
       }
 
       rows.forEach(item => {
@@ -448,9 +450,8 @@ const CALCULATOR_DATA = {
       }
 
       const targetGroup = groups.get(category);
-      const addButton = targetGroup.querySelector(".add-button");
       const row = createOptionalRow(category);
-      targetGroup.insertBefore(row, addButton);
+      targetGroup.appendChild(row);
       renumberOptionalRows(category);
     }
 
@@ -476,7 +477,7 @@ const CALCULATOR_DATA = {
       });
 
       CALCULATOR_DATA.categories.forEach(category => {
-        groups.get(category).appendChild(createAddButton(category));
+        groups.get(category).parentElement.appendChild(createAddButton(category));
       });
     }
 
