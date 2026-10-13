@@ -65,11 +65,23 @@ h1 { margin: 0 0 28px; font-size: 28px; text-align: center; }
   grid-column: 1 / -1;
   text-align: center;
   margin: 0;
-  padding: 0 0 8px;
+  padding: 0;
   font-size: 18px;
   font-weight: 700;
   line-height: 46px;
   border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.optional-separator {
+  display: block;
+  grid-column: 1 / -1;
+  padding: 7px 0;
+  border-top: 1px solid #d4cedd;
+  border-bottom: 1px solid #d4cedd;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .input-row,
