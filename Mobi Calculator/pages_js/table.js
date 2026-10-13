@@ -90,7 +90,36 @@ function createSectionRow(section, { custom = false } = {}) {
         return;
       }
 
-      row.remove();
+      // 확인된 삭제만 애니메이션 처리합니다. 행이 접히는 동안 아래 행과 + 버튼이 위로 이동합니다.
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        row.remove();
+        return;
+      }
+
+      const rowHeight = row.getBoundingClientRect().height;
+      row.style.height = rowHeight + "px";
+      row.style.minHeight = "0";
+      row.style.overflow = "hidden";
+      row.style.opacity = "1";
+      row.style.transition = "height 220ms ease, opacity 180ms ease, margin 220ms ease, padding 220ms ease";
+      row.getBoundingClientRect();
+
+      requestAnimationFrame(() => {
+        row.style.height = "0px";
+        row.style.opacity = "0";
+        row.style.marginTop = "0";
+        row.style.marginBottom = "0";
+        row.style.paddingTop = "0";
+        row.style.paddingBottom = "0";
+        row.style.borderTopWidth = "0";
+        row.style.borderBottomWidth = "0";
+      });
+
+      row.addEventListener("transitionend", function finishRemoval(event) {
+        if (event.propertyName !== "height") return;
+        row.removeEventListener("transitionend", finishRemoval);
+        row.remove();
+      });
     });
     row.appendChild(deleteButton);
   }
