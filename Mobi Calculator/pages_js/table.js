@@ -102,11 +102,20 @@ function createSectionRow(section, { custom = false } = {}) {
       row.style.overflow = "hidden";
       row.style.opacity = "1";
       row.style.transition = "height 220ms ease, opacity 180ms ease, margin 220ms ease, padding 220ms ease";
+      const deleteButton = row.querySelector(".delete-row-button");
+      if (deleteButton) {
+        deleteButton.style.opacity = "1";
+        deleteButton.style.transition = "opacity 180ms ease, transform 180ms ease";
+      }
       row.getBoundingClientRect();
 
       requestAnimationFrame(() => {
         row.style.height = "0px";
         row.style.opacity = "0";
+        if (deleteButton) {
+          deleteButton.style.opacity = "0";
+          deleteButton.style.transform = "translate(4px, -50%) scale(0.92)";
+        }
         row.style.marginTop = "0";
         row.style.marginBottom = "0";
         row.style.paddingTop = "0";
