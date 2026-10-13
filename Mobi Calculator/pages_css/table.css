@@ -15,7 +15,7 @@
 
 body {
   margin: 0;
-  padding: 24px;
+  padding: 24px 54px 24px 24px;
   min-width: 500px;
   min-height: 300px;
   background: var(--background-color);
