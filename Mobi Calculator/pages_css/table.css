@@ -47,6 +47,7 @@ h1 { margin: 0 0 28px; font-size: 28px; }
   border: var(--border-width) solid var(--border-color);
   border-radius: 16px;
   background: var(--surface-color);
+  box-shadow: 0 0 22px rgba(0, 0, 0, 0.12);
   overflow: visible;
 }
 
