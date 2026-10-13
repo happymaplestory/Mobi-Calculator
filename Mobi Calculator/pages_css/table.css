@@ -28,6 +28,9 @@ body {
 h1 { margin: 0 0 28px; font-size: 28px; text-align: center; }
 
 .table-area {
+  position: relative;
+  width: 100%;
+  min-width: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -52,6 +55,19 @@ h1 { margin: 0 0 28px; font-size: 28px; text-align: center; }
 .category-column.layout-enter {
   opacity: 0;
   transform: translateY(24px) scale(0.92);
+}
+
+.category-column.layout-exit {
+  z-index: 0;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 190ms ease, transform 190ms ease;
+  transform-origin: center top;
+}
+
+.category-column.layout-exit.layout-exit-active {
+  opacity: 0;
+  transform: translateY(18px) scale(0.92);
 }
 
 .category-column.layout-moving {
