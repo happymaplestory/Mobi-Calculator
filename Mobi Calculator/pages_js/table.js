@@ -116,92 +116,59 @@ const CALCULATOR_DATA = {
       ));
       const cardHeights = cards.map(card => card.getBoundingClientRect().height);
       const columnCount = Math.min(maxColumns, cards.length);
-      const columns = Array.from({ length: columnCount }, () => ({ cards: [], height: 0 }));
+      const columns = [];
       const orderedCards = cards
-        .map((card, index) => ({ card, index, height: cardHeights[index] }))
-        .sort((a, b) => b.height - a.height || a.index - b.index);
+        .map((card, index) => ({ card, index, height: cardHeights[index] }));
 
+      // Partition cards into contiguous columns so the visual category order
+      // always matches the original order, even when card heights change.
       let bestHeight = Infinity;
       let bestMovementCost = Infinity;
       let bestColumns = null;
 
       function movementCost(candidateColumns) {
         let cost = 0;
-        for (let i = 0; i < cards.length; i++) {
-          for (let j = i + 1; j < cards.length; j++) {
-            const oldI = oldColumns.findIndex(column => column.cards.includes(cards[i]));
-            const oldJ = oldColumns.findIndex(column => column.cards.includes(cards[j]));
-            if (oldI < 0 || oldJ < 0) continue;
-            const newI = candidateColumns.findIndex(column => column.cards.some(item => item.card === cards[i]));
-            const newJ = candidateColumns.findIndex(column => column.cards.some(item => item.card === cards[j]));
-            if ((oldI === oldJ) !== (newI === newJ)) cost++;
-          }
-        }
+        candidateColumns.forEach((column, index) => {
+          const candidateCards = column.cards.map(item => item.card);
+          const oldIndex = oldColumns.findIndex(old => sameCardSet(old.cards, candidateCards));
+          if (oldIndex !== index) cost++;
+        });
         return cost;
       }
 
-      if (orderedCards.length <= 10) {
-        function searchAssignments(cardIndex) {
-          if (cardIndex === orderedCards.length) {
-            // Do not leave a calculated column empty: when three cards fit in three
-            // columns, each card must occupy its own column rather than stacking short cards.
-            if (columns.some(column => column.cards.length === 0)) return;
-            const tallestColumn = Math.max(...columns.map(column => column.height));
-            const movement = movementCost(columns);
-            if (tallestColumn < bestHeight ||
-                (tallestColumn === bestHeight && movement < bestMovementCost)) {
-              bestHeight = tallestColumn;
-              bestMovementCost = movement;
-              bestColumns = columns.map(column => ({
-                cards: [...column.cards],
-                height: column.height
-              }));
-            }
-            return;
+      function searchPartitions(startIndex, partition) {
+        if (partition.length === columnCount) {
+          if (startIndex !== orderedCards.length) return;
+          const tallestColumn = Math.max(...partition.map(column => column.height));
+          const movement = movementCost(partition);
+          if (tallestColumn < bestHeight ||
+              (tallestColumn === bestHeight && movement < bestMovementCost)) {
+            bestHeight = tallestColumn;
+            bestMovementCost = movement;
+            bestColumns = partition.map(column => ({
+              cards: [...column.cards],
+              height: column.height
+            }));
           }
-
-          const item = orderedCards[cardIndex];
-          const triedHeights = new Set();
-          for (const column of columns) {
-            if (triedHeights.has(column.height)) continue;
-            triedHeights.add(column.height);
-
-            const nextHeight = column.height + (column.cards.length > 0 ? cardGap : 0) + item.height;
-            if (nextHeight > bestHeight) continue;
-
-            column.cards.push(item);
-            const previousHeight = column.height;
-            column.height = nextHeight;
-            searchAssignments(cardIndex + 1);
-            column.height = previousHeight;
-            column.cards.pop();
-          }
+          return;
         }
-        searchAssignments(0);
-      } else {
-        orderedCards.forEach(item => {
-          let targetColumn = columns[0];
-          for (const column of columns) {
-            if (column.height < targetColumn.height) targetColumn = column;
-          }
-          targetColumn.cards.push(item);
-          targetColumn.height += item.height + (targetColumn.cards.length > 1 ? cardGap : 0);
-        });
-        bestColumns = columns.map(column => ({ cards: [...column.cards], height: column.height }));
+
+        const remainingColumns = columnCount - partition.length - 1;
+        const maxEnd = orderedCards.length - remainingColumns;
+        for (let endIndex = startIndex + 1; endIndex <= maxEnd; endIndex++) {
+          const partitionCards = orderedCards.slice(startIndex, endIndex);
+          const height = partitionCards.reduce((sum, item) => sum + item.height, 0)
+            + Math.max(0, partitionCards.length - 1) * cardGap;
+          if (height > bestHeight) continue;
+          searchPartitions(endIndex, [...partition, { cards: partitionCards, height }]);
+        }
       }
 
-      if (bestColumns) {
-        columns.forEach((column, index) => {
-          column.cards = bestColumns[index].cards;
-          column.height = bestColumns[index].height;
-        });
-      }
-
+      searchPartitions(0, []);
+      if (bestColumns) columns.push(...bestColumns);
       columns.forEach(column => {
         column.cards.sort((a, b) => a.index - b.index);
-        column.firstIndex = Math.min(...column.cards.map(item => item.index));
       });
-      columns.sort((a, b) => a.firstIndex - b.firstIndex);
 
       const usedOldColumns = new Set();
       const newColumnElements = columns
