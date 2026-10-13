@@ -82,3 +82,15 @@
 - 선택 항목의 X 버튼은 대분류 박스의 오른쪽 바깥에 표시한다.
 - + 버튼은 대분류 박스 아래쪽 바깥에 표시한다.
 - 버튼이 박스 외부에 있어도 클릭 영역과 접근성 레이블을 유지한다.
+
+
+## Compact grid layout (current)
+
+- The outer category card has rounded corners and a subtle category-specific border/background.
+- The category title appears above a compact two-column grid.
+- Required and optional rows use a description column and a value column separated by thin grid lines.
+- Description/dropdown text is 1px smaller than the previous design.
+- The optional-row X button sits outside the right edge of the category card.
+- The + button is centered at the bottom inside the card's visual frame.
+- Keep controls, focus states, drag placeholder, and category-specific colors usable.
+- Do not change JavaScript behavior when making CSS-only visual adjustments.
