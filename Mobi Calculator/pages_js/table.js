@@ -197,9 +197,15 @@ const CALCULATOR_DATA = {
         .filter(column => column.cards.length > 0)
         .map(column => {
           const columnCards = column.cards.map(item => item.card);
-          const oldColumn = oldColumns.find(old =>
-            !usedOldColumns.has(old.element) && sameCardSet(old.cards, columnCards)
-          );
+          const availableOldColumns = oldColumns.filter(old => !usedOldColumns.has(old.element));
+          const exactMatch = availableOldColumns.find(old => sameCardSet(old.cards, columnCards));
+          const oldColumn = exactMatch || availableOldColumns
+            .map(old => ({
+              old,
+              overlap: old.cards.filter(card => columnCards.includes(card)).length
+            }))
+            .filter(match => match.overlap > 0)
+            .sort((a, b) => b.overlap - a.overlap)[0]?.old;
 
           let element;
           if (oldColumn) {
