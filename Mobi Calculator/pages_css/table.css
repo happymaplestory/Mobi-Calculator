@@ -61,6 +61,7 @@ h1 { margin: 0 0 28px; font-size: 28px; }
 
 .category-title {
   grid-column: 1 / -1;
+  text-align: center;
   margin: 0;
   padding: 0 0 8px;
   font-size: 18px;
@@ -77,7 +78,7 @@ h1 { margin: 0 0 28px; font-size: 28px; }
   grid-column: 1 / -1;
   grid-template-columns: var(--description-column-width) var(--value-column-width);
   gap: 0;
-  min-height: 36px;
+  min-height: 31px;
   border-bottom: 1px solid #d4cedd;
   border-radius: 0;
   background: transparent;
@@ -96,7 +97,7 @@ h1 { margin: 0 0 28px; font-size: 28px; }
   display: flex;
   align-items: center;
   width: 100%;
-  min-height: 36px;
+  min-height: 31px;
   padding: 0 14px;
   border: 0;
   border-right: 1px solid #d4cedd;
@@ -120,7 +121,7 @@ select.field option:checked {
 
 .value-input {
   width: 100%;
-  min-height: 36px;
+  min-height: 31px;
   padding: 0 10px;
   border: 0;
   border-radius: 0;
@@ -201,9 +202,10 @@ select.field option:checked {
 .add-button {
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: 12px;
+  right: 12px;
   transform: none;
-  width: 100%;
+  width: auto;
   height: 42px;
   min-height: 42px;
   border: 0;
