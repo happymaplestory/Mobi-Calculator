@@ -52,7 +52,6 @@ const CALCULATOR_DATA = {
 };
 
     const groups = new Map();
-    let lastColumnLayout = null;
     let dragState = null;
     let pendingDrag = null;
     function setColumnWidths() {
@@ -75,31 +74,9 @@ const CALCULATOR_DATA = {
       );
     }
 
-    function captureColumnLayout() {
+    function buildCategoryLayout() {
       const tableArea = document.getElementById("table-area");
-      return Array.from(tableArea.querySelectorAll(":scope > .category-column:not(.layout-exit)")).map(column => ({
-        element: column,
-        clone: column.cloneNode(true),
-        cards: Array.from(column.querySelectorAll(":scope > .category-card")),
-        // offsetLeft/Top exclude transforms, so snapshots remain stable during animation.
-        rect: { left: column.offsetLeft, top: column.offsetTop }
-      }));
-    }
-
-    function sameCardSet(first, second) {
-      return first.length === second.length && first.every((card, index) => card === second[index]);
-    }
-
-    function buildCategoryLayout(previousLayout) {
-      const tableArea = document.getElementById("table-area");
-      previousLayout = previousLayout || lastColumnLayout || captureColumnLayout();
       const cards = Array.from(tableArea.querySelectorAll(".category-card"));
-
-      // Record the original column positions before moving cards between wrappers.
-      const oldColumns = previousLayout.map(column => ({
-        ...column,
-        cardSet: [...column.cards].sort((a, b) => cards.indexOf(a) - cards.indexOf(b))
-      }));
 
       tableArea.replaceChildren(...cards);
       if (cards.length === 0) return;
@@ -116,35 +93,22 @@ const CALCULATOR_DATA = {
       ));
       const cardHeights = cards.map(card => card.getBoundingClientRect().height);
       const columnCount = Math.min(maxColumns, cards.length);
-      const columns = [];
-      const orderedCards = cards
-        .map((card, index) => ({ card, index, height: cardHeights[index] }));
+      const orderedCards = cards.map((card, index) => ({
+        card,
+        index,
+        height: cardHeights[index]
+      }));
 
-      // Partition cards into contiguous columns so the visual category order
-      // always matches the original order, even when card heights change.
+      // Keep each column contiguous in the original category order.
       let bestHeight = Infinity;
-      let bestMovementCost = Infinity;
       let bestColumns = null;
-
-      function movementCost(candidateColumns) {
-        let cost = 0;
-        candidateColumns.forEach((column, index) => {
-          const candidateCards = column.cards.map(item => item.card);
-          const oldIndex = oldColumns.findIndex(old => sameCardSet(old.cards, candidateCards));
-          if (oldIndex !== index) cost++;
-        });
-        return cost;
-      }
 
       function searchPartitions(startIndex, partition) {
         if (partition.length === columnCount) {
           if (startIndex !== orderedCards.length) return;
           const tallestColumn = Math.max(...partition.map(column => column.height));
-          const movement = movementCost(partition);
-          if (tallestColumn < bestHeight ||
-              (tallestColumn === bestHeight && movement < bestMovementCost)) {
+          if (tallestColumn < bestHeight) {
             bestHeight = tallestColumn;
-            bestMovementCost = movement;
             bestColumns = partition.map(column => ({
               cards: [...column.cards],
               height: column.height
@@ -165,110 +129,22 @@ const CALCULATOR_DATA = {
       }
 
       searchPartitions(0, []);
-      if (bestColumns) columns.push(...bestColumns);
-      columns.forEach(column => {
-        column.cards.sort((a, b) => a.index - b.index);
+      if (!bestColumns) return;
+
+      const columns = bestColumns.map(column => {
+        const element = document.createElement("div");
+        element.className = "category-column";
+        element.append(...column.cards
+          .sort((a, b) => a.index - b.index)
+          .map(item => item.card));
+        return element;
       });
 
-      const usedOldColumns = new Set();
-      const newColumnElements = columns
-        .filter(column => column.cards.length > 0)
-        .map(column => {
-          const columnCards = column.cards.map(item => item.card);
-          const availableOldColumns = oldColumns.filter(old => !usedOldColumns.has(old.element));
-          const exactMatch = availableOldColumns.find(old => sameCardSet(old.cards, columnCards));
-          const oldColumn = exactMatch || availableOldColumns
-            .map(old => ({
-              old,
-              overlap: old.cards.filter(card => columnCards.includes(card)).length
-            }))
-            .filter(match => match.overlap > 0)
-            .sort((a, b) => b.overlap - a.overlap)[0]?.old;
-
-          let element;
-          if (oldColumn) {
-            element = oldColumn.element;
-            usedOldColumns.add(element);
-            element.classList.remove("layout-exit", "layout-enter", "layout-moving");
-            element.style.transition = "none";
-            element.style.transform = "";
-          } else {
-            element = document.createElement("div");
-            element.className = "category-column layout-enter";
-          }
-
-          element.append(...columnCards);
-          return { element, oldColumn };
-        });
-
-      // Keep the old wrappers long enough to animate columns whose card membership
-      // changed out, while new wrappers animate in. Exact matches remain stable.
-      const removedColumns = oldColumns.filter(old => !usedOldColumns.has(old.element));
-      const oldColumnClones = removedColumns.map(old => {
-        const clone = old.clone;
-        const rect = old.element.getBoundingClientRect();
-        clone.classList.remove("layout-enter", "layout-moving");
-        clone.classList.add("layout-exit");
-        clone.style.position = "absolute";
-        clone.style.left = (rect.left - tableArea.getBoundingClientRect().left + tableArea.scrollLeft) + "px";
-        clone.style.top = (rect.top - tableArea.getBoundingClientRect().top + tableArea.scrollTop) + "px";
-        clone.style.width = rect.width + "px";
-        clone.style.height = rect.height + "px";
-        clone.style.pointerEvents = "none";
-        return clone;
-      });
-
-      tableArea.replaceChildren(...newColumnElements.map(item => item.element));
-      oldColumnClones.forEach(clone => tableArea.appendChild(clone));
-
-      // FLIP: animate only retained columns whose positions actually changed.
-      const movingColumns = [];
-      newColumnElements.forEach(({ element, oldColumn }) => {
-        if (!oldColumn) return;
-        const dx = oldColumn.rect.left - element.offsetLeft;
-        const dy = oldColumn.rect.top - element.offsetTop;
-        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
-          element.style.transition = "";
-          element.style.transform = "";
-          return;
-        }
-        element.classList.add("layout-moving");
-        element.style.transition = "none";
-        element.style.transform = `translate(${dx}px, ${dy}px)`;
-        movingColumns.push(element);
-      });
-
-      // Exit clones are removed after fading/shrinking; they do not participate in
-      // column layout calculations or future snapshots.
-      oldColumnClones.forEach(clone => {
-        requestAnimationFrame(() => {
-          clone.classList.add("layout-exit-active");
-          window.setTimeout(() => clone.remove(), 200);
-        });
-      });
-
-      // Save the final, untransformed positions. Resize events happen after
-      // the browser has already changed the available layout width.
-      lastColumnLayout = captureColumnLayout();
-
-      // Read layout once, then animate moving columns into their final positions.
-      movingColumns.forEach(element => { void element.offsetWidth; });
-      requestAnimationFrame(() => {
-        movingColumns.forEach(element => {
-          element.style.transition = "";
-          element.style.transform = "";
-          element.classList.remove("layout-moving");
-        });
-        newColumnElements.forEach(({ element, oldColumn }) => {
-          if (!oldColumn) {
-            requestAnimationFrame(() => element.classList.remove("layout-enter"));
-          }
-        });
-      });
+      tableArea.replaceChildren(...columns);
     }
 
-    function layoutCategoryCards(previousLayout) {
-      buildCategoryLayout(previousLayout || lastColumnLayout || captureColumnLayout());
+    function layoutCategoryCards() {
+      buildCategoryLayout();
     }
     function createGroup(category) {
       const card = document.createElement("div");
@@ -545,8 +421,6 @@ const CALCULATOR_DATA = {
         originalNextSibling,
         group: targetGroup
       } = dragState;
-
-      const previousLayout = captureColumnLayout();
       const crossedCategory = targetGroup !== originalGroup;
 
       if (crossedCategory) {
@@ -586,7 +460,7 @@ const CALCULATOR_DATA = {
       updateOptionalSeparator(finalGroup);
       updateOptionalSeparator(originalGroup);
       renumberOptionalRows(finalCategory);
-      layoutCategoryCards(previousLayout);
+      layoutCategoryCards();
       if (crossedCategory && finalCategory !== originalGroup.dataset.category) {
         renumberOptionalRows(originalGroup.dataset.category);
       }
@@ -647,14 +521,12 @@ const CALCULATOR_DATA = {
             return;
           }
         }
-
-        const previousLayout = captureColumnLayout();
         const group = row.parentElement;
         const category = group.dataset.category;
         row.remove();
         updateOptionalSeparator(group);
         renumberOptionalRows(category);
-        layoutCategoryCards(previousLayout);
+        layoutCategoryCards();
       });
 
       row.append(descriptionSelect, valueInput, deleteButton);
@@ -671,14 +543,12 @@ const CALCULATOR_DATA = {
       if (availableDescriptions.length === 0) {
         return;
       }
-
-      const previousLayout = captureColumnLayout();
       const targetGroup = groups.get(category);
       const row = createOptionalRow(category);
       targetGroup.appendChild(row);
       updateOptionalSeparator(targetGroup);
       renumberOptionalRows(category);
-      layoutCategoryCards(previousLayout);
+      layoutCategoryCards();
     }
 
     function createAddButton(category) {
