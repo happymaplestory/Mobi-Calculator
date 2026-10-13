@@ -74,62 +74,89 @@ const CALCULATOR_DATA = {
       );
     }
 
-    function layoutCategoryCards() {
+    let layoutAnimationTimer = null;
+    let layoutRequestId = 0;
+
+    function buildCategoryLayout() {
       const tableArea = document.getElementById("table-area");
       const cards = Array.from(tableArea.querySelectorAll(".category-card"));
+      tableArea.replaceChildren(...cards);
 
-      if (cards.length < 2) {
-        tableArea.replaceChildren(...cards);
+      if (cards.length === 0) return;
+
+      const isMobile = window.matchMedia("(max-width: 760px)").matches;
+      const columnGap = isMobile ? 80 : 44;
+      const cardGap = isMobile ? 20 : 24;
+      const cardWidth = Math.max(...cards.map(card => card.getBoundingClientRect().width));
+      const availableWidth = tableArea.clientWidth;
+      const maxColumns = Math.max(1, Math.floor((availableWidth + columnGap) / (cardWidth + columnGap)));
+      const cardHeights = cards.map(card => card.getBoundingClientRect().height);
+      const columns = Array.from({ length: Math.min(maxColumns, cards.length) }, () => ({
+        cards: [],
+        height: 0
+      }));
+
+      // Put taller cards into the currently shortest column to reduce the total layout height.
+      const orderedCards = cards
+        .map((card, index) => ({ card, index, height: cardHeights[index] }))
+        .sort((a, b) => b.height - a.height || a.index - b.index);
+
+      orderedCards.forEach(item => {
+        let targetColumn = columns[0];
+        for (const column of columns) {
+          if (column.height < targetColumn.height) targetColumn = column;
+        }
+        targetColumn.cards.push(item);
+        targetColumn.height += item.height + (targetColumn.cards.length > 1 ? cardGap : 0);
+      });
+
+      // Keep category order within columns and order columns by their first original card.
+      columns.forEach(column => {
+        column.cards.sort((a, b) => a.index - b.index);
+        column.firstIndex = Math.min(...column.cards.map(item => item.index));
+      });
+      columns.sort((a, b) => a.firstIndex - b.firstIndex);
+
+      const columnElements = columns
+        .filter(column => column.cards.length > 0)
+        .map(column => {
+          const element = document.createElement("div");
+          element.className = "category-column layout-enter";
+          element.append(...column.cards.map(item => item.card));
+          return element;
+        });
+
+      tableArea.replaceChildren(...columnElements);
+      columnElements.forEach(column => { void column.offsetWidth; });
+      requestAnimationFrame(() => {
+        columnElements.forEach(column => column.classList.remove("layout-enter"));
+      });
+    }
+
+    function layoutCategoryCards() {
+      const tableArea = document.getElementById("table-area");
+      const existingColumns = Array.from(tableArea.children)
+        .filter(child => child.classList.contains("category-column"));
+      const requestId = ++layoutRequestId;
+
+      if (layoutAnimationTimer !== null) {
+        clearTimeout(layoutAnimationTimer);
+        layoutAnimationTimer = null;
+      }
+
+      if (existingColumns.length === 0) {
+        buildCategoryLayout();
         return;
       }
 
-      // Flatten first so measured heights are not affected by previous column wrappers.
-      tableArea.replaceChildren(...cards);
-
-      const tallestCard = cards.reduce((tallest, card) =>
-        card.getBoundingClientRect().height > tallest.getBoundingClientRect().height
-          ? card
-          : tallest
-      );
-      const maxColumnHeight = tallestCard.getBoundingClientRect().height;
-      const gap = window.matchMedia("(max-width: 760px)").matches ? 20 : 24;
-      const shorterCards = cards.filter(card => card !== tallestCard);
-      const columns = [[tallestCard]];
-      let currentColumn = [];
-      let currentHeight = 0;
-
-      shorterCards.forEach(card => {
-        const cardHeight = card.getBoundingClientRect().height;
-        const nextHeight = currentHeight === 0
-          ? cardHeight
-          : currentHeight + gap + cardHeight;
-
-        if (currentColumn.length > 0 && nextHeight > maxColumnHeight) {
-          columns.push(currentColumn);
-          currentColumn = [];
-          currentHeight = 0;
-        }
-
-        currentHeight = currentColumn.length === 0
-          ? cardHeight
-          : currentHeight + gap + cardHeight;
-        currentColumn.push(card);
-      });
-
-      if (currentColumn.length > 0) {
-        columns.push(currentColumn);
-      }
-
-      const columnElements = columns.map(columnCards => {
-        const column = document.createElement("div");
-        column.className = "category-column";
-        column.append(...columnCards);
-        return column;
-      });
-
-      tableArea.replaceChildren(...columnElements);
+      // All current columns sink and shrink together before their cards are rearranged.
+      existingColumns.forEach(column => column.classList.add("layout-exit"));
+      layoutAnimationTimer = window.setTimeout(() => {
+        if (requestId !== layoutRequestId) return;
+        layoutAnimationTimer = null;
+        buildCategoryLayout();
+      }, 190);
     }
-
     function createGroup(category) {
       const card = document.createElement("div");
       card.className = "category-card";
