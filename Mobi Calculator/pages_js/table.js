@@ -382,9 +382,12 @@ const CALCULATOR_DATA = {
       row.style.top = "";
       row.style.transform = "";
 
-      const finalCategory = row.parentElement.dataset.category;
+      const finalGroup = row.parentElement;
+      const finalCategory = finalGroup.dataset.category;
       dragState = null;
 
+      updateOptionalSeparator(finalGroup);
+      updateOptionalSeparator(originalGroup);
       renumberOptionalRows(finalCategory);
       if (crossedCategory && finalCategory !== originalGroup.dataset.category) {
         renumberOptionalRows(originalGroup.dataset.category);
@@ -394,6 +397,24 @@ const CALCULATOR_DATA = {
     document.addEventListener("pointermove", updateOptionalDrag);
     document.addEventListener("pointerup", finishOptionalDrag);
     document.addEventListener("pointercancel", finishOptionalDrag);
+
+    function updateOptionalSeparator(group) {
+      const existingSeparator = group.querySelector(".optional-separator");
+      const firstOptionalRow = group.querySelector(".optional-row");
+
+      if (!firstOptionalRow) {
+        existingSeparator?.remove();
+        return;
+      }
+
+      const separator = existingSeparator || document.createElement("div");
+      separator.className = "optional-separator";
+      separator.textContent = "선택 추가 항목";
+
+      if (!existingSeparator || separator.nextElementSibling !== firstOptionalRow) {
+        group.insertBefore(separator, firstOptionalRow);
+      }
+    }
 
     function createOptionalRow(category) {
       const row = document.createElement("div");
@@ -429,8 +450,10 @@ const CALCULATOR_DATA = {
           }
         }
 
-        const category = row.parentElement.dataset.category;
+        const group = row.parentElement;
+        const category = group.dataset.category;
         row.remove();
+        updateOptionalSeparator(group);
         renumberOptionalRows(category);
       });
 
@@ -452,6 +475,7 @@ const CALCULATOR_DATA = {
       const targetGroup = groups.get(category);
       const row = createOptionalRow(category);
       targetGroup.appendChild(row);
+      updateOptionalSeparator(targetGroup);
       renumberOptionalRows(category);
     }
 
