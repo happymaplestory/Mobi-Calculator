@@ -84,7 +84,7 @@ function createSectionRow(section, { custom = false } = {}) {
     deleteButton.title = "행 삭제";
     deleteButton.addEventListener("click", () => {
       const shouldDelete = window.confirm(
-        "이 추가 행을 삭제하시겠습니까?\\n확인을 선택하면 구분 이름, 적용 형식, 입력값이 모두 삭제됩니다."
+        "이 추가 행을 삭제하시겠습니까?\n확인을 선택하면 구분 이름, 적용 형식, 입력값이 모두 삭제됩니다."
       );
       if (shouldDelete) row.remove();
     });
@@ -246,8 +246,8 @@ function enableRowDragging(tableArea) {
         const sourceName = sourceGroup.querySelector(".category-title")?.textContent || "현재 위치";
         const targetName = targetGroup.querySelector(".category-title")?.textContent || "대상 위치";
         allowMove = window.confirm(
-          "\\"" + sourceName + "\\"의 행을 \\"" + targetName +
-          "\\"으로 이동하시겠습니까?\\n확인: 오른쪽 값 입력만 유지하고 구분 이름과 적용 형식은 초기화합니다.\\n취소: 원래 위치와 모든 입력값을 유지합니다."
+          "\"" + sourceName + "\"의 행을 \"" + targetName +
+          "\"으로 이동하시겠습니까?\n확인: 오른쪽 값 입력만 유지하고 구분 이름과 적용 형식은 초기화합니다.\n취소: 원래 위치와 모든 입력값을 유지합니다."
         );
       }
 
@@ -256,7 +256,8 @@ function enableRowDragging(tableArea) {
           row.querySelector(".editable-section-name").value = "";
           row.querySelector(".application-value").value = "";
         }
-        targetGroup.insertBefore(row, placeholder);      } else {
+        targetGroup.insertBefore(row, placeholder);
+      } else {
         const restoreBefore = originalNextSibling && originalNextSibling.parentElement === sourceGroup
           ? originalNextSibling
           : sourceGroup.querySelector(".add-row-button");
