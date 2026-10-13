@@ -31,7 +31,8 @@ h1 { margin: 0 0 28px; font-size: 28px; }
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 24px;
+  row-gap: 24px;
+  column-gap: 88px;
 }
 
 .category-card {
@@ -42,7 +43,7 @@ h1 { margin: 0 0 28px; font-size: 28px; }
   gap: 0;
   width: max-content;
   max-width: calc(100vw - 80px);
-  padding: 12px 60px 42px 12px;
+  padding: 12px 12px 42px;
   border: var(--border-width) solid var(--border-color);
   border-radius: 16px;
   background: var(--surface-color);
@@ -274,6 +275,6 @@ select.field option:checked {
 
 @media (max-width: 760px) {
   body { padding: 16px; }
-  .table-area { gap: 20px; }
+  .table-area { row-gap: 20px; column-gap: 80px; }
   .category-card { max-width: calc(100vw - 64px); }
 }
