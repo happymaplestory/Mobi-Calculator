@@ -106,9 +106,13 @@ const CALCULATOR_DATA = {
       const isMobile = window.matchMedia("(max-width: 760px)").matches;
       const columnGap = isMobile ? 80 : 44;
       const cardGap = isMobile ? 20 : 24;
-      const cardWidth = Math.max(...cards.map(card => card.getBoundingClientRect().width));
-      const availableWidth = tableArea.clientWidth;
-      const maxColumns = Math.max(1, Math.floor((availableWidth + columnGap) / (cardWidth + columnGap)));
+      const cardWidths = cards.map(card => card.getBoundingClientRect().width);
+      const cardWidth = Math.max(...cardWidths);
+      const availableWidth = tableArea.getBoundingClientRect().width;
+      const maxColumns = Math.max(1, Math.min(
+        cards.length,
+        Math.floor((availableWidth + columnGap) / (cardWidth + columnGap))
+      ));
       const cardHeights = cards.map(card => card.getBoundingClientRect().height);
       const columnCount = Math.min(maxColumns, cards.length);
       const columns = Array.from({ length: columnCount }, () => ({ cards: [], height: 0 }));
@@ -138,6 +142,9 @@ const CALCULATOR_DATA = {
       if (orderedCards.length <= 10) {
         function searchAssignments(cardIndex) {
           if (cardIndex === orderedCards.length) {
+            // Do not leave a calculated column empty: when three cards fit in three
+            // columns, each card must occupy its own column rather than stacking short cards.
+            if (columns.some(column => column.cards.length === 0)) return;
             const tallestColumn = Math.max(...columns.map(column => column.height));
             const movement = movementCost(columns);
             if (tallestColumn < bestHeight ||
@@ -226,7 +233,25 @@ const CALCULATOR_DATA = {
           return { element, oldColumn };
         });
 
+      // Keep the old wrappers long enough to animate columns whose card membership
+      // changed out, while new wrappers animate in. Exact matches remain stable.
+      const removedColumns = oldColumns.filter(old => !usedOldColumns.has(old.element));
+      const oldColumnClones = removedColumns.map(old => {
+        const clone = old.element.cloneNode(true);
+        const rect = old.element.getBoundingClientRect();
+        clone.classList.remove("layout-enter", "layout-moving");
+        clone.classList.add("layout-exit");
+        clone.style.position = "absolute";
+        clone.style.left = (rect.left - tableArea.getBoundingClientRect().left + tableArea.scrollLeft) + "px";
+        clone.style.top = (rect.top - tableArea.getBoundingClientRect().top + tableArea.scrollTop) + "px";
+        clone.style.width = rect.width + "px";
+        clone.style.height = rect.height + "px";
+        clone.style.pointerEvents = "none";
+        return clone;
+      });
+
       tableArea.replaceChildren(...newColumnElements.map(item => item.element));
+      oldColumnClones.forEach(clone => tableArea.appendChild(clone));
 
       // FLIP: animate only retained columns whose positions actually changed.
       const movingColumns = [];
@@ -243,6 +268,15 @@ const CALCULATOR_DATA = {
         element.style.transition = "none";
         element.style.transform = `translate(${dx}px, ${dy}px)`;
         movingColumns.push(element);
+      });
+
+      // Exit clones are removed after fading/shrinking; they do not participate in
+      // column layout calculations or future snapshots.
+      oldColumnClones.forEach(clone => {
+        requestAnimationFrame(() => {
+          clone.classList.add("layout-exit-active");
+          window.setTimeout(() => clone.remove(), 200);
+        });
       });
 
       // Save the final, untransformed positions. Resize events happen after
