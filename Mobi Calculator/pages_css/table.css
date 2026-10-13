@@ -35,6 +35,15 @@ h1 { margin: 0 0 28px; font-size: 28px; text-align: center; }
   column-gap: 44px;
 }
 
+.category-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  width: max-content;
+  max-width: 100%;
+}
+
 .category-card {
   position: relative;
   display: flex;
@@ -291,5 +300,6 @@ select.field option:checked {
 @media (max-width: 760px) {
   body { padding: 16px; }
   .table-area { row-gap: 20px; column-gap: 80px; }
+  .category-column { gap: 20px; }
   .category-card { max-width: calc(100vw - 64px); }
 }
