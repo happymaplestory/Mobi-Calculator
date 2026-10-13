@@ -300,10 +300,3 @@ select.field option:checked {
 .category-group[data-category="치명타"] .input-row:hover,
 .category-group[data-category="치명타"] .optional-row:hover { background: #f1e3e1; }
 
-
-@media (max-width: 760px) {
-  body { padding: 16px; }
-  .table-area { row-gap: 20px; column-gap: 80px; }
-  .category-column { gap: 20px; }
-  .category-card { max-width: calc(100vw - 64px); }
-}
