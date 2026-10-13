@@ -42,8 +42,23 @@ h1 { margin: 0 0 28px; font-size: 28px; text-align: center; }
   gap: 24px;
   width: max-content;
   max-width: 100%;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 190ms ease, transform 190ms ease;
+  transform-origin: center top;
+  will-change: opacity, transform;
 }
 
+.category-column.layout-exit {
+  opacity: 0;
+  transform: translateY(24px) scale(0.92);
+  pointer-events: none;
+}
+
+.category-column.layout-enter {
+  opacity: 0;
+  transform: translateY(24px) scale(0.92);
+}
 .category-card {
   position: relative;
   display: flex;
@@ -296,6 +311,10 @@ select.field option:checked {
 }
 .category-group[data-category="치명타"] .input-row:hover,
 .category-group[data-category="치명타"] .optional-row:hover { background: #f1e3e1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .category-column { transition-duration: 1ms; }
+}
 
 @media (max-width: 760px) {
   body { padding: 16px; }
