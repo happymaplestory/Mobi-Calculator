@@ -247,8 +247,6 @@ function enableRowDragging(tableArea) {
       let allowMove = true;
 
       if (sourceLocationId !== targetLocationId) {
-        const sourceName = sourceGroup.querySelector(".category-title")?.textContent || "현재 위치";
-        const targetName = targetGroup.querySelector(".category-title")?.textContent || "대상 위치";
         allowMove = window.confirm("입력 값만 이동됩니다.");
       }
 
