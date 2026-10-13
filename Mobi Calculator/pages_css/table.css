@@ -85,6 +85,7 @@ h1 {
   line-height: 44px;
   white-space: nowrap;
   border-bottom: var(--border-width) solid var(--border-color);
+  border-radius: 10px 10px 0 0;
   background: #f0f0f0;
 }
 
