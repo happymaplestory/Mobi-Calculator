@@ -42,7 +42,7 @@ h1 { margin: 0 0 28px; font-size: 28px; }
   gap: 0;
   width: max-content;
   max-width: calc(100vw - 80px);
-  padding: 12px 12px 42px;
+  padding: 12px 60px 42px 12px;
   border: var(--border-width) solid var(--border-color);
   border-radius: 16px;
   background: var(--surface-color);
