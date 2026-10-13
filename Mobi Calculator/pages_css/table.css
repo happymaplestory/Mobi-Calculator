@@ -277,7 +277,7 @@ input.section-name {
 
 
 /* 새 행은 높이와 투명도를 함께 전환해 갑자기 나타나지 않도록 합니다. */
-.input-row.row-entering {
+.input-row.custom-row.row-entering {
   max-height: 0;
   min-height: 0;
   overflow: hidden;
@@ -285,10 +285,10 @@ input.section-name {
   border-bottom-color: transparent;
   transition: max-height 240ms ease, opacity 180ms ease, border-color 180ms ease;
 }
-.input-row.row-entering > * {
+.input-row.custom-row.row-entering > * {
   min-height: 0;
 }
-.input-row.row-entering.row-entered {
+.input-row.custom-row.row-entering.row-entered {
   max-height: 80px;
   opacity: 1;
   border-bottom-color: #d4cedd;
