@@ -156,8 +156,8 @@ function enableRowDragging(tableArea) {
 
   function moveGhost(clientX, clientY) {
     if (!ghost) return;
-    ghost.style.left = (clientX - active.offsetWidth / 2) + "px";
-    ghost.style.top = (clientY - active.offsetHeight / 2) + "px";
+    ghost.style.left = (clientX - ghost.offsetWidth / 2) + "px";
+    ghost.style.top = (clientY - ghost.offsetHeight / 2) + "px";
   }
 
   function cleanup() {
@@ -166,6 +166,7 @@ function enableRowDragging(tableArea) {
     if (active) {
       active.classList.remove("is-dragging");
       active.style.removeProperty("visibility");
+      active.style.removeProperty("display");
     }
     tableArea.classList.remove("is-row-dragging");
     active = null;
@@ -202,7 +203,9 @@ function enableRowDragging(tableArea) {
       placeholder.className = "row-placeholder";
       placeholder.style.height = rect.height + "px";
       placeholder.style.gridColumn = "1 / -1";
-      sourceGroup.insertBefore(placeholder, active.nextSibling);
+      sourceGroup.insertBefore(placeholder, active);
+      // 원본 행은 레이아웃에서 제외하고 placeholder만 공간을 차지하게 합니다.
+      active.style.display = "none";
 
       ghost = active.cloneNode(true);
       ghost.classList.add("row-drag-ghost");
