@@ -76,6 +76,15 @@ function createSectionRow(section, { custom = false } = {}) {
   row.append(name, application, createValueInput((custom ? "추가 항목" : section.name) + " 값 입력"));
 
   if (custom) {
+    const dragHandle = document.createElement("div");
+    dragHandle.className = "row-drag-handle";
+    dragHandle.textContent = "⋮⋮";
+    dragHandle.setAttribute("role", "button");
+    dragHandle.setAttribute("aria-label", "행 이동");
+    dragHandle.setAttribute("title", "끌어서 행 이동");
+    dragHandle.setAttribute("tabindex", "0");
+    row.appendChild(dragHandle);
+
     const deleteButton = document.createElement("button");
     deleteButton.type = "button";
     deleteButton.className = "delete-row-button";
@@ -110,13 +119,39 @@ function enableRowDragging(tableArea) {
   }
 
   function placePlaceholder(group, clientY) {
-    const rows = getRows(group).filter(row => row.classList.contains("custom-row") && row !== active && row !== placeholder);
+    const rows = getRows(group).filter(row => row.classList.contains("custom-row") && row !== active);
     const nextRow = rows.find(row => {
       const rect = row.getBoundingClientRect();
       return clientY < rect.top + rect.height / 2;
     });
     const addButton = group.querySelector(".add-row-button");
-    group.insertBefore(placeholder, nextRow || addButton);
+    const nextSibling = nextRow || addButton;
+    if (placeholder.parentElement === group && placeholder.nextElementSibling === nextSibling) return;
+
+    // FLIP: 레이아웃 변경 전후의 행 위치 차이를 애니메이션으로 보정해 주변 행이 부드럽게 밀리도록 합니다.
+    const before = new Map();
+    getRows(group).filter(row => row !== active).forEach(row => before.set(row, row.getBoundingClientRect()));
+
+    group.insertBefore(placeholder, nextSibling);
+
+    getRows(group).filter(row => row !== active).forEach(row => {
+      const oldRect = before.get(row);
+      if (!oldRect) return;
+      const newRect = row.getBoundingClientRect();
+      const dx = oldRect.left - newRect.left;
+      const dy = oldRect.top - newRect.top;
+      if (!dx && !dy) return;
+      row.style.transition = "none";
+      row.style.transform = `translate(${dx}px, ${dy}px)`;
+      row.getBoundingClientRect();
+      row.style.transition = "transform 180ms ease";
+      row.style.transform = "";
+      row.addEventListener("transitionend", function clearFlip(event) {
+        if (event.propertyName !== "transform") return;
+        row.style.removeProperty("transition");
+        row.removeEventListener("transitionend", clearFlip);
+      });
+    });
   }
 
   function moveGhost(clientX, clientY) {
@@ -142,7 +177,8 @@ function enableRowDragging(tableArea) {
   }
 
   tableArea.addEventListener("pointerdown", event => {
-    if (event.button !== 0 || event.target.closest("input, select, button, textarea, a")) return;
+    if (event.button !== 0) return;
+    if (!event.target.closest(".row-drag-handle")) return;
     const row = event.target.closest(".input-row.custom-row");
     if (!row || !tableArea.contains(row)) return;
 
