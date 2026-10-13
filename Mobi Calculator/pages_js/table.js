@@ -76,15 +76,6 @@ function createSectionRow(section, { custom = false } = {}) {
   row.append(name, application, createValueInput((custom ? "추가 항목" : section.name) + " 값 입력"));
 
   if (custom) {
-    const dragHandle = document.createElement("div");
-    dragHandle.className = "row-drag-handle";
-    dragHandle.textContent = "⋮⋮";
-    dragHandle.setAttribute("role", "button");
-    dragHandle.setAttribute("aria-label", "행 이동");
-    dragHandle.setAttribute("title", "끌어서 행 이동");
-    dragHandle.setAttribute("tabindex", "0");
-    row.appendChild(dragHandle);
-
     const deleteButton = document.createElement("button");
     deleteButton.type = "button";
     deleteButton.className = "delete-row-button";
@@ -177,8 +168,7 @@ function enableRowDragging(tableArea) {
   }
 
   tableArea.addEventListener("pointerdown", event => {
-    if (event.button !== 0) return;
-    if (!event.target.closest(".row-drag-handle")) return;
+    if (event.button !== 0 || event.target.closest("input, select, button, textarea, a")) return;
     const row = event.target.closest(".input-row.custom-row");
     if (!row || !tableArea.contains(row)) return;
 
