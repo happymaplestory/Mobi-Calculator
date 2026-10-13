@@ -49,15 +49,13 @@ h1 { margin: 0 0 28px; font-size: 28px; text-align: center; }
   will-change: opacity, transform;
 }
 
-.category-column.layout-exit {
-  opacity: 0;
-  transform: translateY(24px) scale(0.92);
-  pointer-events: none;
-}
-
 .category-column.layout-enter {
   opacity: 0;
   transform: translateY(24px) scale(0.92);
+}
+
+.category-column.layout-moving {
+  will-change: transform;
 }
 .category-card {
   position: relative;
