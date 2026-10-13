@@ -74,14 +74,30 @@ const CALCULATOR_DATA = {
       );
     }
 
-    let layoutAnimationTimer = null;
-    let layoutRequestId = 0;
+    function captureColumnLayout() {
+      const tableArea = document.getElementById("table-area");
+      return Array.from(tableArea.querySelectorAll(":scope > .category-column")).map(column => ({
+        element: column,
+        cards: Array.from(column.querySelectorAll(":scope > .category-card")),
+        rect: column.getBoundingClientRect()
+      }));
+    }
 
-    function buildCategoryLayout() {
+    function sameCardSet(first, second) {
+      return first.length === second.length && first.every((card, index) => card === second[index]);
+    }
+
+    function buildCategoryLayout(previousLayout = captureColumnLayout()) {
       const tableArea = document.getElementById("table-area");
       const cards = Array.from(tableArea.querySelectorAll(".category-card"));
-      tableArea.replaceChildren(...cards);
 
+      // Record the original column positions before moving cards between wrappers.
+      const oldColumns = previousLayout.map(column => ({
+        ...column,
+        cardSet: [...column.cards].sort((a, b) => cards.indexOf(a) - cards.indexOf(b))
+      }));
+
+      tableArea.replaceChildren(...cards);
       if (cards.length === 0) return;
 
       const isMobile = window.matchMedia("(max-width: 760px)").matches;
@@ -92,26 +108,39 @@ const CALCULATOR_DATA = {
       const maxColumns = Math.max(1, Math.floor((availableWidth + columnGap) / (cardWidth + columnGap)));
       const cardHeights = cards.map(card => card.getBoundingClientRect().height);
       const columnCount = Math.min(maxColumns, cards.length);
-      const columns = Array.from({ length: columnCount }, () => ({
-        cards: [],
-        height: 0
-      }));
-
+      const columns = Array.from({ length: columnCount }, () => ({ cards: [], height: 0 }));
       const orderedCards = cards
         .map((card, index) => ({ card, index, height: cardHeights[index] }))
         .sort((a, b) => b.height - a.height || a.index - b.index);
 
-      // Find the lowest possible tallest-column height for the current card count.
-      // The number of category cards is small, so use exhaustive search for up to 10 cards.
       let bestHeight = Infinity;
+      let bestMovementCost = Infinity;
       let bestColumns = null;
+
+      function movementCost(candidateColumns) {
+        let cost = 0;
+        for (let i = 0; i < cards.length; i++) {
+          for (let j = i + 1; j < cards.length; j++) {
+            const oldI = oldColumns.findIndex(column => column.cards.includes(cards[i]));
+            const oldJ = oldColumns.findIndex(column => column.cards.includes(cards[j]));
+            if (oldI < 0 || oldJ < 0) continue;
+            const newI = candidateColumns.findIndex(column => column.cards.some(item => item.card === cards[i]));
+            const newJ = candidateColumns.findIndex(column => column.cards.some(item => item.card === cards[j]));
+            if ((oldI === oldJ) !== (newI === newJ)) cost++;
+          }
+        }
+        return cost;
+      }
 
       if (orderedCards.length <= 10) {
         function searchAssignments(cardIndex) {
           if (cardIndex === orderedCards.length) {
             const tallestColumn = Math.max(...columns.map(column => column.height));
-            if (tallestColumn < bestHeight) {
+            const movement = movementCost(columns);
+            if (tallestColumn < bestHeight ||
+                (tallestColumn === bestHeight && movement < bestMovementCost)) {
               bestHeight = tallestColumn;
+              bestMovementCost = movement;
               bestColumns = columns.map(column => ({
                 cards: [...column.cards],
                 height: column.height
@@ -122,15 +151,11 @@ const CALCULATOR_DATA = {
 
           const item = orderedCards[cardIndex];
           const triedHeights = new Set();
-
           for (const column of columns) {
-            // Columns with equal current heights are interchangeable at this step.
             if (triedHeights.has(column.height)) continue;
             triedHeights.add(column.height);
 
-            const nextHeight = column.height
-              + (column.cards.length > 0 ? cardGap : 0)
-              + item.height;
+            const nextHeight = column.height + (column.cards.length > 0 ? cardGap : 0) + item.height;
             if (nextHeight > bestHeight) continue;
 
             column.cards.push(item);
@@ -141,10 +166,8 @@ const CALCULATOR_DATA = {
             column.cards.pop();
           }
         }
-
         searchAssignments(0);
       } else {
-        // Keep recalculation responsive if many more categories are added in the future.
         orderedCards.forEach(item => {
           let targetColumn = columns[0];
           for (const column of columns) {
@@ -153,10 +176,7 @@ const CALCULATOR_DATA = {
           targetColumn.cards.push(item);
           targetColumn.height += item.height + (targetColumn.cards.length > 1 ? cardGap : 0);
         });
-        bestColumns = columns.map(column => ({
-          cards: [...column.cards],
-          height: column.height
-        }));
+        bestColumns = columns.map(column => ({ cards: [...column.cards], height: column.height }));
       }
 
       if (bestColumns) {
@@ -165,52 +185,76 @@ const CALCULATOR_DATA = {
           column.height = bestColumns[index].height;
         });
       }
-      // Keep category order within columns and order columns by their first original card.
+
       columns.forEach(column => {
         column.cards.sort((a, b) => a.index - b.index);
         column.firstIndex = Math.min(...column.cards.map(item => item.index));
       });
       columns.sort((a, b) => a.firstIndex - b.firstIndex);
 
-      const columnElements = columns
+      const usedOldColumns = new Set();
+      const newColumnElements = columns
         .filter(column => column.cards.length > 0)
         .map(column => {
-          const element = document.createElement("div");
-          element.className = "category-column layout-enter";
-          element.append(...column.cards.map(item => item.card));
-          return element;
+          const columnCards = column.cards.map(item => item.card);
+          const oldColumn = oldColumns.find(old =>
+            !usedOldColumns.has(old.element) && sameCardSet(old.cards, columnCards)
+          );
+
+          let element;
+          if (oldColumn) {
+            element = oldColumn.element;
+            usedOldColumns.add(element);
+            element.classList.remove("layout-exit", "layout-enter", "layout-moving");
+            element.style.transition = "none";
+            element.style.transform = "";
+          } else {
+            element = document.createElement("div");
+            element.className = "category-column layout-enter";
+          }
+
+          element.append(...columnCards);
+          return { element, oldColumn };
         });
 
-      tableArea.replaceChildren(...columnElements);
-      columnElements.forEach(column => { void column.offsetWidth; });
+      tableArea.replaceChildren(...newColumnElements.map(item => item.element));
+
+      // FLIP: animate only retained columns whose positions actually changed.
+      const movingColumns = [];
+      newColumnElements.forEach(({ element, oldColumn }) => {
+        if (!oldColumn) return;
+        const nextRect = element.getBoundingClientRect();
+        const dx = oldColumn.rect.left - nextRect.left;
+        const dy = oldColumn.rect.top - nextRect.top;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+          element.style.transition = "";
+          element.style.transform = "";
+          return;
+        }
+        element.classList.add("layout-moving");
+        element.style.transition = "none";
+        element.style.transform = `translate(${dx}px, ${dy}px)`;
+        movingColumns.push(element);
+      });
+
+      // Read layout once, then animate moving columns into their final positions.
+      movingColumns.forEach(element => { void element.offsetWidth; });
       requestAnimationFrame(() => {
-        columnElements.forEach(column => column.classList.remove("layout-enter"));
+        movingColumns.forEach(element => {
+          element.style.transition = "";
+          element.style.transform = "";
+          element.classList.remove("layout-moving");
+        });
+        newColumnElements.forEach(({ element, oldColumn }) => {
+          if (!oldColumn) {
+            requestAnimationFrame(() => element.classList.remove("layout-enter"));
+          }
+        });
       });
     }
 
-    function layoutCategoryCards() {
-      const tableArea = document.getElementById("table-area");
-      const existingColumns = Array.from(tableArea.children)
-        .filter(child => child.classList.contains("category-column"));
-      const requestId = ++layoutRequestId;
-
-      if (layoutAnimationTimer !== null) {
-        clearTimeout(layoutAnimationTimer);
-        layoutAnimationTimer = null;
-      }
-
-      if (existingColumns.length === 0) {
-        buildCategoryLayout();
-        return;
-      }
-
-      // All current columns sink and shrink together before their cards are rearranged.
-      existingColumns.forEach(column => column.classList.add("layout-exit"));
-      layoutAnimationTimer = window.setTimeout(() => {
-        if (requestId !== layoutRequestId) return;
-        layoutAnimationTimer = null;
-        buildCategoryLayout();
-      }, 190);
+    function layoutCategoryCards(previousLayout) {
+      buildCategoryLayout(previousLayout || captureColumnLayout());
     }
     function createGroup(category) {
       const card = document.createElement("div");
@@ -488,6 +532,7 @@ const CALCULATOR_DATA = {
         group: targetGroup
       } = dragState;
 
+      const previousLayout = captureColumnLayout();
       const crossedCategory = targetGroup !== originalGroup;
 
       if (crossedCategory) {
@@ -527,7 +572,7 @@ const CALCULATOR_DATA = {
       updateOptionalSeparator(finalGroup);
       updateOptionalSeparator(originalGroup);
       renumberOptionalRows(finalCategory);
-      layoutCategoryCards();
+      layoutCategoryCards(previousLayout);
       if (crossedCategory && finalCategory !== originalGroup.dataset.category) {
         renumberOptionalRows(originalGroup.dataset.category);
       }
@@ -589,12 +634,13 @@ const CALCULATOR_DATA = {
           }
         }
 
+        const previousLayout = captureColumnLayout();
         const group = row.parentElement;
         const category = group.dataset.category;
         row.remove();
         updateOptionalSeparator(group);
         renumberOptionalRows(category);
-        layoutCategoryCards();
+        layoutCategoryCards(previousLayout);
       });
 
       row.append(descriptionSelect, valueInput, deleteButton);
@@ -612,12 +658,13 @@ const CALCULATOR_DATA = {
         return;
       }
 
+      const previousLayout = captureColumnLayout();
       const targetGroup = groups.get(category);
       const row = createOptionalRow(category);
       targetGroup.appendChild(row);
       updateOptionalSeparator(targetGroup);
       renumberOptionalRows(category);
-      layoutCategoryCards();
+      layoutCategoryCards(previousLayout);
     }
 
     function createAddButton(category) {
