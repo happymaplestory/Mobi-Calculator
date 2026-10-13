@@ -288,6 +288,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
+  padding-right: 34px;
 }
 
 .category-group {
@@ -359,7 +360,8 @@ select.field {
 
 .optional-row .delete-button {
   position: absolute;
-  left: calc(var(--description-column-width) + 130px + 14px);
+  right: -40px;
+  left: auto;
   top: 2px;
   z-index: 2;
   width: 26px;
