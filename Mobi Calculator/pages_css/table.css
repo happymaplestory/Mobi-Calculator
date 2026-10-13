@@ -26,14 +26,23 @@ body {
   user-select: none;
 }
 
-/* 가장 긴 열 아래에 약 260px만 남기고, 페이지 끝을 가로선으로 표시합니다. */
+/* 콘텐츠 아래 여백을 유지하고, 가장 긴 열 너비에 맞춰 페이지 끝 선을 표시합니다. */
 body::after {
   content: "";
   display: block;
-  width: calc(100% + 48px);
   height: 260px;
-  margin: 0 -24px -24px;
-  border-bottom: 1px solid #d9d9d9;
+  margin-bottom: -24px;
+}
+.table-area::after {
+  content: "";
+  position: absolute;
+  top: calc(100% + 260px);
+  left: 0;
+  width: 100%;
+  min-width: 100vw;
+  height: 3px;
+  background: #d0d0d0;
+  pointer-events: none;
 }
 
 h1 {
@@ -286,40 +295,37 @@ input.section-name {
 .table-area.is-row-dragging .input-row { transition: background-color 120ms ease, opacity 120ms ease; }
 
 
-/* 새 행은 높이와 투명도를 함께 전환해 갑자기 나타나지 않도록 합니다. */
+/* 새 행과 X 버튼은 각각 독립적으로 전환합니다. */
 .input-row.custom-row.row-entering {
   max-height: 0;
   min-height: 0;
   overflow: hidden;
   opacity: 0;
   border-bottom-color: transparent;
-  transition: max-height 240ms ease, opacity 180ms ease, border-color 180ms ease;
+  transition: max-height 280ms ease, opacity 220ms ease, border-color 220ms ease;
 }
 .input-row.custom-row .delete-row-button {
-  transition: opacity 160ms ease, transform 160ms ease;
+  opacity: 1;
+  transition: opacity 220ms ease, transform 220ms ease;
 }
 .input-row.custom-row.row-entering .delete-row-button {
   opacity: 0;
-  transform: translate(4px, -50%) scale(0.92);
-  transition-delay: 80ms;
+  transform: translate(8px, -50%) scale(0.82);
 }
 .input-row.custom-row.row-entering.row-entered .delete-row-button {
   opacity: 1;
   transform: translateY(-50%) scale(1);
 }
-.input-row.custom-row.row-entering > * {
-  min-height: 0;
-}
+.input-row.custom-row.row-entering > * { min-height: 0; }
 .input-row.custom-row.row-entering.row-entered {
   max-height: 80px;
   opacity: 1;
   border-bottom-color: #d4cedd;
 }
-.input-row.row-entering.row-entered > * {
-  min-height: var(--row-height);
-}
+.input-row.row-entering.row-entered > * { min-height: var(--row-height); }
 @media (prefers-reduced-motion: reduce) {
-  .input-row.row-entering { transition: none !important; }
+  .input-row.row-entering,
+  .input-row.custom-row .delete-row-button { transition: none !important; }
 }
 
 .input-row.custom-row { transition: background-color 120ms ease, transform 180ms ease; touch-action: none; }
