@@ -77,8 +77,9 @@ const CALCULATOR_DATA = {
 
     function captureColumnLayout() {
       const tableArea = document.getElementById("table-area");
-      return Array.from(tableArea.querySelectorAll(":scope > .category-column")).map(column => ({
+      return Array.from(tableArea.querySelectorAll(":scope > .category-column:not(.layout-exit)")).map(column => ({
         element: column,
+        clone: column.cloneNode(true),
         cards: Array.from(column.querySelectorAll(":scope > .category-card")),
         // offsetLeft/Top exclude transforms, so snapshots remain stable during animation.
         rect: { left: column.offsetLeft, top: column.offsetTop }
@@ -237,7 +238,7 @@ const CALCULATOR_DATA = {
       // changed out, while new wrappers animate in. Exact matches remain stable.
       const removedColumns = oldColumns.filter(old => !usedOldColumns.has(old.element));
       const oldColumnClones = removedColumns.map(old => {
-        const clone = old.element.cloneNode(true);
+        const clone = old.clone;
         const rect = old.element.getBoundingClientRect();
         clone.classList.remove("layout-enter", "layout-moving");
         clone.classList.add("layout-exit");
