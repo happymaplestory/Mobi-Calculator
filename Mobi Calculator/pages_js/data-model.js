@@ -33,8 +33,8 @@ const MOBI_DATA_MODEL = {
     },
     {
       id: 4000,
-      key: "runeWordA",
-      name: "룬 워드",
+      key: "titleEffect",
+      name: "칭호 효과",
       addable: false,
       attributeGroups: ["stat1", "stat2", "stat3", "stat4", "stat5", "stat6"]
     },
