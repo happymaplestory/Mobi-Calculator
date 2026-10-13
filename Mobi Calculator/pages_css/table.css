@@ -280,3 +280,104 @@
       background: #444444;
     }
 
+
+
+/* Compact row layout: labels and inputs share a row; actions sit outside the box. */
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.category-group {
+  grid-template-columns: var(--description-column-width) 130px;
+  gap: 0;
+  padding: 10px 12px;
+}
+
+.category-title {
+  margin: 0;
+  padding: 0 0 6px;
+  line-height: 30px;
+  border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.input-row,
+.optional-row {
+  grid-template-columns: var(--description-column-width) 130px;
+  gap: 8px;
+  min-height: 34px;
+  border-radius: 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.input-row:hover,
+.optional-row:hover {
+  background: transparent;
+}
+
+.input-row:hover::before,
+.optional-row:hover::before,
+.optional-row.dragging::before {
+  inset: 0;
+  border-radius: 0;
+}
+
+.field {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 15px;
+}
+
+select.field {
+  width: 100%;
+  padding-right: 24px;
+}
+
+.value-input {
+  width: 130px;
+  min-height: 32px;
+  padding: 0 8px;
+  border-width: 1px;
+  border-radius: 6px;
+}
+
+.action-button {
+  min-height: 30px;
+  width: 30px;
+  border-width: 1px;
+  border-radius: 7px;
+}
+
+.optional-row {
+  padding-right: 0;
+}
+
+.optional-row .delete-button {
+  position: absolute;
+  left: calc(var(--description-column-width) + 130px + 14px);
+  top: 2px;
+  z-index: 2;
+  width: 26px;
+  min-height: 26px;
+}
+
+.add-button {
+  grid-column: auto;
+  width: 30px;
+  margin-top: 0;
+}
+
+.drag-placeholder {
+  min-height: 34px;
+}
+
+@media (max-width: 900px) {
+  .table-area {
+    gap: 20px;
+  }
+}
