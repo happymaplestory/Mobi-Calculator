@@ -327,7 +327,25 @@ function createLocationColumn(location) {
     addButton.setAttribute("aria-label", location.name + " 항목 추가");
     addButton.addEventListener("click", () => {
       const addRow = createSectionRow(null, { custom: true });
+      addRow.classList.add("row-entering");
       group.insertBefore(addRow, addButton);
+
+      // 행 높이와 투명도를 함께 전환해 새 행이 펼쳐지고 + 버튼도 자연스럽게 아래로 이동합니다.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!addRow.isConnected) return;
+          addRow.classList.add("row-entered");
+        });
+      });
+
+      addRow.addEventListener("transitionend", event => {
+        if (event.propertyName !== "max-height") return;
+        addRow.classList.remove("row-entering", "row-entered");
+        addRow.style.removeProperty("max-height");
+        addRow.style.removeProperty("opacity");
+        addRow.style.removeProperty("overflow");
+      }, { once: false });
+
       addRow.querySelector(".editable-section-name").focus();
     });
     group.appendChild(addButton);
