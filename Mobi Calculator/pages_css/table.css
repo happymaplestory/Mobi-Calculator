@@ -275,7 +275,7 @@ input.section-name {
 .table-area.is-row-dragging .input-row { transition: background-color 120ms ease, opacity 120ms ease; }
 
 
-.input-row.custom-row { transition: background-color 120ms ease, transform 180ms ease; }
+.input-row.custom-row { transition: background-color 120ms ease, transform 180ms ease; touch-action: pan-x; }
 @media (prefers-reduced-motion: reduce) {
   .input-row.custom-row { transition: none !important; }
 }
