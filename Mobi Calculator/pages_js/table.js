@@ -74,6 +74,62 @@ const CALCULATOR_DATA = {
       );
     }
 
+    function layoutCategoryCards() {
+      const tableArea = document.getElementById("table-area");
+      const cards = Array.from(tableArea.querySelectorAll(".category-card"));
+
+      if (cards.length < 2) {
+        tableArea.replaceChildren(...cards);
+        return;
+      }
+
+      // Flatten first so measured heights are not affected by previous column wrappers.
+      tableArea.replaceChildren(...cards);
+
+      const tallestCard = cards.reduce((tallest, card) =>
+        card.getBoundingClientRect().height > tallest.getBoundingClientRect().height
+          ? card
+          : tallest
+      );
+      const maxColumnHeight = tallestCard.getBoundingClientRect().height;
+      const gap = window.matchMedia("(max-width: 760px)").matches ? 20 : 24;
+      const shorterCards = cards.filter(card => card !== tallestCard);
+      const columns = [[tallestCard]];
+      let currentColumn = [];
+      let currentHeight = 0;
+
+      shorterCards.forEach(card => {
+        const cardHeight = card.getBoundingClientRect().height;
+        const nextHeight = currentHeight === 0
+          ? cardHeight
+          : currentHeight + gap + cardHeight;
+
+        if (currentColumn.length > 0 && nextHeight > maxColumnHeight) {
+          columns.push(currentColumn);
+          currentColumn = [];
+          currentHeight = 0;
+        }
+
+        currentHeight = currentColumn.length === 0
+          ? cardHeight
+          : currentHeight + gap + cardHeight;
+        currentColumn.push(card);
+      });
+
+      if (currentColumn.length > 0) {
+        columns.push(currentColumn);
+      }
+
+      const columnElements = columns.map(columnCards => {
+        const column = document.createElement("div");
+        column.className = "category-column";
+        column.append(...columnCards);
+        return column;
+      });
+
+      tableArea.replaceChildren(...columnElements);
+    }
+
     function createGroup(category) {
       const card = document.createElement("div");
       card.className = "category-card";
@@ -389,6 +445,7 @@ const CALCULATOR_DATA = {
       updateOptionalSeparator(finalGroup);
       updateOptionalSeparator(originalGroup);
       renumberOptionalRows(finalCategory);
+      layoutCategoryCards();
       if (crossedCategory && finalCategory !== originalGroup.dataset.category) {
         renumberOptionalRows(originalGroup.dataset.category);
       }
@@ -455,6 +512,7 @@ const CALCULATOR_DATA = {
         row.remove();
         updateOptionalSeparator(group);
         renumberOptionalRows(category);
+        layoutCategoryCards();
       });
 
       row.append(descriptionSelect, valueInput, deleteButton);
@@ -477,6 +535,7 @@ const CALCULATOR_DATA = {
       targetGroup.appendChild(row);
       updateOptionalSeparator(targetGroup);
       renumberOptionalRows(category);
+      layoutCategoryCards();
     }
 
     function createAddButton(category) {
@@ -503,6 +562,9 @@ const CALCULATOR_DATA = {
       CALCULATOR_DATA.categories.forEach(category => {
         groups.get(category).parentElement.appendChild(createAddButton(category));
       });
+
+      layoutCategoryCards();
+      window.addEventListener("resize", layoutCategoryCards);
     }
 
     initialize();
