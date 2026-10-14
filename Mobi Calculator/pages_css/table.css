@@ -26,24 +26,6 @@ body {
   user-select: none;
 }
 
-/* 콘텐츠 아래 여백을 유지하고, 가장 긴 열 너비에 맞춰 페이지 끝 선을 표시합니다. */
-body::after {
-  content: "";
-  display: block;
-  height: 260px;
-  margin-bottom: -24px;
-}
-.table-area::after {
-  content: "";
-  position: absolute;
-  top: calc(100% + 260px);
-  left: 0;
-  width: 100%;
-  min-width: 100vw;
-  height: 3px;
-  background: #d0d0d0;
-  pointer-events: none;
-}
 
 .table-content-box {
   position: relative;
@@ -63,7 +45,7 @@ h1 {
   width: 100%;
   margin: 0 0 28px;
   padding: 0 16px 16px;
-  color: var(--text-color);
+  color: #555555;
   font-size: 28px;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -373,6 +355,7 @@ input.section-name {
   width: max-content;
   flex: 0 0 auto;
   margin-top: 38px;
+  margin-left: 22px;
 }
 
 
@@ -446,6 +429,7 @@ input.section-name {
   gap: 12px;
   min-height: 30px;
   margin-bottom: 15px;
+  transform: translateY(-15px);
 }
 .column-pagination-dot {
   width: 22px;
