@@ -417,8 +417,25 @@ function initializeTable() {
   const tableArea = document.getElementById("table-area");
   const locations = [...MOBI_DATA_MODEL.locationTable]
     .sort((a, b) => a.id - b.id);
+  const columns = locations.map(createLocationColumn);
+  const levelColumn = columns.find(column => column.dataset.locationId === "1000");
+  const paladinColumn = columns.find(column => column.dataset.locationId === "2000");
 
-  tableArea.replaceChildren(...locations.map(createLocationColumn));
+  // 레벨과 팔라딘은 하나의 세로 스택으로 묶어, 레벨 열의 높이가 바뀌면
+  // 팔라딘 열도 문서 흐름과 행 애니메이션에 맞춰 자연스럽게 이동하도록 합니다.
+  const levelPaladinStack = document.createElement("div");
+  levelPaladinStack.className = "level-paladin-stack";
+  if (levelColumn) levelPaladinStack.appendChild(levelColumn);
+  if (paladinColumn) levelPaladinStack.appendChild(paladinColumn);
+
+  const remainingColumns = columns.filter(column =>
+    column !== levelColumn && column !== paladinColumn
+  );
+  const orderedColumns = levelColumn && paladinColumn
+    ? [levelPaladinStack, ...remainingColumns]
+    : columns;
+
+  tableArea.replaceChildren(...orderedColumns);
   enableRowDragging(tableArea);
 }
 
