@@ -32,6 +32,7 @@ body {
   overflow-x: clip;
   background: var(--background-color);
   color: var(--text-color);
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
   font-family: Arial, "Noto Sans KR", sans-serif;
   -webkit-user-select: none;
   user-select: none;
@@ -374,7 +375,7 @@ input.section-name {
   overflow: hidden;
   opacity: 0;
   border-bottom-color: transparent;
-  transition: max-height 280ms ease, opacity 220ms ease, border-color 220ms ease;
+  transition: max-height 280ms ease, opacity 220ms ease, border-color 160ms ease;
 }
 .input-row.custom-row .delete-row-button {
   opacity: 1;
@@ -531,7 +532,7 @@ input.section-name {
   border: 2px solid #c8c8c8;
   border-radius: 50%;
   background: transparent;
-  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 180ms ease;
 }
 .column-pagination-dot[aria-current="true"]::before {
   background: #c8c8c8;
@@ -567,7 +568,7 @@ input.section-name {
   font-size: 64px;
   font-weight: 200;
   line-height: 1;
-  transition: color 150ms ease, transform 150ms ease;
+  transition: color 160ms ease, transform 150ms ease;
 }
 .carousel-arrow:hover span { color: #888; }
 .carousel-arrow-previous { left: -52px; }
