@@ -356,19 +356,25 @@ input.section-name {
   column-gap: 8px;
   width: max-content;
   flex: 0 0 auto;
+  /* Keep the previous arrow clear of the Level/Paladin stack. */
+  margin-left: 100px;
 }
 .column-carousel-viewport {
   grid-column: 1 / -1;
   grid-row: 2;
   position: relative;
   overflow: hidden;
+  box-sizing: content-box;
+  padding: 24px;
+  margin: -24px;
   width: calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 4px);
   touch-action: pan-y;
 }
 .column-carousel-track {
   display: flex;
   align-items: flex-start;
-  width: 100%;
+  width: max-content;
+  gap: 40px;
   transform: translateX(0);
   transition-property: transform;
   transition-timing-function: cubic-bezier(.22,.72,.22,1);
@@ -376,9 +382,12 @@ input.section-name {
   will-change: transform;
 }
 .carousel-column {
-  flex: 0 0 100%;
+  box-sizing: border-box;
+  flex: 0 0 calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 4px);
   min-width: 0;
-  width: 100%;
+  width: calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 4px);
+  padding: 24px;
+  margin: -24px 0;
 }
 .carousel-column .category-card,
 .carousel-column .category-group {
