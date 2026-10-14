@@ -570,11 +570,36 @@ input.section-name {
   background: color-mix(in srgb, var(--background-color) 80%, #000000 20%);
 }
 
+.theme-toggle-button.is-dark {
+  border-color: #666a73;
+  background: #303238;
+}
+
+.theme-toggle-button.is-dark:hover {
+  background: color-mix(in srgb, #303238 80%, #000000 20%);
+}
+
 .theme-toggle-icon {
   transition: filter 160ms ease;
 }
 
-.theme-toggle-button:hover .theme-toggle-icon {
+.theme-icon-sun {
+  display: none;
+}
+
+.theme-toggle-button.is-dark .theme-icon-moon {
+  display: none;
+}
+
+.theme-toggle-button.is-dark .theme-icon-sun {
+  display: inline;
+}
+
+.theme-toggle-button.is-dark:hover .theme-toggle-icon {
+  filter: brightness(1.4);
+}
+
+.theme-toggle-button:not(.is-dark):hover .theme-toggle-icon {
   filter: brightness(1.4);
 }
 
