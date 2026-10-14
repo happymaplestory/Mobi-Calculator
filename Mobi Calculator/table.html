@@ -29,6 +29,7 @@
 
     const updateButton = (isDark) => {
       themeToggle.classList.toggle("is-dark", isDark);
+      document.body.dataset.theme = isDark ? "dark" : "light";
       themeToggle.setAttribute("aria-pressed", String(isDark));
       const nextLabel = isDark ? "라이트모드로 전환" : "다크모드로 전환";
       themeToggle.setAttribute("aria-label", nextLabel);
