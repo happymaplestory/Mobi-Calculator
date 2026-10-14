@@ -77,6 +77,19 @@ h1::after {
   column-gap: 28px;
 }
 
+/* 좁은 뷰포트에서는 레벨·팔라딘 스택 아래로 슬라이드 열을 이동합니다. */
+@media (max-width: 799px) {
+  .table-area {
+    flex-direction: column;
+    row-gap: 0;
+  }
+
+  .column-carousel {
+    margin-top: 50px;
+    margin-left: 22px;
+  }
+}
+
 .category-column {
   display: flex;
   flex-direction: column;
