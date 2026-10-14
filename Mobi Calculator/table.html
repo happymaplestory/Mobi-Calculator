@@ -15,12 +15,29 @@
     const themeToggle = document.getElementById("theme-toggle");
     if (!themeToggle) return;
 
-    themeToggle.addEventListener("click", () => {
-      const isDark = themeToggle.classList.toggle("is-dark");
+    const getSavedDarkMode = () => {
+      const match = document.cookie.match(/(?:^|;\\s*)darkmode=(true|false)(?:;|$)/);
+      return match ? match[1] === "true" : false;
+    };
+
+    const saveDarkMode = (isDark) => {
+      document.cookie = `darkmode=${isDark}; Max-Age=315360000; Path=/; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+    };
+
+    const updateButton = (isDark) => {
+      themeToggle.classList.toggle("is-dark", isDark);
       themeToggle.setAttribute("aria-pressed", String(isDark));
       const nextLabel = isDark ? "라이트모드로 전환" : "다크모드로 전환";
       themeToggle.setAttribute("aria-label", nextLabel);
       themeToggle.setAttribute("title", nextLabel);
+    };
+
+    updateButton(getSavedDarkMode());
+
+    themeToggle.addEventListener("click", () => {
+      const isDark = !themeToggle.classList.contains("is-dark");
+      saveDarkMode(isDark);
+      updateButton(isDark);
     });
   })();
 </script>
