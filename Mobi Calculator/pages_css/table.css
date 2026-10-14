@@ -357,7 +357,7 @@ input.section-name {
   width: max-content;
   flex: 0 0 auto;
   /* Keep the previous arrow clear of the Level/Paladin stack. */
-  margin-left: 100px;
+  margin-left: 50px;
 }
 .column-carousel-viewport {
   grid-column: 1 / -1;
@@ -365,8 +365,8 @@ input.section-name {
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  padding: 24px;
-  margin: -24px;
+  padding: 15px 24px;
+  margin: -15px -24px;
   width: calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 52px);
   touch-action: pan-y;
 }
