@@ -365,8 +365,8 @@ input.section-name {
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  padding: 15px 24px;
-  margin: -15px -24px;
+  padding: 24px 15px;
+  margin: -24px -15px;
   width: calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 52px);
   touch-action: pan-y;
 }
