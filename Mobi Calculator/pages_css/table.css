@@ -382,19 +382,19 @@ input.section-name {
   padding: 24px 15px;
   margin: -24px -15px;
   width: calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 52px);
-  /* 가장자리 직전부터 열과 그림자가 안개처럼 사라지도록 하며, 스택에는 적용하지 않습니다. */
+  /* 뷰포트 중앙의 표시 영역은 온전히 유지하고, 좌우 끝의 좁은 28px 구간에서만 페이드합니다. */
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0,
-    #000 58px,
-    #000 calc(100% - 58px),
+    #000 28px,
+    #000 calc(100% - 28px),
     transparent 100%
   );
   mask-image: linear-gradient(
     to right,
     transparent 0,
-    #000 58px,
-    #000 calc(100% - 58px),
+    #000 28px,
+    #000 calc(100% - 28px),
     transparent 100%
   );
   touch-action: pan-y;
