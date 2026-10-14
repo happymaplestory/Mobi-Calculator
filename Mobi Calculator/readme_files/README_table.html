@@ -154,7 +154,8 @@
 ## 페이지네이션 클릭 영역 및 레벨·팔라딘 상단 간격
 
 - `.column-pagination`에 `margin-bottom: 15px`를 적용해 페이지 점의 클릭 반응 영역이 `.column-carousel-viewport` 상단 패딩 영역과 겹쳐 비활성화되는 문제를 방지한다. 페이지 점 각각을 정상적으로 클릭할 수 있어야 한다.
-- `.level-paladin-stack`에 `margin-top: 38px`를 적용해 상단 여백을 확보한다.
+- `.level-paladin-stack`의 상단 margin은 기존 38px에서 20px 늘린 58px로 설정한다.
+- `.column-carousel`에는 상단 margin 20px를 추가한다. 두 요소의 기존 가로 배치 및 내부 간격은 유지한다.
 - 간격 조정 후 페이지 점 클릭과 열 이동이 정상 동작하는지, 레벨·팔라딘 영역의 배치 및 화살표와의 간격이 유지되는지 확인한다.
 
 ## 800x800 콘텐츠 박스 및 확대·축소 정렬
