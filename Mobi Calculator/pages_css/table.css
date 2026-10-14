@@ -332,3 +332,15 @@ input.section-name {
 @media (prefers-reduced-motion: reduce) {
   .input-row.custom-row { transition: none !important; }
 }
+
+
+/* 레벨과 팔라딘을 한 열 안에서 세로로 쌓습니다. 레벨 행의 높이 전환에 따라
+   팔라딘 열은 일반 문서 흐름을 통해 같은 간격을 유지하며 자연스럽게 이동합니다. */
+.level-paladin-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+  width: max-content;
+  flex: 0 0 auto;
+}
