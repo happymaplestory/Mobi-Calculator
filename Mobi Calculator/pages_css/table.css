@@ -567,7 +567,7 @@ input.section-name {
 }
 
 .theme-toggle-button:hover {
-  background: color-mix(in srgb, var(--background-color) 80%, #000000 20%);
+  background: color-mix(in srgb, var(--background-color) 80%, #ffffff 20%);
 }
 
 .theme-toggle-button.is-dark {
