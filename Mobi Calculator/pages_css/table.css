@@ -355,7 +355,7 @@ input.section-name {
   gap: 28px;
   width: max-content;
   flex: 0 0 auto;
-  margin-top: 38px;
+  margin-top: 58px;
   margin-left: 22px;
 }
 
@@ -371,6 +371,7 @@ input.section-name {
   width: max-content;
   flex: 0 0 auto;
   /* Keep the previous arrow clear of the Level/Paladin stack. */
+  margin-top: 20px;
   margin-left: 50px;
 }
 .column-carousel-viewport {
