@@ -431,8 +431,110 @@ function initializeTable() {
   const remainingColumns = columns.filter(column =>
     column !== levelColumn && column !== paladinColumn
   );
+  const mobileColumns = remainingColumns.filter(column =>
+    Number(column.dataset.locationId) >= 3000 && Number(column.dataset.locationId) <= 8000
+  );
+
+  const carousel = document.createElement("section");
+  carousel.className = "column-carousel";
+  carousel.setAttribute("aria-label", "내 정보부터 전투 스킬까지의 입력 열");
+
+  const previousButton = document.createElement("button");
+  previousButton.type = "button";
+  previousButton.className = "carousel-arrow carousel-arrow-previous";
+  previousButton.setAttribute("aria-label", "이전 열");
+  previousButton.innerHTML = '<span aria-hidden="true">‹</span>';
+
+  const nextButton = document.createElement("button");
+  nextButton.type = "button";
+  nextButton.className = "carousel-arrow carousel-arrow-next";
+  nextButton.setAttribute("aria-label", "다음 열");
+  nextButton.innerHTML = '<span aria-hidden="true">›</span>';
+
+  const pagination = document.createElement("nav");
+  pagination.className = "column-pagination";
+  pagination.setAttribute("aria-label", "입력 열 선택");
+
+  const viewport = document.createElement("div");
+  viewport.className = "column-carousel-viewport";
+  const track = document.createElement("div");
+  track.className = "column-carousel-track";
+  mobileColumns.forEach((column, index) => {
+    column.classList.add("carousel-column");
+    column.dataset.carouselIndex = String(index);
+    track.appendChild(column);
+
+    const dot = document.createElement("button");
+    dot.type = "button";
+    dot.className = "column-pagination-dot";
+    dot.setAttribute("aria-label", (index + 1) + "번째 열: " + column.querySelector(".category-title").textContent);
+    dot.setAttribute("aria-current", index === 0 ? "true" : "false");
+    dot.addEventListener("click", () => moveToColumn(index));
+    pagination.appendChild(dot);
+  });
+  viewport.appendChild(track);
+  carousel.append(previousButton, pagination, viewport, nextButton);
+
+  let currentColumnIndex = 0;
+  let moveTimer = null;
+  const TRANSITION_DURATION = 300;
+
+  function moveToColumn(targetIndex) {
+    const boundedIndex = Math.max(0, Math.min(mobileColumns.length - 1, targetIndex));
+    if (boundedIndex === currentColumnIndex) return;
+    const distance = Math.abs(boundedIndex - currentColumnIndex);
+    currentColumnIndex = boundedIndex;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const duration = reducedMotion ? 0 : TRANSITION_DURATION;
+    track.style.transitionDuration = duration + "ms";
+    track.style.transform = "translateX(" + (-100 * currentColumnIndex) + "%)";
+    pagination.querySelectorAll(".column-pagination-dot").forEach((dot, index) => {
+      dot.setAttribute("aria-current", index === currentColumnIndex ? "true" : "false");
+    });
+    previousButton.hidden = currentColumnIndex === 0;
+    nextButton.hidden = currentColumnIndex === mobileColumns.length - 1;
+    // 여러 열 이동도 전체 시간이 일정하도록 이동 거리와 속도를 함께 조절합니다.
+    track.style.setProperty("--carousel-travel-distance", distance);
+    if (moveTimer) clearTimeout(moveTimer);
+    moveTimer = setTimeout(() => {
+      track.style.removeProperty("--carousel-travel-distance");
+      moveTimer = null;
+    }, duration);
+  }
+
+  previousButton.addEventListener("click", () => moveToColumn(currentColumnIndex - 1));
+  nextButton.addEventListener("click", () => moveToColumn(currentColumnIndex + 1));
+
+  let swipeStartX = 0;
+  let swipeStartY = 0;
+  let swipePointerId = null;
+  let swipeEligible = false;
+  viewport.addEventListener("pointerdown", event => {
+    if (event.target.closest("input, select, textarea, button, option, [contenteditable='true']")) {
+      swipeEligible = false;
+      return;
+    }
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    swipeStartX = event.clientX;
+    swipeStartY = event.clientY;
+    swipePointerId = event.pointerId;
+    swipeEligible = true;
+  });
+  viewport.addEventListener("pointerup", event => {
+    if (!swipeEligible || event.pointerId !== swipePointerId) return;
+    const dx = event.clientX - swipeStartX;
+    const dy = event.clientY - swipeStartY;
+    swipeEligible = false;
+    if (Math.abs(dx) < 45 || Math.abs(dx) <= Math.abs(dy) * 1.2) return;
+    moveToColumn(currentColumnIndex + (dx < 0 ? 1 : -1));
+  });
+  viewport.addEventListener("pointercancel", () => { swipeEligible = false; });
+
+  previousButton.hidden = true;
+  nextButton.hidden = mobileColumns.length < 2;
+
   const orderedColumns = levelColumn && paladinColumn
-    ? [levelPaladinStack, ...remainingColumns]
+    ? [levelPaladinStack, carousel]
     : columns;
 
   tableArea.replaceChildren(...orderedColumns);
