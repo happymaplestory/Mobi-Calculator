@@ -600,7 +600,7 @@ input.section-name {
 }
 
 .theme-toggle-button:not(.is-dark):hover .theme-toggle-icon {
-  filter: brightness(1.4);
+  filter: saturate(1.2);
 }
 
 .theme-toggle-button:focus-visible {
