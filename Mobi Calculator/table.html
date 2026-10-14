@@ -16,8 +16,11 @@
     if (!themeToggle) return;
 
     const getSavedDarkMode = () => {
-      const match = document.cookie.match(/(?:^|;\\s*)darkmode=(true|false)(?:;|$)/);
-      return match ? match[1] === "true" : false;
+      const cookieValue = document.cookie
+        .split(";")
+        .map((item) => item.trim())
+        .find((item) => item.startsWith("darkmode="));
+      return cookieValue ? cookieValue.slice("darkmode=".length) === "true" : false;
     };
 
     const saveDarkMode = (isDark) => {
