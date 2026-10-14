@@ -48,6 +48,7 @@ body {
   overflow-y: visible;
   border: 0;
   background: var(--background-color);
+  transition: background-color 160ms ease;
 }
 
 h1 {
@@ -127,6 +128,7 @@ h1::after {
   border-radius: 14px;
   background: var(--surface-color);
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.10);
+  transition: box-shadow 160ms ease;
   overflow: visible;
 }
 
@@ -669,7 +671,10 @@ body[data-theme="dark"] {
 [data-theme="dark"] .category-group,
 [data-theme="dark"] .row-drag-ghost,
 [data-theme="dark"] .row-placeholder {
-  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+[data-theme="dark"] .category-card {
+  box-shadow: 0 0 18px rgba(204, 204, 204, 0.18);
 }
 [data-theme="dark"] .field,
 [data-theme="dark"] .input-row > * { border-color: #555861; }
