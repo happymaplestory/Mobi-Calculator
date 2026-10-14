@@ -79,14 +79,23 @@ h1::after {
 
 /* 좁은 뷰포트에서는 레벨·팔라딘 스택 아래로 슬라이드 열을 이동합니다. */
 @media (max-width: 799px) {
+  .table-content-box {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
   .table-area {
     flex-direction: column;
     row-gap: 0;
   }
 
+  .level-paladin-stack,
   .column-carousel {
-    margin-top: 50px;
-    margin-left: 22px;
+    margin-left: 0;
+  }
+
+  .column-carousel {
+    margin-top: 80px;
   }
 }
 
