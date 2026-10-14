@@ -487,9 +487,10 @@ function initializeTable() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const duration = reducedMotion ? 0 : TRANSITION_DURATION;
     track.style.transitionDuration = duration + "ms";
-    const viewportWidth = viewport.clientWidth;
-    const columnGap = 40;
-    track.style.transform = "translateX(" + (-(viewportWidth + columnGap) * currentColumnIndex) + "px)";
+    // Align by each column actual layout position, independent of viewport padding and gaps.
+    const targetColumn = mobileColumns[currentColumnIndex];
+    const targetOffset = targetColumn ? targetColumn.offsetLeft : 0;
+    track.style.transform = "translateX(" + (-targetOffset) + "px)";
     pagination.querySelectorAll(".column-pagination-dot").forEach((dot, index) => {
       dot.setAttribute("aria-current", index === currentColumnIndex ? "true" : "false");
     });
