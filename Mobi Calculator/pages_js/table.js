@@ -487,7 +487,9 @@ function initializeTable() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const duration = reducedMotion ? 0 : TRANSITION_DURATION;
     track.style.transitionDuration = duration + "ms";
-    track.style.transform = "translateX(" + (-100 * currentColumnIndex) + "%)";
+    const viewportWidth = viewport.clientWidth;
+    const columnGap = 40;
+    track.style.transform = "translateX(" + (-(viewportWidth + columnGap) * currentColumnIndex) + "px)";
     pagination.querySelectorAll(".column-pagination-dot").forEach((dot, index) => {
       dot.setAttribute("aria-current", index === currentColumnIndex ? "true" : "false");
     });
