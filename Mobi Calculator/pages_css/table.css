@@ -343,6 +343,7 @@ input.section-name {
   gap: 28px;
   width: max-content;
   flex: 0 0 auto;
+  margin-top: 38px;
 }
 
 
@@ -415,6 +416,7 @@ input.section-name {
   align-items: center;
   gap: 12px;
   min-height: 30px;
+  margin-bottom: 15px;
 }
 .column-pagination-dot {
   width: 22px;
