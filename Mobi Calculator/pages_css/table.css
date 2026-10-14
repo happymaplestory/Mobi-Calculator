@@ -596,11 +596,11 @@ input.section-name {
 }
 
 .theme-toggle-button.is-dark:hover .theme-toggle-icon {
-  filter: saturate(1.2);
+  filter: saturate(1.3) brightness(1.2);
 }
 
 .theme-toggle-button:not(.is-dark):hover .theme-toggle-icon {
-  filter: saturate(1.2);
+  filter: saturate(1.3) brightness(1.2);
 }
 
 .theme-toggle-button:focus-visible {
