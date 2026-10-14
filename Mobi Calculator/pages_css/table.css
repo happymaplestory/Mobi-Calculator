@@ -364,10 +364,10 @@ input.section-name {
   grid-row: 2;
   position: relative;
   overflow: hidden;
-  box-sizing: content-box;
+  box-sizing: border-box;
   padding: 24px;
   margin: -24px;
-  width: calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 4px);
+  width: calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 52px);
   touch-action: pan-y;
 }
 .column-carousel-track {
@@ -386,11 +386,15 @@ input.section-name {
   flex: 0 0 calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 4px);
   min-width: 0;
   width: calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 4px);
-  padding: 24px;
-  margin: -24px 0;
+  padding: 0;
+  margin: 0;
 }
-.carousel-column .category-card,
+.carousel-column .category-card {
+  box-sizing: border-box;
+  width: calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 4px);
+}
 .carousel-column .category-group {
+  box-sizing: border-box;
   width: 100%;
 }
 .carousel-column .category-group {
