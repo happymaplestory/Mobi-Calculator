@@ -344,3 +344,114 @@ input.section-name {
   width: max-content;
   flex: 0 0 auto;
 }
+
+
+/* 6개 입력 열의 슬라이드형 탐색 UI */
+.column-carousel {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px max-content 44px;
+  grid-template-rows: 38px auto;
+  align-items: start;
+  column-gap: 8px;
+  width: max-content;
+  flex: 0 0 auto;
+}
+.column-carousel-viewport {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  position: relative;
+  overflow: hidden;
+  width: calc(var(--description-column-width) + var(--application-column-width) + var(--value-column-width) + 4px);
+  touch-action: pan-y;
+}
+.column-carousel-track {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  transform: translateX(0);
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(.22,.72,.22,1);
+  transition-duration: 300ms;
+  will-change: transform;
+}
+.carousel-column {
+  flex: 0 0 100%;
+  min-width: 0;
+  width: 100%;
+}
+.carousel-column .category-card,
+.carousel-column .category-group {
+  width: 100%;
+}
+.carousel-column .category-group {
+  grid-template-columns: var(--description-column-width) var(--application-column-width) var(--value-column-width);
+}
+.carousel-column .input-row {
+  grid-template-columns: var(--description-column-width) var(--application-column-width) var(--value-column-width);
+}
+.carousel-column .category-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.column-pagination {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  min-height: 30px;
+}
+.column-pagination-dot {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  padding: 0;
+  border: 2px solid #c8c8c8;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+.column-pagination-dot[aria-current="true"] {
+  background: #c8c8c8;
+  border-color: #c8c8c8;
+}
+.column-pagination-dot:focus-visible,
+.carousel-arrow:focus-visible {
+  outline: 2px solid #777;
+  outline-offset: 3px;
+}
+.carousel-arrow {
+  grid-row: 2;
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 84px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #c4c4c4;
+  cursor: pointer;
+}
+.carousel-arrow span {
+  font-family: Arial, sans-serif;
+  font-size: 64px;
+  font-weight: 200;
+  line-height: 1;
+  transition: color 150ms ease, transform 150ms ease;
+}
+.carousel-arrow:hover span { color: #888; }
+.carousel-arrow-previous { left: -52px; }
+.carousel-arrow-next { right: -52px; }
+.carousel-arrow[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .column-carousel-track,
+  .column-pagination-dot,
+  .carousel-arrow span { transition: none !important; }
+}
