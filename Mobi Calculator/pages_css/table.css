@@ -374,7 +374,7 @@ input.section-name {
   display: flex;
   align-items: flex-start;
   width: max-content;
-  gap: 40px;
+  gap: 50px;
   transform: translateX(0);
   transition-property: transform;
   transition-timing-function: cubic-bezier(.22,.72,.22,1);
