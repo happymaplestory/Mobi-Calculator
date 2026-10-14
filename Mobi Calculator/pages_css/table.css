@@ -51,10 +51,9 @@ body::after {
   transform: translateX(-50%);
   width: 800px;
   height: 800px;
-  overflow: auto;
+  overflow: hidden;
   border: 1px solid #d0d0d0;
   background: var(--background-color);
-  scrollbar-gutter: stable;
 }
 
 h1 {
