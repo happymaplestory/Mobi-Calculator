@@ -439,7 +439,8 @@ input.section-name {
   grid-column: 1 / -1;
   grid-row: 2;
   position: relative;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   box-sizing: border-box;
   padding: 24px 15px;
   margin: -24px -15px;
@@ -739,6 +740,15 @@ body[data-theme="dark"] {
 [data-theme="dark"] .input-row > * { border-color: #555861; }
 [data-theme="dark"] .input-row { border-bottom-color: #555861; }
 [data-theme="dark"] .delete-row-button { border-color: var(--category-border-color); }
+
+/* 행 추가 버튼이 없는 내 정보~보너스 카드 열은 마지막 행 모서리를 버튼과 동일하게 둥글게 처리합니다. */
+.category-group[data-location-id="3000"] > .input-row:last-child,
+.category-group[data-location-id="4000"] > .input-row:last-child,
+.category-group[data-location-id="5000"] > .input-row:last-child,
+.category-group[data-location-id="6000"] > .input-row:last-child {
+  border-radius: 0 0 10px 10px;
+}
+
 [data-theme="dark"] .add-row-button:hover { background: var(--category-title-color); }
 [data-theme="dark"] .delete-row-button:hover { background: var(--dark-hover-color); }
 [data-theme="dark"] .column-pagination-dot::before { border-color: #777b85; }
