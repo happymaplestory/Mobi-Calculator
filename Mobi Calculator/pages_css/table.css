@@ -1131,6 +1131,12 @@ body[data-theme="dark"] {
   margin-right: 90px;
 }
 
+/* 상단 메뉴가 접힌 경우에만 페이지 전환 UI의 왼쪽 여백을 20px로 확장합니다. */
+.page-header:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
+  width: calc(100% - 110px);
+  margin-left: 20px;
+}
+
 /* 전체 페이지 전환 UI */
 .full-page-pagination {
   display: flex;
