@@ -321,12 +321,10 @@
           const incomingHeight = incoming.getBoundingClientRect().height;
           incoming.style.position = "absolute";
           incoming.style.inset = "0";
-          incoming.style.width = "100%";
           stage.classList.add("is-transitioning");
           stage.style.height = `${outgoingHeight}px`;
           outgoing.style.position = "absolute";
           outgoing.style.inset = "0";
-          outgoing.style.width = "100%";
           stage.getBoundingClientRect();
 
           const previousIndex = pageOrder.indexOf(previousPage);
