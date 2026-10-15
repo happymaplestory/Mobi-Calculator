@@ -624,6 +624,7 @@ input.section-name {
 /* 제목, 데이터 버튼, 테마 전환 및 페이지 선택을 하나의 상단 고정 영역으로 유지합니다. */
 .page-header {
   position: sticky;
+  transition: height 280ms cubic-bezier(.22,.72,.22,1);
   top: 0;
   z-index: 1000;
   isolation: isolate;
@@ -656,11 +657,12 @@ input.section-name {
   position: relative;
   display: flow-root;
   width: 100%;
-  transition: transform 260ms ease;
+  transform: translateY(var(--pagination-layout-shift, 0px));
+  transition: transform 280ms cubic-bezier(.22,.72,.22,1);
 }
 
 .page-header.is-collapsed .pagination-fade-group {
-  transform: translateY(-50px);
+  transform: translateY(calc(var(--pagination-layout-shift, 0px) - 50px));
 }
 
 .pagination-fade-group::after {
@@ -773,6 +775,7 @@ input.section-name {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .page-header,
   .page-header h1,
   .page-header .data-action-buttons,
   .page-header #theme-toggle,
