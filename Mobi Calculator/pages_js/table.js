@@ -209,16 +209,6 @@ function removeCustomRow(row) {
   deleteButton?.addEventListener("transitionend", onButtonTransitionEnd);
 }
 
-window.MobiDeleteConfirmation = {
-  getSkipDeleteConfirmation() {
-    return skipDeleteConfirmation;
-  },
-  setSkipDeleteConfirmation(value) {
-    skipDeleteConfirmation = Boolean(value);
-    if (activeDeleteDialog) activeDeleteDialog.close();
-  }
-};
-
 function createSectionRow(section, { custom = false, sectionSelectFromModel = false } = {}) {
   const row = document.createElement("div");
   row.className = "input-row" + (custom ? " custom-row" : "");
