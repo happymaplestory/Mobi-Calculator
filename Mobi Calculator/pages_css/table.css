@@ -114,7 +114,6 @@ h1[data-title-layout="three"] span {
 .page-content-stage.is-transitioning > .page-content-panel {
   position: absolute;
   inset: 0;
-  width: 100%;
 }
 
 .page-test-panel {
