@@ -563,6 +563,9 @@ input.section-name {
   transition: color 160ms ease, transform 150ms ease;
 }
 .carousel-arrow:hover span { color: #888; }
+.carousel-arrow.is-boundary { cursor: default; }
+.carousel-arrow.is-boundary span { color: #d0d0d0; }
+.carousel-arrow.is-boundary:hover span { color: #d0d0d0; }
 .carousel-arrow-previous { left: -52px; }
 .carousel-arrow-next { right: -52px; }
 .carousel-arrow[hidden] { display: none; }
@@ -747,6 +750,8 @@ body[data-theme="dark"] {
 }
 [data-theme="dark"] .carousel-arrow { color: #cccccc; }
 [data-theme="dark"] .carousel-arrow:hover span { color: #ffffff; }
+[data-theme="dark"] .carousel-arrow.is-boundary span,
+[data-theme="dark"] .carousel-arrow.is-boundary:hover span { color: #777b85; }
 [data-theme="dark"] .theme-toggle-button.is-dark {
   background: #303238;
   color: #cccccc;
