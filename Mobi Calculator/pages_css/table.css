@@ -406,7 +406,7 @@ input.section-name {
   width: max-content;
   flex: 0 0 auto;
   margin-top: 20px;
-  margin-left: -50px;
+  margin-left: 50px;
   margin-right: 50px;
 }
 .column-carousel-viewport {
