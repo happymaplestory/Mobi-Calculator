@@ -352,6 +352,8 @@
 
           Promise.allSettled(activeAnimations.map((animation) => animation.finished)).then(() => {
             if (token !== transitionToken) return;
+            activeAnimations.forEach((animation) => animation.cancel());
+            activeAnimations = [];
             settlePage(nextPage);
           });
         });
