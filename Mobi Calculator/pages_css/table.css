@@ -631,6 +631,19 @@ input.section-name {
   background: var(--background-color);
 }
 
+/* 스크롤 콘텐츠가 상단 고정 영역 아래로 지나갈 때 가장자리를 부드럽게 페이드합니다. */
+.page-header::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: -20px;
+  left: 0;
+  height: 20px;
+  background: linear-gradient(to bottom, var(--background-color) 0%, transparent 100%);
+  pointer-events: none;
+}
+
 /* 다크모드 버튼: 쿠키에 저장된 상태에 따라 버튼 자체의 표시를 전환합니다. */
 .theme-toggle-button {
   position: absolute;
