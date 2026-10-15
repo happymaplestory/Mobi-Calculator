@@ -788,6 +788,7 @@ input.section-name {
   .page-header .data-action-buttons,
   .page-header #theme-toggle,
   .page-header .pagination-fade-group,
+  .full-page-pagination,
   .header-collapse-toggle {
     transition: none !important;
   }
@@ -1157,6 +1158,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   padding: 0;
   border: 0;
   background: transparent;
+  transition: width 260ms ease, margin-left 260ms ease, margin-right 260ms ease;
 }
 
 .full-page-pagination-option {
