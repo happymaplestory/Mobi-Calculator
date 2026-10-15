@@ -637,7 +637,7 @@ input.section-name {
   position: absolute;
   z-index: 2;
   right: 0;
-  bottom: -10px;
+  bottom: -40px;
   left: 0;
   height: 20px;
   background: linear-gradient(to bottom, var(--background-color) 0%, transparent 100%);
