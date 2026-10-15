@@ -668,7 +668,8 @@ input.section-name {
 }
 
 .page-header.is-collapsed .pagination-fade-group {
-  transform: translateY(-50px);
+  /* 접힌 상태에서 기존보다 20px 아래에 표시합니다. */
+  transform: translateY(-30px);
 }
 
 /* 페이드는 실제 문서 흐름에 높이를 차지해 콘텐츠가 그 아래에서 시작하도록 합니다. */
