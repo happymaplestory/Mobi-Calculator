@@ -43,6 +43,135 @@ function createApplicationSelect() {
   return select;
 }
 
+let skipDeleteConfirmation = false;
+let activeDeleteDialog = null;
+
+function requestDeleteConfirmation(value) {
+  if (skipDeleteConfirmation) return Promise.resolve(true);
+
+  return new Promise(resolve => {
+    const overlay = document.createElement("div");
+    overlay.className = "delete-confirm-overlay";
+    overlay.innerHTML = `
+      <section class="delete-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="delete-confirm-title" aria-describedby="delete-confirm-message">
+        <h2 class="delete-confirm-title" id="delete-confirm-title">데이터 삭제 확인</h2>
+        <p class="delete-confirm-message" id="delete-confirm-message"></p>
+        <label class="delete-confirm-option">
+          <input class="delete-confirm-skip-checkbox" type="checkbox">
+          <span>더 물어보지 마세요.</span>
+        </label>
+        <div class="delete-confirm-actions">
+          <button class="delete-confirm-cancel" type="button">취소</button>
+          <button class="delete-confirm-accept" type="button">삭제</button>
+        </div>
+      </section>`;
+    overlay.querySelector(".delete-confirm-message").textContent =
+      "\"" + value + "\" 삭제하시겠습니까?";
+
+    const checkbox = overlay.querySelector(".delete-confirm-skip-checkbox");
+    const cancelButton = overlay.querySelector(".delete-confirm-cancel");
+    const acceptButton = overlay.querySelector(".delete-confirm-accept");
+    let finished = false;
+
+    const finish = confirmed => {
+      if (finished) return;
+      finished = true;
+      if (confirmed) skipDeleteConfirmation = checkbox.checked;
+      document.removeEventListener("keydown", onKeyDown);
+      overlay.remove();
+      activeDeleteDialog = null;
+      resolve(confirmed);
+    };
+
+    const onKeyDown = event => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        finish(false);
+      } else if (event.key === "Enter" && !event.target.matches("button")) {
+        event.preventDefault();
+        finish(true);
+      }
+    };
+
+    cancelButton.addEventListener("click", () => finish(false));
+    acceptButton.addEventListener("click", () => finish(true));
+    overlay.addEventListener("click", event => {
+      if (event.target === overlay) finish(false);
+    });
+    document.addEventListener("keydown", onKeyDown);
+    document.body.appendChild(overlay);
+    activeDeleteDialog = { close: () => finish(false) };
+    acceptButton.focus();
+  });
+}
+
+function removeCustomRow(row) {
+  // 확인된 삭제만 애니메이션 처리합니다. 행이 접히는 동안 아래 행과 + 버튼이 위로 이동합니다.
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    row.remove();
+    return;
+  }
+
+  const rowHeight = row.getBoundingClientRect().height;
+  row.style.height = rowHeight + "px";
+  row.style.minHeight = "0";
+  row.style.overflow = "hidden";
+  row.style.opacity = "1";
+  row.style.transition = "height 220ms ease, opacity 180ms ease, margin 220ms ease, padding 220ms ease";
+  const deleteButton = row.querySelector(".delete-row-button");
+  if (deleteButton) {
+    deleteButton.style.opacity = "1";
+    deleteButton.style.transition = "opacity 180ms ease, transform 180ms ease";
+  }
+  row.getBoundingClientRect();
+
+  requestAnimationFrame(() => {
+    row.style.height = "0px";
+    row.style.opacity = "0";
+    if (deleteButton) {
+      deleteButton.style.opacity = "0";
+      deleteButton.style.transform = "translate(4px, -50%) scale(0.92)";
+    }
+    row.style.marginTop = "0";
+    row.style.marginBottom = "0";
+    row.style.paddingTop = "0";
+    row.style.paddingBottom = "0";
+    row.style.borderTopWidth = "0";
+    row.style.borderBottomWidth = "0";
+  });
+
+  let rowHeightFinished = false;
+  let buttonFadeFinished = !deleteButton;
+  const finishRemoval = () => {
+    if (!rowHeightFinished || !buttonFadeFinished) return;
+    row.removeEventListener("transitionend", onRowTransitionEnd);
+    deleteButton?.removeEventListener("transitionend", onButtonTransitionEnd);
+    row.remove();
+  };
+  const onRowTransitionEnd = event => {
+    if (event.target !== row || event.propertyName !== "height") return;
+    rowHeightFinished = true;
+    finishRemoval();
+  };
+  const onButtonTransitionEnd = event => {
+    if (event.target !== deleteButton || event.propertyName !== "opacity") return;
+    buttonFadeFinished = true;
+    finishRemoval();
+  };
+  row.addEventListener("transitionend", onRowTransitionEnd);
+  deleteButton?.addEventListener("transitionend", onButtonTransitionEnd);
+}
+
+window.MobiDeleteConfirmation = {
+  getSkipDeleteConfirmation() {
+    return skipDeleteConfirmation;
+  },
+  setSkipDeleteConfirmation(value) {
+    skipDeleteConfirmation = Boolean(value);
+    if (activeDeleteDialog) activeDeleteDialog.close();
+  }
+};
+
 function createSectionRow(section, { custom = false, sectionSelectFromModel = false } = {}) {
   const row = document.createElement("div");
   row.className = "input-row" + (custom ? " custom-row" : "");
@@ -114,66 +243,15 @@ function createSectionRow(section, { custom = false, sectionSelectFromModel = fa
       const valueInput = row.querySelector(".value-input");
       const value = valueInput?.value.trim() || "";
 
-      if (value && !window.confirm("\"" + value + "\" 삭제하시겠습니까?")) {
+      if (value) {
+        requestDeleteConfirmation(value).then(confirmed => {
+          if (confirmed) removeCustomRow(row);
+        });
         return;
       }
 
-      // 확인된 삭제만 애니메이션 처리합니다. 행이 접히는 동안 아래 행과 + 버튼이 위로 이동합니다.
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        row.remove();
-        return;
-      }
+      removeCustomRow(row);
 
-      const rowHeight = row.getBoundingClientRect().height;
-      row.style.height = rowHeight + "px";
-      row.style.minHeight = "0";
-      row.style.overflow = "hidden";
-      row.style.opacity = "1";
-      row.style.transition = "height 220ms ease, opacity 180ms ease, margin 220ms ease, padding 220ms ease";
-      const deleteButton = row.querySelector(".delete-row-button");
-      if (deleteButton) {
-        deleteButton.style.opacity = "1";
-        deleteButton.style.transition = "opacity 180ms ease, transform 180ms ease";
-      }
-      row.getBoundingClientRect();
-
-      requestAnimationFrame(() => {
-        row.style.height = "0px";
-        row.style.opacity = "0";
-        if (deleteButton) {
-          deleteButton.style.opacity = "0";
-          deleteButton.style.transform = "translate(4px, -50%) scale(0.92)";
-        }
-        row.style.marginTop = "0";
-        row.style.marginBottom = "0";
-        row.style.paddingTop = "0";
-        row.style.paddingBottom = "0";
-        row.style.borderTopWidth = "0";
-        row.style.borderBottomWidth = "0";
-      });
-
-      // 행 접힘과 X 버튼 페이드아웃이 모두 끝난 뒤 제거합니다.
-      // 행의 height 전환만 기다리면 버튼 전환이 끝나기 전에 DOM에서 제거될 수 있습니다.
-      let rowHeightFinished = false;
-      let buttonFadeFinished = !deleteButton;
-      const finishRemoval = () => {
-        if (!rowHeightFinished || !buttonFadeFinished) return;
-        row.removeEventListener("transitionend", onRowTransitionEnd);
-        deleteButton?.removeEventListener("transitionend", onButtonTransitionEnd);
-        row.remove();
-      };
-      const onRowTransitionEnd = event => {
-        if (event.target !== row || event.propertyName !== "height") return;
-        rowHeightFinished = true;
-        finishRemoval();
-      };
-      const onButtonTransitionEnd = event => {
-        if (event.target !== deleteButton || event.propertyName !== "opacity") return;
-        buttonFadeFinished = true;
-        finishRemoval();
-      };
-      row.addEventListener("transitionend", onRowTransitionEnd);
-      deleteButton?.addEventListener("transitionend", onButtonTransitionEnd);
     });
     row.appendChild(deleteButton);
   }
