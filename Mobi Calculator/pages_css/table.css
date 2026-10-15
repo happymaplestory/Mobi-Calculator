@@ -637,7 +637,7 @@ input.section-name {
   position: absolute;
   z-index: 2;
   right: 0;
-  bottom: -20px;
+  bottom: -10px;
   left: 0;
   height: 20px;
   background: linear-gradient(to bottom, var(--background-color) 0%, transparent 100%);
@@ -1034,7 +1034,7 @@ body[data-theme="dark"] {
   width: calc(100% - 40px);
   min-width: 410px;
   height: 55px;
-  margin: 80px 20px 0;
+  margin: 80px 20px 10px;
   padding: 0;
   border: 0;
   background: transparent;
