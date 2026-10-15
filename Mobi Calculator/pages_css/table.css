@@ -54,7 +54,7 @@ h1 {
   row-gap: 0;
   width: min(500px, max(0px, calc(100vw - 260px)));
   min-width: 0;
-  margin: -4px 0 8px;
+  margin: -11px 0 15px;
   padding: 0;
   color: #555555;
   font-size: 26px;
