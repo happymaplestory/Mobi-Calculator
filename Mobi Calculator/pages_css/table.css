@@ -752,7 +752,6 @@ input.section-name {
   .page-header h1,
   .page-header .data-action-buttons,
   .page-header #theme-toggle,
-  .page-header #full-page-pagination,
   .header-collapse-toggle {
     transition: none !important;
   }
