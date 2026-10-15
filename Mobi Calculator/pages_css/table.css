@@ -1133,6 +1133,16 @@ body[data-theme="dark"] {
 }
 
 
+/* 제목이 한 줄일 때만 페이지 전환 UI의 좌우 여백과 시각적 Y 위치를 별도 조정합니다. */
+.page-header:has(h1[data-title-layout="single"]) .full-page-pagination {
+  position: relative;
+  top: -10px;
+  width: calc(100% - 185px);
+  min-width: 0;
+  margin-left: 120px;
+  margin-right: 65px;
+}
+
 /* 전체 페이지 전환 UI */
 .full-page-pagination {
   display: flex;
