@@ -643,7 +643,12 @@ input.section-name {
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
   mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
   pointer-events: none;
-  transition: background-color 160ms ease;
+  transition: background-color 160ms ease, inset 260ms ease;
+}
+
+/* 접기 시 페이지 전환 그룹과 같은 거리만큼 배경 페이드 영역도 위로 이동합니다. */
+.page-header.is-collapsed::before {
+  inset: 0 0 50px;
 }
 
 /* 페이지 선택 UI와 세로 페이드 영역을 하나의 그룹으로 유지합니다. */
