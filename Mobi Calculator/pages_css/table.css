@@ -770,6 +770,7 @@ input.section-name {
 .page-header #theme-toggle { transform: translateY(0); }
 
 .page-header.is-collapsed h1 {
+  position: absolute;
   opacity: 0;
   transform: translate(-50%, -80px);
   pointer-events: none;
