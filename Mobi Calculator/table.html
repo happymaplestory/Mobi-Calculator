@@ -253,10 +253,10 @@
   </script>
   <div class="pagination-fade-group">
   <nav id="full-page-pagination" class="full-page-pagination" aria-label="페이지 선택">
-    <button class="full-page-pagination-option is-active" type="button" aria-pressed="true">스탯</button>
-    <button class="full-page-pagination-option" type="button" aria-pressed="false">룬</button>
-    <button class="full-page-pagination-option" type="button" aria-pressed="false">장비</button>
-    <button class="full-page-pagination-option" type="button" aria-pressed="false">기타</button>
+    <button class="full-page-pagination-option is-active" type="button" data-page="stats" aria-pressed="true">스탯</button>
+    <button class="full-page-pagination-option" type="button" data-page="runes" aria-pressed="false">룬</button>
+    <button class="full-page-pagination-option" type="button" data-page="equipment" aria-pressed="false">장비</button>
+    <button class="full-page-pagination-option" type="button" data-page="other" aria-pressed="false">기타</button>
   </nav>
   <script>
     (() => {
@@ -270,6 +270,12 @@
             item.classList.toggle("is-active", selected);
             item.setAttribute("aria-pressed", String(selected));
           });
+
+          // 현재 구현된 입력 콘텐츠는 스탯 페이지에서만 표시합니다.
+          const tableArea = document.getElementById("table-area");
+          if (tableArea) {
+            tableArea.hidden = option.dataset.page !== "stats";
+          }
         });
       });
     })();
