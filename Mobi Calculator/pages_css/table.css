@@ -27,7 +27,7 @@ button,
 body {
   margin: 0;
   padding: 24px 0;
-  min-width: 800px;
+  min-width: 0;
   min-height: 300px;
   overflow-x: clip;
   background: var(--background-color);
@@ -39,18 +39,6 @@ body {
 }
 
 
-.table-content-box {
-  position: relative;
-  left: calc(50vw + 20px);
-  transform: translateX(-50%);
-  width: 800px;
-  height: 800px;
-  overflow-x: clip;
-  overflow-y: visible;
-  border: 0;
-  background: var(--background-color);
-  transition: background-color 160ms ease;
-}
 
 h1 {
   position: relative;
@@ -83,32 +71,12 @@ h1::after {
 .table-area {
   position: relative;
   display: flex;
-  width: max-content;
-  flex-wrap: nowrap;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: flex-start;
-  column-gap: 28px;
-}
-
-/* 좁은 뷰포트에서는 레벨·팔라딘 스택 아래로 슬라이드 열을 이동합니다. */
-@media (max-width: 799px) {
-  .table-content-box {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .table-area {
-    flex-direction: column;
-    row-gap: 0;
-  }
-
-  .level-paladin-stack,
-  .column-carousel {
-    margin-left: 0;
-  }
-
-  .column-carousel {
-    margin-top: 80px;
-  }
+  column-gap: 0;
+  row-gap: 80px;
 }
 
 .category-column {
@@ -422,7 +390,8 @@ input.section-name {
   width: max-content;
   flex: 0 0 auto;
   margin-top: 58px;
-  margin-left: 22px;
+  margin-left: 50px;
+  margin-right: 50px;
 }
 
 
@@ -436,9 +405,9 @@ input.section-name {
   column-gap: 8px;
   width: max-content;
   flex: 0 0 auto;
-  /* Keep the previous arrow clear of the Level/Paladin stack. */
   margin-top: 20px;
-  margin-left: 50px;
+  margin-left: 0;
+  margin-right: 50px;
 }
 .column-carousel-viewport {
   grid-column: 1 / -1;
@@ -727,7 +696,6 @@ body[data-theme="dark"] {
   color: var(--text-color);
   transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
 }
-[data-theme="dark"] .table-content-box { background: var(--background-color); }
 [data-theme="dark"] h1 {
   color: var(--dark-text-color);
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
