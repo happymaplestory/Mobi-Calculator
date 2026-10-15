@@ -2,7 +2,7 @@
  * 마비노기 모바일 계산기 데이터 모델
  *
  * 네 개의 표(위치, 속성, 구분, 적용)를 ID로 연결해 관리합니다.
- * 이 파일은 데이터 정의만 보관하며, 현재 table.js UI에 자동으로 연결되지는 않습니다.
+ * table.html에서 먼저 로드되며, table.js가 MOBI_DATA_MODEL을 참조해 위치별 입력 테이블 UI를 생성합니다.
  */
 
 const MOBI_DATA_MODEL = {
