@@ -636,7 +636,7 @@ input.section-name {
   isolation: isolate;
   margin-top: -24px;
   padding-top: 24px;
-  padding-bottom: 10px;
+  padding-bottom: 0px;
   background: transparent;
 }
 
