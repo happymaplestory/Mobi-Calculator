@@ -874,6 +874,27 @@ body[data-theme="dark"] {
   place-items: center;
   padding: 20px;
   background: rgba(0, 0, 0, 0.42);
+  animation: delete-confirm-backdrop-in 220ms ease-out both;
+}
+
+.delete-confirm-dialog {
+  animation: delete-confirm-dialog-in 220ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+@keyframes delete-confirm-backdrop-in {
+  from { background-color: rgba(0, 0, 0, 0); }
+  to { background-color: rgba(0, 0, 0, 0.42); }
+}
+
+@keyframes delete-confirm-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .delete-confirm-dialog {
@@ -966,6 +987,11 @@ body[data-theme="dark"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .delete-confirm-overlay,
+  .delete-confirm-dialog {
+    animation: none !important;
+  }
+
   .delete-confirm-actions button {
     transition: none !important;
   }
