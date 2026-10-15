@@ -61,6 +61,8 @@ h1 {
   font-weight: 600;
   letter-spacing: 0.04em;
   line-height: 1.35;
+  height: auto;
+  transition: height 280ms cubic-bezier(.22,.72,.22,1);
   text-align: center;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
 }
@@ -624,7 +626,6 @@ input.section-name {
 /* 제목, 데이터 버튼, 테마 전환 및 페이지 선택을 하나의 상단 고정 영역으로 유지합니다. */
 .page-header {
   position: sticky;
-  transition: height 280ms cubic-bezier(.22,.72,.22,1);
   top: 0;
   z-index: 1000;
   isolation: isolate;
@@ -657,21 +658,19 @@ input.section-name {
   position: relative;
   display: flow-root;
   width: 100%;
-  transform: translateY(var(--pagination-layout-shift, 0px));
-  transition: transform 280ms cubic-bezier(.22,.72,.22,1);
+  transition: transform 260ms ease;
 }
 
 .page-header.is-collapsed .pagination-fade-group {
-  transform: translateY(calc(var(--pagination-layout-shift, 0px) - 50px));
+  transform: translateY(-50px);
 }
 
+/* 페이드는 실제 문서 흐름에 높이를 차지해 콘텐츠가 그 아래에서 시작하도록 합니다. */
 .pagination-fade-group::after {
   content: "";
-  position: absolute;
-  z-index: 2;
-  top: 100%;
-  right: 0;
-  left: 0;
+  position: relative;
+  display: block;
+  width: 100%;
   height: 20px;
   background: linear-gradient(to bottom, var(--background-color) 0%, transparent 100%);
   pointer-events: none;
@@ -775,7 +774,6 @@ input.section-name {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .page-header,
   .page-header h1,
   .page-header .data-action-buttons,
   .page-header #theme-toggle,
@@ -1141,8 +1139,7 @@ body[data-theme="dark"] {
   width: calc(100% - 40px);
   min-width: 410px;
   height: 30px;
-  margin: 60px 20px 10px;
-  transform: translateY(-50px);
+  margin: 10px 20px 0;
   padding: 0;
   border: 0;
   background: transparent;
