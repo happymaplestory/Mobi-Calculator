@@ -527,8 +527,7 @@ function initializeTable() {
     pagination.querySelectorAll(".column-pagination-dot").forEach((dot, index) => {
       dot.setAttribute("aria-current", index === currentColumnIndex ? "true" : "false");
     });
-    previousButton.hidden = currentColumnIndex === 0;
-    nextButton.hidden = currentColumnIndex === mobileColumns.length - 1;
+    updateArrowState();
     // 여러 열 이동도 전체 시간이 일정하도록 이동 거리와 속도를 함께 조절합니다.
     track.style.setProperty("--carousel-travel-distance", distance);
     if (moveTimer) clearTimeout(moveTimer);
@@ -538,8 +537,28 @@ function initializeTable() {
     }, duration);
   }
 
-  previousButton.addEventListener("click", () => moveToColumn(currentColumnIndex - 1));
-  nextButton.addEventListener("click", () => moveToColumn(currentColumnIndex + 1));
+  function updateArrowState() {
+    const atFirstColumn = currentColumnIndex === 0;
+    const atLastColumn = currentColumnIndex === mobileColumns.length - 1;
+
+    previousButton.hidden = false;
+    nextButton.hidden = mobileColumns.length < 2;
+
+    previousButton.classList.toggle("is-boundary", atFirstColumn);
+    nextButton.classList.toggle("is-boundary", atLastColumn);
+    previousButton.setAttribute("aria-disabled", String(atFirstColumn));
+    nextButton.setAttribute("aria-disabled", String(atLastColumn));
+
+    previousButton.querySelector("span").textContent = atFirstColumn ? "‖" : "‹";
+    nextButton.querySelector("span").textContent = atLastColumn ? "‖" : "›";
+  }
+
+  previousButton.addEventListener("click", () => {
+    if (currentColumnIndex > 0) moveToColumn(currentColumnIndex - 1);
+  });
+  nextButton.addEventListener("click", () => {
+    if (currentColumnIndex < mobileColumns.length - 1) moveToColumn(currentColumnIndex + 1);
+  });
 
   let swipeStartX = 0;
   let swipeStartY = 0;
@@ -566,8 +585,7 @@ function initializeTable() {
   });
   viewport.addEventListener("pointercancel", () => { swipeEligible = false; });
 
-  previousButton.hidden = true;
-  nextButton.hidden = mobileColumns.length < 2;
+  updateArrowState();
 
   const orderedColumns = levelColumn && paladinColumn
     ? [levelPaladinStack, carousel]
