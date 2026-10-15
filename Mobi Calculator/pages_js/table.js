@@ -304,6 +304,7 @@ function enableRowDragging(tableArea) {
   let startY = 0;
   let pointerId = null;
   let dragging = false;
+  let handlingDrop = false;
   let originalNextSibling = null;
 
   function getDropGroup(target) {
@@ -373,6 +374,7 @@ function enableRowDragging(tableArea) {
     pointerId = null;
     originalNextSibling = null;
     dragging = false;
+    handlingDrop = false;
   }
 
   tableArea.addEventListener("pointerdown", event => {
@@ -437,7 +439,8 @@ function enableRowDragging(tableArea) {
   }, { passive: false });
 
   document.addEventListener("pointerup", async event => {
-    if (!active || event.pointerId !== pointerId) return;
+    if (!active || event.pointerId !== pointerId || handlingDrop) return;
+    handlingDrop = true;
     const row = active;
     const sourceGroup = row.parentElement;
     const targetGroup = dragging ? placeholder?.parentElement : sourceGroup;
