@@ -826,6 +826,8 @@ input.section-name {
 }
 #save-button:hover, #save-button.is-active { background: var(--save-hover-color); }
 #load-button:hover, #load-button.is-active { background: var(--load-hover-color); }
+.data-action-buttons[data-mode="save"] #save-button { border-bottom-left-radius: 0; }
+.data-action-buttons[data-mode="load"] #load-button { border-bottom-right-radius: 0; }
 .data-action-buttons[data-mode="save"] .data-action-divider,
 .data-action-buttons[data-mode="save"] .data-action-submenu-button { background: var(--save-hover-color); }
 .data-action-buttons[data-mode="load"] .data-action-divider,
