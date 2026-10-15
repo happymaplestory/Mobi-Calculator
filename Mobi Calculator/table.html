@@ -261,21 +261,101 @@
   <script>
     (() => {
       const pagination = document.getElementById("full-page-pagination");
-      if (!pagination) return;
+      const stage = document.getElementById("page-content-stage");
+      if (!pagination || !stage) return;
+
       const options = [...pagination.querySelectorAll(".full-page-pagination-option")];
+      const pages = {
+        stats: document.getElementById("table-area"),
+        runes: document.getElementById("runes-page"),
+        equipment: document.getElementById("equipment-page"),
+        other: document.getElementById("other-page")
+      };
+      const pageOrder = options.map((option) => option.dataset.page);
+      const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let currentPage = "stats";
+      let transitionToken = 0;
+      let activeAnimations = [];
+
+      const settlePage = (pageKey) => {
+        Object.entries(pages).forEach(([key, panel]) => {
+          if (!panel) return;
+          panel.hidden = key !== pageKey;
+          panel.style.removeProperty("position");
+          panel.style.removeProperty("inset");
+          panel.style.removeProperty("width");
+          panel.style.removeProperty("opacity");
+          panel.style.removeProperty("transform");
+        });
+        stage.classList.remove("is-transitioning");
+        stage.style.removeProperty("height");
+      };
+
       options.forEach((option) => {
         option.addEventListener("click", () => {
+          const nextPage = option.dataset.page;
+          if (!pages[nextPage] || nextPage === currentPage) return;
+
           options.forEach((item) => {
             const selected = item === option;
             item.classList.toggle("is-active", selected);
             item.setAttribute("aria-pressed", String(selected));
           });
 
-          // 현재 구현된 입력 콘텐츠는 스탯 페이지에서만 표시합니다.
-          const tableArea = document.getElementById("table-area");
-          if (tableArea) {
-            tableArea.hidden = option.dataset.page !== "stats";
+          const previousPage = currentPage;
+          const outgoing = pages[previousPage];
+          const incoming = pages[nextPage];
+          const token = ++transitionToken;
+          activeAnimations.forEach((animation) => animation.cancel());
+          activeAnimations = [];
+          settlePage(previousPage);
+          currentPage = nextPage;
+
+          if (reduceMotion()) {
+            settlePage(nextPage);
+            return;
           }
+
+          const outgoingHeight = outgoing.getBoundingClientRect().height;
+          incoming.hidden = false;
+          const incomingHeight = incoming.getBoundingClientRect().height;
+          incoming.style.position = "absolute";
+          incoming.style.inset = "0";
+          incoming.style.width = "100%";
+          stage.classList.add("is-transitioning");
+          stage.style.height = `${outgoingHeight}px`;
+          outgoing.style.position = "absolute";
+          outgoing.style.inset = "0";
+          outgoing.style.width = "100%";
+          stage.getBoundingClientRect();
+
+          const previousIndex = pageOrder.indexOf(previousPage);
+          const nextIndex = pageOrder.indexOf(nextPage);
+          const incomingOffset = nextIndex < previousIndex ? -32 : 32;
+          const exitAnimation = outgoing.animate(
+            [
+              { opacity: 1, transform: "translateY(0) scale(1)" },
+              { opacity: 0, transform: "translateY(24px) scale(0.94)" }
+            ],
+            { duration: 260, easing: "cubic-bezier(.22,.72,.22,1)", fill: "forwards" }
+          );
+          const enterAnimation = incoming.animate(
+            [
+              { opacity: 0, transform: `translateX(${incomingOffset}px)` },
+              { opacity: 1, transform: "translateX(0)" }
+            ],
+            { duration: 260, delay: 100, easing: "cubic-bezier(.22,.72,.22,1)", fill: "both" }
+          );
+          const stageAnimation = stage.animate(
+            [{ height: `${outgoingHeight}px` }, { height: `${incomingHeight}px` }],
+            { duration: 260, delay: 100, easing: "cubic-bezier(.22,.72,.22,1)", fill: "forwards" }
+          );
+          activeAnimations = [exitAnimation, enterAnimation, stageAnimation];
+
+          Promise.allSettled(activeAnimations.map((animation) => animation.finished)).then(() => {
+            if (token !== transitionToken) return;
+            settlePage(nextPage);
+          });
         });
       });
     })();
@@ -283,7 +363,12 @@
   </div>
   </div>
 
-  <div id="table-area" class="table-area"></div>
+  <main id="page-content-stage" class="page-content-stage">
+    <div id="table-area" class="table-area page-content-panel"></div>
+    <section id="runes-page" class="page-content-panel page-test-panel" data-page="runes" hidden aria-label="룬 페이지 테스트 콘텐츠"></section>
+    <section id="equipment-page" class="page-content-panel page-test-panel" data-page="equipment" hidden aria-label="장비 페이지 테스트 콘텐츠"></section>
+    <section id="other-page" class="page-content-panel page-test-panel" data-page="other" hidden aria-label="기타 페이지 테스트 콘텐츠"></section>
+  </main>
 
   <script src="pages_js/data-model.js"></script>
   <script src="pages_js/table.js"></script>
