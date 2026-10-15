@@ -44,42 +44,56 @@ function createApplicationSelect() {
 }
 
 let skipDeleteConfirmation = false;
-let activeDeleteDialog = null;
+let skipMoveConfirmation = false;
+let activeCustomDialog = null;
 
-function requestDeleteConfirmation(value) {
-  if (skipDeleteConfirmation) return Promise.resolve(true);
+function requestCustomConfirmation({
+  title,
+  message,
+  confirmText = "확인",
+  showSkipCheckbox = false,
+  skipPreference = null
+}) {
+  if (skipPreference === "delete" && skipDeleteConfirmation) return Promise.resolve(true);
+  if (skipPreference === "move" && skipMoveConfirmation) return Promise.resolve(true);
 
   return new Promise(resolve => {
     const overlay = document.createElement("div");
     overlay.className = "delete-confirm-overlay";
     overlay.innerHTML = `
       <section class="delete-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="delete-confirm-title" aria-describedby="delete-confirm-message">
-        <h2 class="delete-confirm-title" id="delete-confirm-title">데이터 삭제 확인</h2>
+        <h2 class="delete-confirm-title" id="delete-confirm-title"></h2>
         <p class="delete-confirm-message" id="delete-confirm-message"></p>
-        <label class="delete-confirm-option">
+        <label class="delete-confirm-option" hidden>
           <input class="delete-confirm-skip-checkbox" type="checkbox">
           <span>더 물어보지 마세요.</span>
         </label>
         <div class="delete-confirm-actions">
           <button class="delete-confirm-cancel" type="button">취소</button>
-          <button class="delete-confirm-accept" type="button">삭제</button>
+          <button class="delete-confirm-accept" type="button"></button>
         </div>
       </section>`;
-    overlay.querySelector(".delete-confirm-message").textContent =
-      "\"" + value + "\" 삭제하시겠습니까?";
+    overlay.querySelector(".delete-confirm-title").textContent = title;
+    overlay.querySelector(".delete-confirm-message").textContent = message;
 
+    const option = overlay.querySelector(".delete-confirm-option");
+    option.hidden = !showSkipCheckbox;
     const checkbox = overlay.querySelector(".delete-confirm-skip-checkbox");
     const cancelButton = overlay.querySelector(".delete-confirm-cancel");
     const acceptButton = overlay.querySelector(".delete-confirm-accept");
+    acceptButton.textContent = confirmText;
     let finished = false;
 
     const finish = confirmed => {
       if (finished) return;
       finished = true;
-      if (confirmed) skipDeleteConfirmation = checkbox.checked;
+      if (confirmed && showSkipCheckbox) {
+        if (skipPreference === "delete") skipDeleteConfirmation = checkbox.checked;
+        if (skipPreference === "move") skipMoveConfirmation = checkbox.checked;
+      }
       document.removeEventListener("keydown", onKeyDown);
       overlay.remove();
-      activeDeleteDialog = null;
+      activeCustomDialog = null;
       resolve(confirmed);
     };
 
@@ -97,10 +111,46 @@ function requestDeleteConfirmation(value) {
     });
     document.addEventListener("keydown", onKeyDown);
     document.body.appendChild(overlay);
-    activeDeleteDialog = { close: () => finish(false) };
+    activeCustomDialog = { close: () => finish(false) };
     acceptButton.focus();
   });
 }
+
+function requestDeleteConfirmation(value) {
+  return requestCustomConfirmation({
+    title: "데이터 삭제 확인",
+    message: "\"" + value + "\" 삭제하시겠습니까?",
+    confirmText: "삭제",
+    showSkipCheckbox: true,
+    skipPreference: "delete"
+  });
+}
+
+window.MobiCustomDialogs = {
+  confirm(options) {
+    return requestCustomConfirmation(options);
+  }
+};
+
+window.MobiDeleteConfirmation = {
+  getSkipDeleteConfirmation() {
+    return skipDeleteConfirmation;
+  },
+  setSkipDeleteConfirmation(value) {
+    skipDeleteConfirmation = Boolean(value);
+    if (activeCustomDialog) activeCustomDialog.close();
+  }
+};
+
+window.MobiMoveConfirmation = {
+  getSkipMoveConfirmation() {
+    return skipMoveConfirmation;
+  },
+  setSkipMoveConfirmation(value) {
+    skipMoveConfirmation = Boolean(value);
+    if (activeCustomDialog) activeCustomDialog.close();
+  }
+};
 
 function removeCustomRow(row) {
   // 확인된 삭제만 애니메이션 처리합니다. 행이 접히는 동안 아래 행과 + 버튼이 위로 이동합니다.
@@ -396,7 +446,7 @@ function enableRowDragging(tableArea) {
     }
   }, { passive: false });
 
-  document.addEventListener("pointerup", event => {
+  document.addEventListener("pointerup", async event => {
     if (!active || event.pointerId !== pointerId) return;
     const row = active;
     const sourceGroup = row.parentElement;
@@ -407,8 +457,14 @@ function enableRowDragging(tableArea) {
       const targetLocationId = targetGroup.dataset.locationId;
       let allowMove = true;
 
-      if (sourceLocationId !== targetLocationId) {
-        allowMove = window.confirm("입력 값만 이동됩니다.");
+      if (sourceLocationId !== targetLocationId && !skipMoveConfirmation) {
+        allowMove = await requestCustomConfirmation({
+          title: "행 이동 확인",
+          message: "입력 값만 이동됩니다.",
+          confirmText: "이동",
+          showSkipCheckbox: true,
+          skipPreference: "move"
+        });
       }
 
       if (allowMove) {
