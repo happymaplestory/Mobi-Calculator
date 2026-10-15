@@ -43,14 +43,42 @@ function createApplicationSelect() {
   return select;
 }
 
-function createSectionRow(section, { custom = false } = {}) {
+function createSectionRow(section, { custom = false, sectionSelectFromModel = false } = {}) {
   const row = document.createElement("div");
   row.className = "input-row" + (custom ? " custom-row" : "");
   row.draggable = false;
   if (section?.id != null) row.dataset.sectionId = String(section.id);
 
   let name;
-  if (custom) {
+  if (custom && sectionSelectFromModel) {
+    name = document.createElement("select");
+    name.className = "field section-name editable-section-name";
+    name.setAttribute("aria-label", "구분 선택");
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "구분 선택";
+    placeholder.selected = true;
+    name.appendChild(placeholder);
+
+    MOBI_DATA_MODEL.sectionTable
+      .filter(item => item.id > 3000)
+      .sort((a, b) => a.id - b.id)
+      .forEach(item => {
+        const option = document.createElement("option");
+        option.value = String(item.id);
+        option.textContent = item.name;
+        name.appendChild(option);
+      });
+
+    name.addEventListener("change", () => {
+      const selectedSection = MOBI_DATA_MODEL.sectionTable.find(
+        item => String(item.id) === name.value
+      );
+      if (selectedSection) row.dataset.sectionId = String(selectedSection.id);
+      else delete row.dataset.sectionId;
+    });
+  } else if (custom) {
     name = document.createElement("input");
     name.type = "text";
     name.className = "field section-name editable-section-name";
@@ -383,7 +411,10 @@ function createLocationColumn(location) {
     addButton.textContent = "+";
     addButton.setAttribute("aria-label", location.name + " 항목 추가");
     addButton.addEventListener("click", () => {
-      const addRow = createSectionRow(null, { custom: true });
+      const addRow = createSectionRow(null, {
+        custom: true,
+        sectionSelectFromModel: location.id === 7000 || location.id === 8000
+      });
       addRow.classList.add("row-entering");
       group.insertBefore(addRow, addButton);
 
