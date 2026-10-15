@@ -42,30 +42,30 @@ body {
 
 h1 {
   position: relative;
-  left: 50vw;
+  left: calc(50% + 55px);
   transform: translateX(-50%);
-  display: block;
-  width: 500px;
-  max-width: calc(100vw - 40px);
-  margin: 0 0 8px;
-  padding: 50px 16px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.28em;
+  row-gap: 0;
+  width: min(500px, max(0px, calc(100vw - 260px)));
+  min-width: 0;
+  margin: -4px 0 8px;
+  padding: 0;
   color: #555555;
-  font-size: 28px;
-  font-weight: 800;
+  font-size: 26px;
+  font-weight: 400;
   letter-spacing: 0.04em;
   line-height: 1.35;
   text-align: center;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
-h1::after {
-  content: "";
-  display: block;
-  width: 156px;
-  height: 3px;
-  margin: 12px auto 0;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, #8f8f8f 22%, #c7b8d8 50%, #8f8f8f 78%, transparent);
+h1 span {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .table-area {
@@ -719,9 +719,6 @@ body[data-theme="dark"] {
 [data-theme="dark"] h1 {
   color: var(--dark-text-color);
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
-}
-[data-theme="dark"] h1::after {
-  background: linear-gradient(90deg, transparent, #777b85 22%, #62596e 50%, #777b85 78%, transparent);
 }
 [data-theme="dark"] .category-title { color: var(--dark-text-color); }
 [data-theme="dark"] .field option {
