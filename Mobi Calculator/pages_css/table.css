@@ -626,10 +626,24 @@ input.section-name {
   position: sticky;
   top: 0;
   z-index: 1000;
+  isolation: isolate;
   margin-top: -24px;
   padding-top: 24px;
   padding-bottom: 10px;
-  background: var(--background-color);
+  background: transparent;
+}
+
+/* 헤더 UI는 유지하되, 배경만 하단에서 투명해져 스크롤 콘텐츠가 페이드 영역에 보이도록 합니다. */
+.page-header::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-color: var(--background-color);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
+  pointer-events: none;
+  transition: background-color 160ms ease;
 }
 
 /* 페이지 선택 UI와 세로 페이드 영역을 하나의 그룹으로 유지합니다. */
