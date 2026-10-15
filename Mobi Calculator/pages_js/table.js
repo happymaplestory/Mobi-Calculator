@@ -728,14 +728,12 @@ function initializeTable() {
 
   enableRowDragging(tableArea);
 
-  // 창 크기 변경으로 두 콘텐츠 묶음의 배치 줄이 바뀌는 순간에만 FLIP 모션을 적용합니다.
-  // 요소의 ResizeObserver나 변형된 화면 좌표를 사용하지 않아 재배치 관찰 루프를 방지합니다.
+  // 배치 줄이 바뀔 때 스택의 상단 여백을 조정하고 두 콘텐츠 묶음에 FLIP 슬라이드 모션을 적용합니다.
+  // 같은 배치 상태 안에서 발생하는 일반적인 너비 조정에는 모션을 적용하지 않습니다.
   if (levelColumn && paladinColumn) {
     const layoutMotionElements = [levelPaladinStack, carousel];
-    const MOTION_DURATION = 360;
+    const MOTION_DURATION = 260;
     let layoutAnimations = [];
-    let previousMode = getLayoutMode();
-    let previousPositions = getLayoutPositions();
 
     function getLayoutPositions() {
       return layoutMotionElements.map(element => ({
@@ -745,11 +743,15 @@ function initializeTable() {
     }
 
     function getLayoutMode() {
-      // 같은 줄에서는 top 차이가 두 요소의 margin 차이(38px) 수준이고,
-      // 줄이 바뀌면 .table-area의 80px row-gap이 추가됩니다.
-      return Math.abs(carousel.offsetTop - levelPaladinStack.offsetTop) > 80
+      // 가로 배치의 top 차이는 약 38px, 세로 배치에서는 row-gap을 포함해 최소 약 70px입니다.
+      // 55px 기준은 스택 margin-top이 58px 또는 10px인 두 상태 모두에서 구분됩니다.
+      return Math.abs(carousel.offsetTop - levelPaladinStack.offsetTop) > 55
         ? "stacked"
         : "side-by-side";
+    }
+
+    function applyLayoutMode(mode) {
+      tableArea.classList.toggle("is-stacked", mode === "stacked");
     }
 
     function cancelLayoutAnimations() {
@@ -757,18 +759,27 @@ function initializeTable() {
       layoutAnimations = [];
     }
 
+    // 최초 화면 크기에서도 올바른 margin-top을 적용한 뒤 기준 좌표를 저장합니다.
+    let previousMode = getLayoutMode();
+    applyLayoutMode(previousMode);
+    let previousPositions = getLayoutPositions();
+
     window.addEventListener("resize", () => {
       const currentMode = getLayoutMode();
-      const currentPositions = getLayoutPositions();
 
       // 같은 배치 상태의 일반적인 너비 조정은 애니메이션하지 않습니다.
       if (currentMode === previousMode) {
-        previousPositions = currentPositions;
+        previousPositions = getLayoutPositions();
         return;
       }
 
       cancelLayoutAnimations();
+
+      // margin-top 변경을 포함한 새 레이아웃 좌표를 FLIP의 도착점으로 사용합니다.
+      applyLayoutMode(currentMode);
+      const currentPositions = getLayoutPositions();
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
       if (!reducedMotion) {
         layoutMotionElements.forEach((element, index) => {
           const before = previousPositions[index];
