@@ -564,6 +564,8 @@
     loadButton.classList.toggle("is-active", mode === "load");
     saveButton.setAttribute("aria-expanded", String(mode === "save"));
     loadButton.setAttribute("aria-expanded", String(mode === "load"));
+    actionBrowserButton.textContent = mode === "save" ? "브라우저 저장" : "브라우저 로드";
+    actionFileButton.textContent = mode === "save" ? "파일 저장" : "파일 로드";
     actionSubmenu.hidden = false;
     actionSubmenu.setAttribute("aria-hidden", "false");
     window.requestAnimationFrame(() => {
