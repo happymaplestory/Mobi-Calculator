@@ -98,7 +98,7 @@ h1[data-title-layout="three"] span {
 .table-area {
   position: relative;
   display: flex;
-  margin-top: 26px;
+  margin-top: 7px;
   width: 100%;
   flex-wrap: wrap;
   justify-content: center;
