@@ -122,6 +122,29 @@
   })();
 </script>
 
+  <nav id="full-page-pagination" class="full-page-pagination" aria-label="페이지 선택">
+    <button class="full-page-pagination-option is-active" type="button" aria-pressed="true">캐릭터 스탯</button>
+    <button class="full-page-pagination-option" type="button" aria-pressed="false">룬</button>
+    <button class="full-page-pagination-option" type="button" aria-pressed="false">장비</button>
+    <button class="full-page-pagination-option" type="button" aria-pressed="false">기타</button>
+  </nav>
+  <script>
+    (() => {
+      const pagination = document.getElementById("full-page-pagination");
+      if (!pagination) return;
+      const options = [...pagination.querySelectorAll(".full-page-pagination-option")];
+      options.forEach((option) => {
+        option.addEventListener("click", () => {
+          options.forEach((item) => {
+            const selected = item === option;
+            item.classList.toggle("is-active", selected);
+            item.setAttribute("aria-pressed", String(selected));
+          });
+        });
+      });
+    })();
+  </script>
+
   <div id="table-area" class="table-area"></div>
 
   <script src="pages_js/data-model.js"></script>
