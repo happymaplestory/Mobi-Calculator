@@ -42,9 +42,11 @@ body {
 
 h1 {
   position: relative;
+  top: 10px;
   left: calc(50% + 65px);
   transform: translateX(-50%);
   display: flex;
+  flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
@@ -66,6 +68,31 @@ h1 {
 h1 span {
   display: inline-block;
   white-space: nowrap;
+}
+
+/* 제목의 실제 너비를 기준으로 줄 배치를 고정합니다. */
+h1[data-title-layout="two"] {
+  flex-direction: column;
+  row-gap: 0;
+}
+
+h1[data-title-layout="two"] span:nth-child(3) {
+  display: none;
+}
+
+h1[data-title-layout="two"] span:nth-child(2)::after {
+  content: " 계산기";
+  white-space: nowrap;
+}
+
+h1[data-title-layout="three"] {
+  flex-direction: column;
+  row-gap: 0;
+}
+
+h1[data-title-layout="two"] span,
+h1[data-title-layout="three"] span {
+  flex: 0 0 auto;
 }
 
 .table-area {
@@ -776,14 +803,4 @@ body[data-theme="dark"] {
 }
 
 
-/* 제목 너비 325px 미만에서는 '모바일 계산기'를 한 묶음으로 줄바꿈하고,
-   210px 미만에서는 세 단어를 각각 한 줄로 배치합니다. */
-@media (max-width: 585px) {
-  h1 { flex-wrap: wrap; }
-  h1 span:nth-child(3) { display: none; }
-  h1 span:nth-child(2)::after { content: " 계산기"; }
-}
-@media (max-width: 470px) {
-  h1 span:nth-child(2)::after { content: ""; }
-  h1 span:nth-child(3) { display: inline-block; }
-}
+/* 제목 너비에 따른 배치 상태는 table.html의 ResizeObserver가 설정합니다. */
