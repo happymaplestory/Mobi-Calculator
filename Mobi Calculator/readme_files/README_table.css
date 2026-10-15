@@ -16,7 +16,7 @@
 
 ## 반응형 배치
 
-- `.table-area`는 페이지 너비 100%를 사용하고 `justify-content: center`, `flex-wrap: wrap`으로 콘텐츠 묶음을 가로 중앙 정렬합니다. 두 묶음의 너비와 여백을 합친 값이 가용 너비보다 크면 별도 고정 breakpoint 없이 다음 줄로 자동 배치합니다.
+- `.table-area`는 상단 margin 50px, 페이지 너비 100%를 사용하고 `justify-content: center`, `flex-wrap: wrap`으로 콘텐츠 묶음을 가로 중앙 정렬합니다. 두 묶음의 너비와 여백을 합친 값이 가용 너비보다 크면 별도 고정 breakpoint 없이 다음 줄로 자동 배치합니다.
 - `.table-area`의 열 간격은 0px, 줄 간격은 80px입니다.
 
 ## 열과 슬라이드 탐색
