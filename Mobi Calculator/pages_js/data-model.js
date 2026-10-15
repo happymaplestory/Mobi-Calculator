@@ -165,8 +165,8 @@ const MOBI_DATA_MODEL = {
   applicationTable: [
     { id: 1111, key: "add", name: "+" },
     { id: 3211, key: "percent", name: "%" },
-    { id: 3311, key: "damagePercent", name: "% (데미지)" },
-    { id: 3312, key: "skillDamagePercent", name: "% (스킬 피해)" },
-    { id: 3411, key: "activationPercent", name: "% (발동)" }
+    { id: 3311, key: "damagePercent", name: "데미지 %" },
+    { id: 3312, key: "skillDamagePercent", name: "스킬피해 %" },
+    { id: 3411, key: "activationPercent", name: "발동 %" }
   ]
 };
