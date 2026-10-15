@@ -233,24 +233,27 @@
     const valueControl = row.querySelector(".value-input");
 
     if (nameControl) {
-      nameControl.value = savedRow.nameValue == null ? "" : String(savedRow.nameValue);
+      const savedNameValue = savedRow.nameValue == null ? "" : String(savedRow.nameValue);
+      if (nameControl.tagName === "SELECT" && savedNameValue &&
+          ![...nameControl.options].some(option => option.value === savedNameValue)) {
+        throw new Error("선택행에서 현재 사용할 수 없는 구분 ID를 발견했습니다: " + savedNameValue);
+      }
+      nameControl.value = savedNameValue;
       if (nameControl.tagName === "SELECT") {
-        if (nameControl.value && ![...nameControl.options].some(option => option.value === nameControl.value)) {
-          throw new Error("선택행에서 현재 사용할 수 없는 구분 ID를 발견했습니다: " + nameControl.value);
-        }
-        if (nameControl.value) row.dataset.sectionId = nameControl.value;
+        if (savedNameValue) row.dataset.sectionId = savedNameValue;
         else delete row.dataset.sectionId;
       }
     }
 
     if (applicationControl) {
-      applicationControl.value = savedRow.applicationValue == null
+      const savedApplicationValue = savedRow.applicationValue == null
         ? ""
         : String(savedRow.applicationValue);
-      if (applicationControl.value &&
-          ![...applicationControl.options].some(option => option.value === applicationControl.value)) {
-        throw new Error("선택행에서 현재 사용할 수 없는 적용 형식 ID를 발견했습니다: " + applicationControl.value);
+      if (savedApplicationValue &&
+          ![...applicationControl.options].some(option => option.value === savedApplicationValue)) {
+        throw new Error("선택행에서 현재 사용할 수 없는 적용 형식 ID를 발견했습니다: " + savedApplicationValue);
       }
+      applicationControl.value = savedApplicationValue;
     }
 
     if (valueControl) valueControl.value = savedRow.value;
