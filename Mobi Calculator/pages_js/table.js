@@ -87,9 +87,6 @@ function requestDeleteConfirmation(value) {
       if (event.key === "Escape") {
         event.preventDefault();
         finish(false);
-      } else if (event.key === "Enter" && !event.target.matches("button")) {
-        event.preventDefault();
-        finish(true);
       }
     };
 
