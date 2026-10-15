@@ -141,7 +141,7 @@
       columns,
       booleanOptions: captureBooleanControls({
         querySelectorAll(selector) {
-          return [...tableArea.querySelectorAll(selector)].filter(control =>
+          return [...document.querySelectorAll(selector)].filter(control =>
             !control.closest(".input-row")
           );
         }
@@ -313,7 +313,7 @@
     const globalBooleanChanges = restoreBooleanControls(
       {
         querySelectorAll(selector) {
-          return [...tableArea.querySelectorAll(selector)].filter(control =>
+          return [...document.querySelectorAll(selector)].filter(control =>
             !control.closest(".input-row")
           );
         }
