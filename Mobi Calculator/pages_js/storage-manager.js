@@ -18,8 +18,15 @@
   const tableArea = document.getElementById("table-area");
   const saveButton = document.getElementById("save-button");
   const loadButton = document.getElementById("load-button");
+  const saveSubmenu = document.getElementById("save-submenu");
+  const loadSubmenu = document.getElementById("load-submenu");
+  const saveBrowserButton = document.getElementById("save-browser-button");
+  const saveFileButton = document.getElementById("save-file-button");
+  const loadBrowserButton = document.getElementById("load-browser-button");
+  const loadFileButton = document.getElementById("load-file-button");
 
-  if (!tableArea || !saveButton || !loadButton) {
+  if (!tableArea || !saveButton || !loadButton || !saveSubmenu || !loadSubmenu ||
+      !saveBrowserButton || !saveFileButton || !loadBrowserButton || !loadFileButton) {
     window.alert(
       "저장 및 불러오기를 초기화하지 못했습니다.\n" +
       "필요한 화면 요소(table-area, save-button, load-button)를 찾을 수 없습니다."
@@ -350,10 +357,13 @@
     );
   }
 
-  function handleSave() {
+  function getSerializedCurrentState() {
+    return JSON.stringify(collectCurrentState(), null, 2);
+  }
+
+  function handleSaveToBrowser() {
     try {
-      const state = collectCurrentState();
-      const serialized = JSON.stringify(state);
+      const serialized = getSerializedCurrentState();
       window.localStorage.setItem(STORAGE_KEY, serialized);
       window.alert("현재 입력 데이터를 이 브라우저에 저장했습니다.");
     } catch (error) {
@@ -366,34 +376,57 @@
     }
   }
 
-  function handleLoad() {
-    let storedText;
-    let data;
-
+  function handleSaveToFile() {
+    let objectUrl;
     try {
-      storedText = window.localStorage.getItem(STORAGE_KEY);
-      if (storedText === null) {
-        window.alert("불러올 저장 기록이 없습니다. 먼저 저장 버튼을 눌러 주세요.");
-        return;
-      }
+      const serialized = getSerializedCurrentState();
+      const blob = new Blob([serialized], { type: "application/json;charset=utf-8" });
+      objectUrl = URL.createObjectURL(blob);
 
-      data = JSON.parse(storedText);
-      validateStoredState(data);
+      const now = new Date();
+      const twoDigits = value => String(value).padStart(2, "0");
+      const filename = "mobi-calculator-" +
+        now.getFullYear() +
+        twoDigits(now.getMonth() + 1) +
+        twoDigits(now.getDate()) + "-" +
+        twoDigits(now.getHours()) +
+        twoDigits(now.getMinutes()) +
+        twoDigits(now.getSeconds()) + ".json";
+
+      const downloadLink = document.createElement("a");
+      downloadLink.href = objectUrl;
+      downloadLink.download = filename;
+      downloadLink.style.display = "none";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      downloadLink.remove();
+
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      objectUrl = null;
+      window.alert("현재 입력 데이터를 JSON 파일로 저장하도록 요청했습니다.");
     } catch (error) {
-      window.alert("불러오기를 진행할 수 없습니다.\n" + (error?.message || "저장 데이터를 읽는 중 오류가 발생했습니다."));
-      return;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      window.alert(
+        "파일 저장에 실패했습니다.\n" +
+        "브라우저가 파일 다운로드를 차단했거나 파일을 생성하지 못했습니다.\n" +
+        "오류 내용: " + (error?.message || "알 수 없는 오류")
+      );
     }
+  }
+
+  function restoreFromData(data) {
+    validateStoredState(data);
 
     const confirmed = window.confirm(
-      "현재 입력해 둔 데이터는 모두 유실되고, 가장 마지막에 저장한 기록으로 대체됩니다.\n" +
-      "저장 기록을 불러오시겠습니까?"
+      "현재 입력해 둔 데이터는 모두 유실되고, 선택한 저장 기록으로 대체됩니다.\n" +
+      "계속 불러오시겠습니까?"
     );
     if (!confirmed) return;
 
     try {
       const prepared = prepareRestore(data);
       applyRestoredState(prepared);
-      window.alert("마지막으로 저장한 기록을 불러왔습니다.");
+      window.alert("저장 기록을 불러왔습니다.");
     } catch (error) {
       window.alert(
         "불러오기에 실패했습니다.\n" +
@@ -403,6 +436,135 @@
     }
   }
 
-  saveButton.addEventListener("click", handleSave);
-  loadButton.addEventListener("click", handleLoad);
+  function handleLoadFromBrowser() {
+    let storedText;
+    try {
+      storedText = window.localStorage.getItem(STORAGE_KEY);
+      if (storedText === null) {
+        window.alert("불러올 브라우저 저장 기록이 없습니다. 먼저 저장-브라우저를 실행해 주세요.");
+        return;
+      }
+      restoreFromData(JSON.parse(storedText));
+    } catch (error) {
+      window.alert(
+        "브라우저 저장 기록을 불러올 수 없습니다.\n" +
+        (error?.message || "저장 데이터를 읽는 중 오류가 발생했습니다.")
+      );
+    }
+  }
+
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".json,application/json";
+  fileInput.hidden = true;
+  fileInput.setAttribute("aria-label", "불러올 마비노기 모바일 계산기 JSON 파일 선택");
+  document.body.appendChild(fileInput);
+
+  function handleLoadFromFile(file) {
+    if (!file) return;
+
+    const isJsonFile = file.name.toLowerCase().endsWith(".json") ||
+      file.type === "application/json";
+    if (!isJsonFile) {
+      window.alert("JSON 파일만 불러올 수 있습니다. 저장한 .json 파일을 선택해 주세요.");
+      return;
+    }
+
+    file.text().then(text => {
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error("파일 내용이 올바른 JSON 형식이 아닙니다.");
+      }
+      restoreFromData(data);
+    }).catch(error => {
+      window.alert(
+        "파일 불러오기에 실패했습니다.\n" +
+        (error?.message || "파일을 읽는 중 오류가 발생했습니다.")
+      );
+    });
+  }
+
+  function closeMenu(menu, trigger) {
+    if (menu.hidden) {
+      trigger.setAttribute("aria-expanded", "false");
+      return;
+    }
+
+    menu.classList.remove("is-open");
+    menu.setAttribute("aria-hidden", "true");
+    trigger.setAttribute("aria-expanded", "false");
+
+    const finishClose = event => {
+      if (event && (event.target !== menu || event.propertyName !== "opacity")) return;
+      if (menu.classList.contains("is-open")) return;
+      menu.hidden = true;
+      menu.removeEventListener("transitionend", finishClose);
+    };
+    menu.addEventListener("transitionend", finishClose);
+    window.setTimeout(() => finishClose(), 220);
+  }
+
+  function openMenu(menu, trigger) {
+    menu.hidden = false;
+    menu.setAttribute("aria-hidden", "false");
+    trigger.setAttribute("aria-expanded", "true");
+    window.requestAnimationFrame(() => {
+      if (!menu.hidden) menu.classList.add("is-open");
+    });
+  }
+
+  function toggleMenu(which) {
+    const openingSave = which === "save";
+    const targetMenu = openingSave ? saveSubmenu : loadSubmenu;
+    const targetButton = openingSave ? saveButton : loadButton;
+    const otherMenu = openingSave ? loadSubmenu : saveSubmenu;
+    const otherButton = openingSave ? loadButton : saveButton;
+
+    const wasOpen = !targetMenu.hidden && targetMenu.classList.contains("is-open");
+    closeMenu(otherMenu, otherButton);
+
+    if (wasOpen) {
+      closeMenu(targetMenu, targetButton);
+    } else {
+      openMenu(targetMenu, targetButton);
+    }
+  }
+
+  saveButton.addEventListener("click", () => toggleMenu("save"));
+  loadButton.addEventListener("click", () => toggleMenu("load"));
+  saveBrowserButton.addEventListener("click", () => {
+    closeMenu(saveSubmenu, saveButton);
+    handleSaveToBrowser();
+  });
+  saveFileButton.addEventListener("click", () => {
+    closeMenu(saveSubmenu, saveButton);
+    handleSaveToFile();
+  });
+  loadBrowserButton.addEventListener("click", () => {
+    closeMenu(loadSubmenu, loadButton);
+    handleLoadFromBrowser();
+  });
+  loadFileButton.addEventListener("click", () => {
+    closeMenu(loadSubmenu, loadButton);
+    fileInput.value = "";
+    fileInput.click();
+  });
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files && fileInput.files[0];
+    handleLoadFromFile(file);
+  });
+
+  document.addEventListener("click", event => {
+    if (event.target.closest(".data-action-buttons")) return;
+    closeMenu(saveSubmenu, saveButton);
+    closeMenu(loadSubmenu, loadButton);
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+    closeMenu(saveSubmenu, saveButton);
+    closeMenu(loadSubmenu, loadButton);
+  });
 })();
