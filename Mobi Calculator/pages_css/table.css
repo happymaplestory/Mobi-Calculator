@@ -733,7 +733,6 @@ input.section-name {
   min-height: 30px;
   padding: 0;
   box-shadow: none;
-  font-size: 13px;
 }
 
 [data-theme="dark"] .data-action-button,
