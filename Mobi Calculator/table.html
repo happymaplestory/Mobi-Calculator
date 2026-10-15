@@ -132,8 +132,7 @@
     const controlled = [
       header?.querySelector("h1"),
       header?.querySelector(".data-action-buttons"),
-      document.getElementById("theme-toggle"),
-      document.getElementById("full-page-pagination")
+      document.getElementById("theme-toggle")
     ].filter(Boolean);
     if (!header || !toggle) return;
 
@@ -159,6 +158,7 @@
     });
   })();
   </script>
+  <div class="pagination-fade-group">
   <nav id="full-page-pagination" class="full-page-pagination" aria-label="페이지 선택">
     <button class="full-page-pagination-option is-active" type="button" aria-pressed="true">스탯</button>
     <button class="full-page-pagination-option" type="button" aria-pressed="false">룬</button>
@@ -181,6 +181,7 @@
       });
     })();
   </script>
+  </div>
   </div>
 
   <div id="table-area" class="table-area"></div>
