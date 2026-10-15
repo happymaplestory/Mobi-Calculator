@@ -735,7 +735,6 @@ input.section-name {
   border-radius: 14px;
   background: var(--background-color);
   color: var(--text-color);
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.10);
   font: inherit;
   font-size: 25px;
   font-weight: 600;
@@ -750,7 +749,6 @@ input.section-name {
   border-color: #666a73;
   background: #303238;
   color: #cccccc;
-  box-shadow: 0 0 18px rgba(204, 204, 204, 0.18);
 }
 [data-theme="dark"] .header-collapse-toggle:hover { background: #505050; }
 .header-collapse-toggle:focus-visible {
@@ -1175,7 +1173,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, filter 160ms ease;
 }
 
 .full-page-pagination-option:hover {
