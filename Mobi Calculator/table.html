@@ -16,9 +16,47 @@
     const updateTitleLayout = () => {
       const width = title.getBoundingClientRect().width;
       const layout = width < 210 ? "three" : width < 325 ? "two" : "single";
-      if (title.dataset.titleLayout !== layout) {
-        title.dataset.titleLayout = layout;
-      }
+      if (title.dataset.titleLayout === layout) return;
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const words = [...title.querySelectorAll("span")];
+      const beforeRects = new Map(
+        words.map(word => [word, word.getBoundingClientRect()])
+          .filter(([, rect]) => rect.width > 0 && rect.height > 0)
+      );
+
+      title.dataset.titleLayout = layout;
+      if (reducedMotion) return;
+
+      const animations = [];
+      words.forEach(word => {
+        const before = beforeRects.get(word);
+        const after = word.getBoundingClientRect();
+        if (!before || after.width === 0 || after.height === 0) return;
+
+        const dx = before.left - after.left;
+        const dy = before.top - after.top;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+
+        word.style.transition = "none";
+        word.style.transform = `translate(${dx}px, ${dy}px)`;
+        word.getBoundingClientRect();
+        animations.push(word);
+      });
+
+      requestAnimationFrame(() => {
+        animations.forEach(word => {
+          const clearAnimation = event => {
+            if (event.target !== word || event.propertyName !== "transform") return;
+            word.style.removeProperty("transition");
+            word.style.removeProperty("transform");
+            word.removeEventListener("transitionend", clearAnimation);
+          };
+          word.addEventListener("transitionend", clearAnimation);
+          word.style.transition = "transform 280ms cubic-bezier(.22,.72,.22,1)";
+          word.style.transform = "translate(0, 0)";
+        });
+      });
     };
 
     updateTitleLayout();
