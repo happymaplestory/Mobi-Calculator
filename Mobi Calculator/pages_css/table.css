@@ -1001,3 +1001,86 @@ body[data-theme="dark"] {
     transition: none !important;
   }
 }
+
+
+/* 전체 페이지 전환 UI */
+.full-page-pagination {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  width: calc(100% - 40px);
+  min-width: 410px;
+  height: 55px;
+  margin: 80px 20px 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.full-page-pagination-option {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--surface-color);
+  color: var(--text-color);
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.10);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+}
+
+.full-page-pagination-option:hover {
+  background: var(--hover-color);
+  filter: saturate(1.2) brightness(1.02);
+}
+
+.full-page-pagination-option.is-active {
+  border-color: #8b9db5;
+  background: #e7edf5;
+  color: #26384e;
+}
+
+[data-theme="dark"] .full-page-pagination-option {
+  border-color: #666a73;
+  background: var(--dark-surface-color);
+  color: var(--dark-text-color);
+  box-shadow: 0 0 18px rgba(204, 204, 204, 0.18);
+}
+
+[data-theme="dark"] .full-page-pagination-option:hover {
+  background: #505050;
+}
+
+[data-theme="dark"] .full-page-pagination-option.is-active {
+  border-color: #8196b2;
+  background: #354454;
+  color: #e1e8f1;
+}
+
+.full-page-pagination-option:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+@media (max-width: 449px) {
+  .full-page-pagination {
+    min-width: 0;
+    gap: 6px;
+  }
+
+  .full-page-pagination-option {
+    padding: 0 4px;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .full-page-pagination-option {
+    transition: none;
+  }
+}
