@@ -793,8 +793,8 @@ input.section-name {
 
 /* 저장/불러오기 통합 버튼과 공통 하위 메뉴 */
 .data-action-buttons {
-  --save-hover-color: #e3efe4;
-  --load-hover-color: #e2ebf8;
+  --save-hover-color: #ffbd66;
+  --load-hover-color: #79aaff;
   position: absolute;
   z-index: 1;
   top: 20px;
@@ -831,8 +831,9 @@ input.section-name {
 .data-action-buttons[data-mode="load"] .data-action-divider,
 .data-action-buttons[data-mode="load"] .data-action-submenu-button { background: var(--load-hover-color); }
 .data-action-submenu {
-  position: absolute; top: calc(100% + 8px); left: 0;
+  position: absolute; top: 100%; left: 0;
   display: flex; flex-direction: column; gap: 0;
+  width: 100%; box-sizing: border-box;
   opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-4px);
   transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
 }
@@ -842,20 +843,14 @@ input.section-name {
   transition: opacity 180ms ease, transform 180ms ease, visibility 0s;
 }
 .data-action-submenu-button {
-  width: 90px; min-width: 90px; height: 30px; min-height: 30px;
-  padding: 0; box-shadow: none;
+  width: 100%; min-width: 0; height: 30px; min-height: 30px;
+  box-sizing: border-box; padding: 0; box-shadow: none;
 }
-.data-action-submenu-button:first-child {
-  border-radius: 10px 10px 0 0;
-  border-bottom-width: 0;
-}
-.data-action-submenu-button:last-child {
-  border-radius: 0 0 10px 10px;
-}
-
+.data-action-submenu-button:first-child { border-radius: 0; border-bottom-width: 0; }
+.data-action-submenu-button:last-child { border-radius: 0 0 10px 10px; }
 [data-theme="dark"] .data-action-buttons {
-  --save-hover-color: #3e5544;
-  --load-hover-color: #3d4f66;
+  --save-hover-color: #a95e16;
+  --load-hover-color: #285ba8;
 }
 [data-theme="dark"] .data-action-button,
 [data-theme="dark"] .data-action-submenu-button {
