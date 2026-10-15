@@ -592,6 +592,66 @@ function initializeTable() {
     : columns;
 
   tableArea.replaceChildren(...orderedColumns);
+
+  // FLIP으로 두 레이아웃 묶음의 위치 변화를 보정해 줄바꿈 시 부드럽게 이동시킵니다.
+  if (orderedColumns.length > 1 && "ResizeObserver" in window) {
+    let previousRects = null;
+    const getLayoutRects = () => new Map(
+      orderedColumns.map(item => [item, item.getBoundingClientRect()])
+    );
+
+    const animateLayoutChange = () => {
+      const currentRects = getLayoutRects();
+      if (!previousRects) {
+        previousRects = currentRects;
+        return;
+      }
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        previousRects = currentRects;
+        return;
+      }
+
+      const movingItems = [];
+      orderedColumns.forEach(item => {
+        const before = previousRects.get(item);
+        const after = currentRects.get(item);
+        if (!before || !after) return;
+
+        const dx = before.left - after.left;
+        const dy = before.top - after.top;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+
+        item.style.transition = "none";
+        item.style.transform = `translate(${dx}px, ${dy}px)`;
+        item.getBoundingClientRect();
+        movingItems.push(item);
+      });
+      previousRects = currentRects;
+
+      requestAnimationFrame(() => {
+        movingItems.forEach(item => {
+          const clearAnimation = event => {
+            if (event.target !== item || event.propertyName !== "transform") return;
+            item.style.removeProperty("transition");
+            item.style.removeProperty("transform");
+            item.removeEventListener("transitionend", clearAnimation);
+          };
+          item.addEventListener("transitionend", clearAnimation);
+          item.style.transition = "transform 360ms cubic-bezier(.22,.72,.22,1)";
+          item.style.transform = "translate(0, 0)";
+        });
+      });
+    };
+
+    const layoutObserver = new ResizeObserver(animateLayoutChange);
+    layoutObserver.observe(tableArea);
+    orderedColumns.forEach(item => layoutObserver.observe(item));
+    requestAnimationFrame(() => {
+      previousRects = getLayoutRects();
+    });
+  }
+
   enableRowDragging(tableArea);
 }
 
