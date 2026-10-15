@@ -538,6 +538,12 @@ input.section-name {
   background: #c8c8c8;
   border-color: #c8c8c8;
 }
+.column-pagination-dot:not([aria-current="true"]):hover::before {
+  background: color-mix(in srgb, var(--background-color) 80%, #000000 20%);
+}
+[data-theme="dark"] .column-pagination-dot:not([aria-current="true"]):hover::before {
+  background: #505050;
+}
 .column-pagination-dot:focus-visible {
   outline: 2px solid #777;
   outline-offset: -1px;
@@ -593,11 +599,11 @@ input.section-name {
   width: 50px;
   height: 50px;
   padding: 0;
-  border: 1px solid #d5d5d5;
+  border: 2px solid #d5d5d5;
   border-radius: 14px;
   background: var(--background-color);
   color: var(--text-color);
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.10);
   cursor: pointer;
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
 }
@@ -633,11 +639,11 @@ input.section-name {
   min-width: 72px;
   height: 50px;
   padding: 0 14px;
-  border: 1px solid #d5d5d5;
+  border: 2px solid #d5d5d5;
   border-radius: 14px;
   background: var(--background-color);
   color: var(--text-color);
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.10);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -724,7 +730,9 @@ body[data-theme="dark"] {
 [data-theme="dark"] .row-placeholder {
   transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
-[data-theme="dark"] .category-card {
+[data-theme="dark"] .category-card,
+[data-theme="dark"] .theme-toggle-button,
+[data-theme="dark"] .data-action-button {
   box-shadow: 0 0 18px rgba(204, 204, 204, 0.18);
 }
 [data-theme="dark"] .field,
