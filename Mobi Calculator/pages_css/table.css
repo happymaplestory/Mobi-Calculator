@@ -1137,10 +1137,10 @@ body[data-theme="dark"] {
 .page-header:has(h1[data-title-layout="single"]) .full-page-pagination {
   position: relative;
   top: -10px;
-  width: calc(100% - 320px);
+  width: calc(100% - 315px);
   min-width: 0;
-  margin-left: 240px;
-  margin-right: 80px;
+  margin-left: 225px;
+  margin-right: 90px;
 }
 
 /* 전체 페이지 전환 UI */
