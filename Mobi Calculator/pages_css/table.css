@@ -97,9 +97,36 @@ h1[data-title-layout="three"] span {
   flex: 0 0 auto;
 }
 
-.table-area[hidden] {
+.table-area[hidden],
+.page-test-panel[hidden] {
   display: none !important;
 }
+
+.page-content-stage {
+  position: relative;
+  width: 100%;
+}
+
+.page-content-stage.is-transitioning {
+  overflow: visible;
+}
+
+.page-content-stage.is-transitioning > .page-content-panel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+}
+
+.page-test-panel {
+  width: 800px;
+  height: 800px;
+  max-width: calc(100vw - 40px);
+  margin: 7px auto 0;
+}
+
+#runes-page { background-color: #bb8888; }
+#equipment-page { background-color: #88bb88; }
+#other-page { background-color: #8888bb; }
 
 .table-area {
   position: relative;
