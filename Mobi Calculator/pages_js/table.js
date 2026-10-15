@@ -594,6 +594,78 @@ function initializeTable() {
   tableArea.replaceChildren(...orderedColumns);
 
   enableRowDragging(tableArea);
+
+  // 창 크기 변경으로 두 콘텐츠 묶음의 배치 줄이 바뀌는 순간에만 FLIP 모션을 적용합니다.
+  // 요소의 ResizeObserver나 변형된 화면 좌표를 사용하지 않아 재배치 관찰 루프를 방지합니다.
+  if (levelColumn && paladinColumn) {
+    const layoutMotionElements = [levelPaladinStack, carousel];
+    const MOTION_DURATION = 360;
+    let layoutAnimations = [];
+    let previousMode = getLayoutMode();
+    let previousPositions = getLayoutPositions();
+
+    function getLayoutPositions() {
+      return layoutMotionElements.map(element => ({
+        x: element.offsetLeft,
+        y: element.offsetTop
+      }));
+    }
+
+    function getLayoutMode() {
+      // 같은 줄에서는 top 차이가 두 요소의 margin 차이(38px) 수준이고,
+      // 줄이 바뀌면 .table-area의 80px row-gap이 추가됩니다.
+      return Math.abs(carousel.offsetTop - levelPaladinStack.offsetTop) > 80
+        ? "stacked"
+        : "side-by-side";
+    }
+
+    function cancelLayoutAnimations() {
+      layoutAnimations.forEach(animation => animation.cancel());
+      layoutAnimations = [];
+    }
+
+    window.addEventListener("resize", () => {
+      const currentMode = getLayoutMode();
+      const currentPositions = getLayoutPositions();
+
+      // 같은 배치 상태의 일반적인 너비 조정은 애니메이션하지 않습니다.
+      if (currentMode === previousMode) {
+        previousPositions = currentPositions;
+        return;
+      }
+
+      cancelLayoutAnimations();
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!reducedMotion) {
+        layoutMotionElements.forEach((element, index) => {
+          const before = previousPositions[index];
+          const after = currentPositions[index];
+          const dx = before.x - after.x;
+          const dy = before.y - after.y;
+          if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+
+          const animation = element.animate(
+            [
+              { transform: `translate(${dx}px, ${dy}px)` },
+              { transform: "translate(0, 0)" }
+            ],
+            {
+              duration: MOTION_DURATION,
+              easing: "cubic-bezier(.22,.72,.22,1)"
+            }
+          );
+          animation.onfinish = () => {
+            animation.cancel();
+            layoutAnimations = layoutAnimations.filter(item => item !== animation);
+          };
+          layoutAnimations.push(animation);
+        });
+      }
+
+      previousMode = currentMode;
+      previousPositions = currentPositions;
+    });
+  }
 }
 
 initializeTable();
