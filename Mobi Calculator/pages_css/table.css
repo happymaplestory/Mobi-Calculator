@@ -1131,9 +1131,10 @@ body[data-theme="dark"] {
   margin-right: 90px;
 }
 
-/* 상단 메뉴가 접힌 경우에는 페이지 전환 UI의 왼쪽 여백을 우선순위 높게 20px로 고정합니다. */
+/* 상단 메뉴가 접힌 경우에는 페이지 전환 UI의 왼쪽 여백을 20px로 고정하고 제목 줄 수에 따른 Y축 이동을 해제합니다. */
 body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   margin-left: 20px !important;
+  top: 0 !important;
 }
 
 /* 전체 페이지 전환 UI */
