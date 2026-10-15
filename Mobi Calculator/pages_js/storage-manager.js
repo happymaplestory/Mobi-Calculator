@@ -16,20 +16,19 @@
   const CURRENT_DB_VERSION = 1;
 
   const tableArea = document.getElementById("table-area");
+  const dataActionButtons = document.getElementById("data-action-buttons");
   const saveButton = document.getElementById("save-button");
   const loadButton = document.getElementById("load-button");
-  const saveSubmenu = document.getElementById("save-submenu");
-  const loadSubmenu = document.getElementById("load-submenu");
-  const saveBrowserButton = document.getElementById("save-browser-button");
-  const saveFileButton = document.getElementById("save-file-button");
-  const loadBrowserButton = document.getElementById("load-browser-button");
-  const loadFileButton = document.getElementById("load-file-button");
+  const actionSubmenu = document.getElementById("action-submenu");
+  const actionBrowserButton = document.getElementById("action-browser-button");
+  const actionFileButton = document.getElementById("action-file-button");
+  let activeAction = null;
 
-  if (!tableArea || !saveButton || !loadButton || !saveSubmenu || !loadSubmenu ||
-      !saveBrowserButton || !saveFileButton || !loadBrowserButton || !loadFileButton) {
+  if (!tableArea || !dataActionButtons || !saveButton || !loadButton ||
+      !actionSubmenu || !actionBrowserButton || !actionFileButton) {
     window.alert(
-      "저장 및 불러오기를 초기화하지 못했습니다.\n" +
-      "필요한 화면 요소(table-area, save-button, load-button)를 찾을 수 없습니다."
+      "저장 및 불러오기를 초기화하지 못했습니다.\\n" +
+      "필요한 화면 요소(table-area, 저장/불러오기 버튼, 공통 하위 메뉴)를 찾을 수 없습니다."
     );
     return;
   }
@@ -536,85 +535,73 @@
     });
   }
 
-  function closeMenu(menu, trigger) {
-    if (menu.hidden) {
-      trigger.setAttribute("aria-expanded", "false");
-      return;
-    }
-
-    menu.classList.remove("is-open");
-    menu.setAttribute("aria-hidden", "true");
-    trigger.setAttribute("aria-expanded", "false");
-
+  function clearActiveMode() {
+    activeAction = null;
+    dataActionButtons.removeAttribute("data-mode");
+    saveButton.classList.remove("is-active");
+    loadButton.classList.remove("is-active");
+    saveButton.setAttribute("aria-expanded", "false");
+    loadButton.setAttribute("aria-expanded", "false");
+  }
+  function closeMenu() {
+    if (actionSubmenu.hidden) { clearActiveMode(); return; }
+    actionSubmenu.classList.remove("is-open");
+    actionSubmenu.setAttribute("aria-hidden", "true");
+    clearActiveMode();
     const finishClose = event => {
-      if (event && (event.target !== menu || event.propertyName !== "opacity")) return;
-      if (menu.classList.contains("is-open")) return;
-      menu.hidden = true;
-      menu.removeEventListener("transitionend", finishClose);
+      if (event && (event.target !== actionSubmenu || event.propertyName !== "opacity")) return;
+      if (actionSubmenu.classList.contains("is-open")) return;
+      actionSubmenu.hidden = true;
+      actionSubmenu.removeEventListener("transitionend", finishClose);
     };
-    menu.addEventListener("transitionend", finishClose);
+    actionSubmenu.addEventListener("transitionend", finishClose);
     window.setTimeout(() => finishClose(), 220);
   }
-
-  function openMenu(menu, trigger) {
-    menu.hidden = false;
-    menu.setAttribute("aria-hidden", "false");
-    trigger.setAttribute("aria-expanded", "true");
+  function openMenu(mode) {
+    activeAction = mode;
+    dataActionButtons.dataset.mode = mode;
+    saveButton.classList.toggle("is-active", mode === "save");
+    loadButton.classList.toggle("is-active", mode === "load");
+    saveButton.setAttribute("aria-expanded", String(mode === "save"));
+    loadButton.setAttribute("aria-expanded", String(mode === "load"));
+    actionSubmenu.hidden = false;
+    actionSubmenu.setAttribute("aria-hidden", "false");
     window.requestAnimationFrame(() => {
-      if (!menu.hidden) menu.classList.add("is-open");
+      if (!actionSubmenu.hidden) actionSubmenu.classList.add("is-open");
     });
   }
-
-  function toggleMenu(which) {
-    const openingSave = which === "save";
-    const targetMenu = openingSave ? saveSubmenu : loadSubmenu;
-    const targetButton = openingSave ? saveButton : loadButton;
-    const otherMenu = openingSave ? loadSubmenu : saveSubmenu;
-    const otherButton = openingSave ? loadButton : saveButton;
-
-    const wasOpen = !targetMenu.hidden && targetMenu.classList.contains("is-open");
-    closeMenu(otherMenu, otherButton);
-
-    if (wasOpen) {
-      closeMenu(targetMenu, targetButton);
-    } else {
-      openMenu(targetMenu, targetButton);
-    }
+  function toggleMenu(mode) {
+    const wasOpen = activeAction === mode && !actionSubmenu.hidden && actionSubmenu.classList.contains("is-open");
+    if (wasOpen) closeMenu();
+    else openMenu(mode);
   }
-
   saveButton.addEventListener("click", () => toggleMenu("save"));
   loadButton.addEventListener("click", () => toggleMenu("load"));
-  saveBrowserButton.addEventListener("click", () => {
-    closeMenu(saveSubmenu, saveButton);
-    handleSaveToBrowser();
+  actionBrowserButton.addEventListener("click", () => {
+    const action = activeAction;
+    closeMenu();
+    if (action === "save") handleSaveToBrowser();
+    else if (action === "load") handleLoadFromBrowser();
   });
-  saveFileButton.addEventListener("click", () => {
-    closeMenu(saveSubmenu, saveButton);
-    handleSaveToFile();
-  });
-  loadBrowserButton.addEventListener("click", () => {
-    closeMenu(loadSubmenu, loadButton);
-    handleLoadFromBrowser();
-  });
-  loadFileButton.addEventListener("click", () => {
-    closeMenu(loadSubmenu, loadButton);
-    fileInput.value = "";
-    fileInput.click();
+  actionFileButton.addEventListener("click", () => {
+    const action = activeAction;
+    closeMenu();
+    if (action === "save") handleSaveToFile();
+    else if (action === "load") {
+      fileInput.value = "";
+      fileInput.click();
+    }
   });
   fileInput.addEventListener("change", () => {
     const file = fileInput.files && fileInput.files[0];
     handleLoadFromFile(file);
   });
-
   document.addEventListener("click", event => {
     if (event.target.closest(".data-action-buttons")) return;
-    closeMenu(saveSubmenu, saveButton);
-    closeMenu(loadSubmenu, loadButton);
+    closeMenu();
   });
-
   document.addEventListener("keydown", event => {
     if (event.key !== "Escape") return;
-    closeMenu(saveSubmenu, saveButton);
-    closeMenu(loadSubmenu, loadButton);
+    closeMenu();
   });
 })();
