@@ -918,6 +918,7 @@ body[data-theme="dark"] {
 .delete-confirm-message {
   margin: 0;
   overflow-wrap: anywhere;
+  white-space: pre-line;
   font-size: 15px;
   line-height: 1.6;
 }
@@ -930,6 +931,10 @@ body[data-theme="dark"] {
   cursor: pointer;
   font-size: 14px;
   line-height: 1.5;
+}
+
+.delete-confirm-option[hidden] {
+  display: none;
 }
 
 .delete-confirm-option input {
