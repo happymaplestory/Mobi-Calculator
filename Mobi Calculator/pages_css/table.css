@@ -658,6 +658,7 @@ input.section-name {
   position: relative;
   display: flow-root;
   width: 100%;
+  margin-top: 20px;
   transition: transform 260ms ease;
 }
 
@@ -680,7 +681,7 @@ input.section-name {
 .theme-toggle-button {
   position: absolute;
   z-index: 1;
-  top: 65px;
+  top: 60px;
   right: 20px;
   display: flex;
   align-items: center;
