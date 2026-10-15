@@ -1137,10 +1137,10 @@ body[data-theme="dark"] {
 .page-header:has(h1[data-title-layout="single"]) .full-page-pagination {
   position: relative;
   top: -10px;
-  width: calc(100% - 185px);
+  width: calc(100% - 320px);
   min-width: 0;
-  margin-left: 120px;
-  margin-right: 65px;
+  margin-left: 240px;
+  margin-right: 80px;
 }
 
 /* 전체 페이지 전환 UI */
@@ -1160,7 +1160,6 @@ body[data-theme="dark"] {
 .full-page-pagination-option {
   height: 30px;
   flex: 1 1 0;
-  min-width: 75px;
   padding: 0 12px;
   border: 2px solid var(--border-color);
   border-radius: 14px;
@@ -1215,7 +1214,6 @@ body[data-theme="dark"] {
   }
 
   .full-page-pagination-option {
-    min-width: 75px;
     padding: 0 4px;
   }
 }
