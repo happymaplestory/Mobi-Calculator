@@ -29,8 +29,7 @@
     };
 
     const saveDarkMode = (isDark) => {
-      document.cookie = "darkmode=" + isDark + "; Max-Age=315360000; Path=/; SameSite=Lax" +
-        (location.protocol === "https:" ? "; Secure" : "");
+      document.cookie = `darkmode=${isDark}; Max-Age=315360000; Path=/; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
     };
 
     const updateButton = (isDark) => {
