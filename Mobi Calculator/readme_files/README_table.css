@@ -94,7 +94,7 @@
 
 ## 전체 페이지 전환 UI
 
-- `.full-page-pagination`은 `h1` 아래 10px margin, 높이 30px, 좌우 margin 20px, 최소 너비 410px을 사용하며 별도 transform을 적용하지 않습니다. 각 `.full-page-pagination-option` 버튼도 높이 30px입니다. 배경은 투명하고 테두리는 없습니다. 화면 너비 450px 미만에서는 최소 너비를 해제하여 넘침을 방지합니다. `.pagination-fade-group`의 그라데이션은 실제 문서 흐름에서 20px 높이를 차지하며, 시각적 그라데이션만 `top: 5px`으로 5px 아래에 표시합니다. 이 이동은 페이지네이션 버튼이나 콘텐츠의 문서 흐름 위치를 변경하지 않습니다. 헤더 접기 시 그룹 전체는 기존 동작대로 위로 50px 슬라이드합니다.
+- 기본 `.full-page-pagination`은 `h1` 아래 10px margin, 높이 30px, 좌우 margin 20px, 최소 너비 410px을 사용합니다. 단, `h1[data-title-layout="single"]`일 때만 페이지네이션의 왼쪽 여백을 120px, 오른쪽 여백을 65px로 설정하고 `top: -10px`으로 시각적 위치를 10px 위로 이동합니다. 이 Y축 이동은 페이지네이션 자체에만 적용하며, `.pagination-fade-group::after`의 페이드 위치와 문서 흐름은 이동하지 않습니다. 각 `.full-page-pagination-option` 버튼도 높이 30px입니다. 배경은 투명하고 테두리는 없습니다. 화면 너비 450px 미만에서는 기본 상태의 최소 너비를 해제하여 넘침을 방지합니다. `.pagination-fade-group`의 그라데이션은 실제 문서 흐름에서 20px 높이를 차지하며, 시각적 그라데이션만 `top: 5px`으로 5px 아래에 표시합니다. 헤더 접기 시 그룹 전체는 기존 동작대로 위로 50px 슬라이드합니다.
 - 네 개의 옵션 버튼은 가로 flex 배치, 10px gap, 동일한 확장 비율을 사용합니다. 버튼 색상·테두리·후광·hover 및 선택 상태는 라이트/다크모드에서 대응하며, 색상 transition은 160ms입니다.
 - 키보드 포커스는 `:focus-visible`로 표시하고 `prefers-reduced-motion: reduce`를 존중합니다. 버튼은 모바일 기본 탭 하이라이트를 표시하지 않습니다.
 
