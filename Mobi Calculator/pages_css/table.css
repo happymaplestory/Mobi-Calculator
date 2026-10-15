@@ -1167,7 +1167,6 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   border-radius: 14px;
   background: var(--background-color);
   color: var(--text-color);
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.10);
   font: inherit;
   font-size: 15px;
   font-weight: 600;
@@ -1191,7 +1190,6 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   border-color: #666a73;
   background: var(--dark-surface-color);
   color: var(--dark-text-color);
-  box-shadow: 0 0 18px rgba(204, 204, 204, 0.18);
 }
 
 [data-theme="dark"] .full-page-pagination-option:hover {
