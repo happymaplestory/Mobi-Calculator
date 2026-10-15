@@ -655,52 +655,111 @@ input.section-name {
   background: #505050;
 }
 
-/* 저장/불러오기 버튼은 테마 전환 버튼과 같은 테마별 외형을 사용합니다. */
+/* 저장/불러오기 버튼과 하위 메뉴 */
 .data-action-buttons {
   position: fixed;
   z-index: 1000;
   top: 20px;
   left: 20px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 15px;
 }
 
-.data-action-button {
+.data-action-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.data-action-button,
+.data-action-submenu-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 72px;
-  height: 50px;
-  padding: 0 14px;
   border: 2px solid #d5d5d5;
   border-radius: 14px;
   background: var(--background-color);
   color: var(--text-color);
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.10);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
 }
 
-.data-action-button:hover {
+.data-action-button {
+  min-width: 72px;
+  height: 50px;
+  padding: 0 14px;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.10);
+}
+
+.data-action-button:hover,
+.data-action-submenu-button:hover {
   background: color-mix(in srgb, var(--background-color) 80%, #000000 20%);
 }
 
-[data-theme="dark"] .data-action-button {
+.data-action-submenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
+}
+
+.data-action-submenu[hidden] {
+  display: none;
+}
+
+.data-action-submenu.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition: opacity 180ms ease, transform 180ms ease, visibility 0s;
+}
+
+.data-action-submenu-button {
+  width: 90px;
+  min-width: 90px;
+  height: 30px;
+  min-height: 30px;
+  padding: 0;
+  box-shadow: none;
+  font-size: 13px;
+}
+
+[data-theme="dark"] .data-action-button,
+[data-theme="dark"] .data-action-submenu-button {
   border-color: #666a73;
   background: #303238;
   color: var(--dark-text-color);
 }
 
-[data-theme="dark"] .data-action-button:hover {
+[data-theme="dark"] .data-action-button:hover,
+[data-theme="dark"] .data-action-submenu-button:hover {
   background: #505050;
 }
 
-.data-action-button:focus-visible {
+.data-action-button:focus-visible,
+.data-action-submenu-button:focus-visible {
   outline: 2px solid #777;
   outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .data-action-submenu,
+  .data-action-button,
+  .data-action-submenu-button {
+    transition: none !important;
+  }
 }
 
 .theme-toggle-icon {
