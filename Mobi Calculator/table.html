@@ -110,20 +110,15 @@
   })();
 </script>
 
-    <div class="data-action-buttons" aria-label="데이터 저장 및 불러오기">
-      <div class="data-action-item" id="save-action-item">
-        <button id="save-button" class="data-action-button" type="button" aria-expanded="false" aria-controls="save-submenu">저장</button>
-        <div id="save-submenu" class="data-action-submenu" hidden>
-          <button id="save-browser-button" class="data-action-submenu-button" type="button">브라우저</button>
-          <button id="save-file-button" class="data-action-submenu-button" type="button">파일</button>
-        </div>
+    <div class="data-action-buttons" id="data-action-buttons" aria-label="데이터 저장 및 불러오기">
+      <div class="data-action-selector" role="group" aria-label="저장 또는 불러오기 선택">
+        <button id="save-button" class="data-action-button" data-action="save" type="button" aria-expanded="false" aria-controls="action-submenu">저장</button>
+        <span class="data-action-divider" aria-hidden="true">|</span>
+        <button id="load-button" class="data-action-button" data-action="load" type="button" aria-expanded="false" aria-controls="action-submenu">불러오기</button>
       </div>
-      <div class="data-action-item" id="load-action-item">
-        <button id="load-button" class="data-action-button" type="button" aria-expanded="false" aria-controls="load-submenu">불러오기</button>
-        <div id="load-submenu" class="data-action-submenu" hidden>
-          <button id="load-browser-button" class="data-action-submenu-button" type="button">브라우저</button>
-          <button id="load-file-button" class="data-action-submenu-button" type="button">파일</button>
-        </div>
+      <div id="action-submenu" class="data-action-submenu" aria-hidden="true" hidden>
+        <button id="action-browser-button" class="data-action-submenu-button" type="button">브라우저</button>
+        <button id="action-file-button" class="data-action-submenu-button" type="button">파일</button>
       </div>
     </div>
 
