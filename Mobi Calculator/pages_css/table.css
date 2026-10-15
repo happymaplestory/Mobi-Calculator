@@ -621,10 +621,20 @@ input.section-name {
 }
 
 
+/* 제목, 데이터 버튼, 테마 전환 및 페이지 선택을 하나의 상단 고정 영역으로 유지합니다. */
+.page-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  margin-top: -24px;
+  padding-top: 24px;
+  background: var(--background-color);
+}
+
 /* 다크모드 버튼: 쿠키에 저장된 상태에 따라 버튼 자체의 표시를 전환합니다. */
 .theme-toggle-button {
-  position: fixed;
-  z-index: 1000;
+  position: absolute;
+  z-index: 1;
   top: 20px;
   right: 20px;
   display: flex;
@@ -657,8 +667,8 @@ input.section-name {
 
 /* 저장/불러오기 버튼과 하위 메뉴 */
 .data-action-buttons {
-  position: fixed;
-  z-index: 1000;
+  position: absolute;
+  z-index: 1;
   top: 20px;
   left: 20px;
   display: flex;
