@@ -107,6 +107,7 @@
 
 ## 전체 페이지 전환 UI 선택 상태
 
-- `table.html`의 `.full-page-pagination-option` 버튼은 현재 UI 확인용 선택 상태만 제공합니다.
-- 초기 선택은 `스탯`이며, 버튼을 누르면 해당 버튼에만 `.is-active`와 `aria-pressed="true"`를 적용합니다.
-- 현재 단계에서는 실제 데이터, 테이블 콘텐츠 또는 계산 기능을 전환하지 않습니다. 이후 페이지별 콘텐츠 구현 시 별도 요구사항에 따라 연결합니다.
+- `table.html`의 `.full-page-pagination-option` 버튼은 `data-page`로 각각 `stats`, `runes`, `equipment`, `other` 페이지를 식별합니다.
+- 최초 방문 및 새로고침 시 `스탯`이 기본 선택이며, `#table-area`의 입력 콘텐츠를 표시합니다.
+- 버튼을 누르면 해당 버튼에만 `.is-active`와 `aria-pressed="true"`를 적용합니다. `#table-area`는 `stats` 페이지에서만 표시하고 나머지 페이지에서는 `hidden` 상태로 숨깁니다.
+- 페이지 전환 시 `#table-area`와 그 하위 입력 DOM을 제거하거나 다시 생성하지 않으므로, 스탯 페이지로 돌아오면 입력 상태가 유지됩니다.
