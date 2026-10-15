@@ -593,54 +593,65 @@ function initializeTable() {
 
   tableArea.replaceChildren(...orderedColumns);
 
-  // FLIP으로 두 레이아웃 묶음의 위치 변화를 보정해 줄바꿈 시 부드럽게 이동시킵니다.
+  // FLIP으로 재배치 모션을 적용합니다. WAAPI를 사용해 레이아웃용 인라인
+  // transform을 남기지 않으며, 연속 리사이즈 시 이전 애니메이션을 안전하게 취소합니다.
   if (orderedColumns.length > 1 && "ResizeObserver" in window) {
     let previousRects = null;
+    let pendingLayoutFrame = 0;
+    const layoutAnimations = new Map();
     const getLayoutRects = () => new Map(
       orderedColumns.map(item => [item, item.getBoundingClientRect()])
     );
 
     const animateLayoutChange = () => {
-      const currentRects = getLayoutRects();
-      if (!previousRects) {
-        previousRects = currentRects;
-        return;
-      }
+      if (pendingLayoutFrame) cancelAnimationFrame(pendingLayoutFrame);
+      pendingLayoutFrame = requestAnimationFrame(() => {
+        pendingLayoutFrame = 0;
+        const currentRects = getLayoutRects();
 
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        previousRects = currentRects;
-        return;
-      }
+        if (!previousRects) {
+          previousRects = currentRects;
+          return;
+        }
 
-      const movingItems = [];
-      orderedColumns.forEach(item => {
-        const before = previousRects.get(item);
-        const after = currentRects.get(item);
-        if (!before || !after) return;
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        orderedColumns.forEach(item => {
+          const activeAnimation = layoutAnimations.get(item);
+          if (activeAnimation) {
+            activeAnimation.cancel();
+            layoutAnimations.delete(item);
+          }
 
-        const dx = before.left - after.left;
-        const dy = before.top - after.top;
-        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+          if (reduceMotion) return;
 
-        item.style.transition = "none";
-        item.style.transform = `translate(${dx}px, ${dy}px)`;
-        item.getBoundingClientRect();
-        movingItems.push(item);
-      });
-      previousRects = currentRects;
+          const before = previousRects.get(item);
+          const after = currentRects.get(item);
+          if (!before || !after) return;
 
-      requestAnimationFrame(() => {
-        movingItems.forEach(item => {
-          const clearAnimation = event => {
-            if (event.target !== item || event.propertyName !== "transform") return;
-            item.style.removeProperty("transition");
-            item.style.removeProperty("transform");
-            item.removeEventListener("transitionend", clearAnimation);
+          const dx = before.left - after.left;
+          const dy = before.top - after.top;
+          if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+
+          const animation = item.animate(
+            [
+              { transform: `translate(${dx}px, ${dy}px)` },
+              { transform: "translate(0, 0)" }
+            ],
+            {
+              duration: 360,
+              easing: "cubic-bezier(.22,.72,.22,1)",
+              composite: "add"
+            }
+          );
+          layoutAnimations.set(item, animation);
+          animation.onfinish = () => {
+            if (layoutAnimations.get(item) !== animation) return;
+            layoutAnimations.delete(item);
+            animation.cancel();
           };
-          item.addEventListener("transitionend", clearAnimation);
-          item.style.transition = "transform 360ms cubic-bezier(.22,.72,.22,1)";
-          item.style.transform = "translate(0, 0)";
         });
+
+        previousRects = currentRects;
       });
     };
 
