@@ -501,15 +501,15 @@ input.section-name {
   grid-template-columns: var(--description-column-width) var(--application-column-width) var(--value-column-width);
 }
 
-/* 전투 스킬(액티브/패시브): 구분 선택 폭을 줄이고 적용 선택 폭을 늘리되 전체 너비는 유지합니다. */
+/* 전투 스킬(액티브/패시브): 왼쪽 -25px, 가운데 +40px, 오른쪽 -15px로 조정해 전체 너비를 유지합니다. */
 .carousel-column[data-location-id="7000"] .category-group,
 .carousel-column[data-location-id="8000"] .category-group,
 .carousel-column[data-location-id="7000"] .input-row,
 .carousel-column[data-location-id="8000"] .input-row {
   grid-template-columns:
-    calc(var(--description-column-width) - 15px)
-    calc(var(--application-column-width) + 15px)
-    var(--value-column-width);
+    calc(var(--description-column-width) - 25px)
+    calc(var(--application-column-width) + 40px)
+    calc(var(--value-column-width) - 15px);
 }
 .carousel-column .category-title {
   overflow: hidden;
