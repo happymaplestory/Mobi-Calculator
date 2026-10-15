@@ -773,3 +773,7 @@ body[data-theme="dark"] {
   background: #303238;
   color: #cccccc;
 }
+
+[data-theme="dark"] .theme-toggle-button.is-dark:hover {
+  background: #505050;
+}
