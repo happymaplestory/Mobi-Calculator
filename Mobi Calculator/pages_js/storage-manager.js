@@ -152,7 +152,11 @@
             !control.closest(".input-row")
           );
         }
-      })
+      }),
+      preferences: {
+        skipDeleteConfirmation:
+          window.MobiDeleteConfirmation?.getSkipDeleteConfirmation() === true
+      }
     };
   }
 
@@ -225,6 +229,15 @@
 
     if (!Array.isArray(data.booleanOptions)) {
       throw new Error("체크/스위치 옵션 데이터가 올바르지 않습니다.");
+    }
+
+    // preferences는 이전 저장 파일과의 호환성을 위해 선택 항목으로 취급합니다.
+    if (data.preferences !== undefined &&
+        (!data.preferences || typeof data.preferences !== "object" ||
+         Array.isArray(data.preferences) ||
+         (data.preferences.skipDeleteConfirmation !== undefined &&
+          typeof data.preferences.skipDeleteConfirmation !== "boolean"))) {
+      throw new Error("저장된 삭제 확인 설정이 올바르지 않습니다.");
     }
   }
 
@@ -328,7 +341,11 @@
       data.booleanOptions
     );
 
-    return { preparedColumns, globalBooleanChanges };
+    return {
+      preparedColumns,
+      globalBooleanChanges,
+      skipDeleteConfirmation: data.preferences?.skipDeleteConfirmation === true
+    };
   }
 
   function applyRestoredState(prepared) {
@@ -354,6 +371,11 @@
 
     prepared.globalBooleanChanges.forEach(change =>
       writeBooleanValue(change.control, change.value)
+    );
+
+    // 이전 저장 데이터에 설정이 없으면 기본값 false로 복원합니다.
+    window.MobiDeleteConfirmation?.setSkipDeleteConfirmation(
+      prepared.skipDeleteConfirmation
     );
   }
 
