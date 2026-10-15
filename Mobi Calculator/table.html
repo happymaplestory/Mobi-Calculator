@@ -86,6 +86,8 @@
       </div>
     </div>
 
+    <button id="header-collapse-toggle" class="header-collapse-toggle" type="button" aria-label="상단 메뉴 접기" title="상단 메뉴 접기" aria-expanded="true"><span aria-hidden="true">=</span></button>
+
     <button id="theme-toggle" class="theme-toggle-button" type="button" aria-label="다크모드로 전환" title="다크모드로 전환" aria-pressed="false"><svg class="theme-toggle-icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="theme-icon-moon" d="M20.2 14.6A8.6 8.6 0 0 1 9.4 3.8 8.7 8.7 0 1 0 20.2 14.6Z" fill="#d0cda9" stroke="#c3c09f" stroke-width="0.6" stroke-linejoin="round"/><g class="theme-icon-sun" fill="none" stroke="#f1d88b" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="#f1d88b" stroke="none"/><path d="M12 2.5v2.1M12 19.4v2.1M2.5 12h2.1M19.4 12h2.1M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M18.7 5.3l-1.5 1.5M6.8 17.2l-1.5 1.5"/></g></svg></button>
 <script>
   (() => {
@@ -123,6 +125,40 @@
   })();
 </script>
 
+  <script>
+  (() => {
+    const header = document.getElementById("page-header");
+    const toggle = document.getElementById("header-collapse-toggle");
+    const controlled = [
+      header?.querySelector("h1"),
+      header?.querySelector(".data-action-buttons"),
+      document.getElementById("theme-toggle"),
+      document.getElementById("full-page-pagination")
+    ].filter(Boolean);
+    if (!header || !toggle) return;
+
+    const setCollapsed = (collapsed) => {
+      header.classList.toggle("is-collapsed", collapsed);
+      toggle.setAttribute("aria-expanded", String(!collapsed));
+      const label = collapsed ? "상단 메뉴 펼치기" : "상단 메뉴 접기";
+      toggle.setAttribute("aria-label", label);
+      toggle.setAttribute("title", label);
+      controlled.forEach((element) => {
+        if (collapsed) {
+          element.setAttribute("inert", "");
+          element.setAttribute("aria-hidden", "true");
+        } else {
+          element.removeAttribute("inert");
+          element.removeAttribute("aria-hidden");
+        }
+      });
+    };
+
+    toggle.addEventListener("click", () => {
+      setCollapsed(!header.classList.contains("is-collapsed"));
+    });
+  })();
+  </script>
   <nav id="full-page-pagination" class="full-page-pagination" aria-label="페이지 선택">
     <button class="full-page-pagination-option is-active" type="button" aria-pressed="true">스탯</button>
     <button class="full-page-pagination-option" type="button" aria-pressed="false">룬</button>

@@ -649,7 +649,7 @@ input.section-name {
 .theme-toggle-button {
   position: absolute;
   z-index: 1;
-  top: 20px;
+  top: 100px;
   right: 20px;
   display: flex;
   align-items: center;
@@ -677,6 +677,82 @@ input.section-name {
 
 .theme-toggle-button.is-dark:hover {
   background: #505050;
+}
+
+
+/* 상단 메뉴 접기 버튼은 기존 테마 버튼 위치에 두고, 테마 버튼은 80px 아래로 이동합니다. */
+.header-collapse-toggle {
+  position: absolute;
+  z-index: 3;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  border: 2px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--background-color);
+  color: var(--text-color);
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.10);
+  font: inherit;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+.header-collapse-toggle:hover {
+  background: color-mix(in srgb, var(--background-color) 80%, #000000 20%);
+}
+[data-theme="dark"] .header-collapse-toggle {
+  border-color: #666a73;
+  background: #303238;
+  color: #cccccc;
+  box-shadow: 0 0 18px rgba(204, 204, 204, 0.18);
+}
+[data-theme="dark"] .header-collapse-toggle:hover { background: #505050; }
+.header-collapse-toggle:focus-visible {
+  outline: 2px solid #777;
+  outline-offset: 3px;
+}
+
+/* 접기 시 상단 UI를 위로 이동하며 페이드아웃합니다. 숨긴 컨트롤은 inert로 조작할 수 없습니다. */
+.page-header h1,
+.page-header .data-action-buttons,
+.page-header #theme-toggle,
+.page-header #full-page-pagination {
+  opacity: 1;
+  transition: opacity 260ms ease, transform 260ms ease;
+}
+.page-header h1 { transform: translateX(-50%); }
+.page-header .data-action-buttons,
+.page-header #theme-toggle,
+.page-header #full-page-pagination { transform: translateY(0); }
+
+.page-header.is-collapsed h1 {
+  opacity: 0;
+  transform: translate(-50%, -80px);
+  pointer-events: none;
+}
+.page-header.is-collapsed .data-action-buttons,
+.page-header.is-collapsed #theme-toggle,
+.page-header.is-collapsed #full-page-pagination {
+  opacity: 0;
+  transform: translateY(-80px);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-header h1,
+  .page-header .data-action-buttons,
+  .page-header #theme-toggle,
+  .page-header #full-page-pagination,
+  .header-collapse-toggle {
+    transition: none !important;
+  }
 }
 
 /* 저장/불러오기 버튼과 하위 메뉴 */
@@ -714,7 +790,7 @@ input.section-name {
 
 .data-action-button {
   min-width: 72px;
-  height: 50px;
+  height: 30px;
   padding: 0 14px;
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.10);
 }
@@ -1034,7 +1110,7 @@ body[data-theme="dark"] {
   gap: 10px;
   width: calc(100% - 40px);
   min-width: 410px;
-  height: 55px;
+  height: 30px;
   margin: 80px 20px 10px;
   padding: 0;
   border: 0;
@@ -1042,6 +1118,7 @@ body[data-theme="dark"] {
 }
 
 .full-page-pagination-option {
+  height: 30px;
   flex: 1 1 0;
   min-width: 75px;
   padding: 0 12px;
