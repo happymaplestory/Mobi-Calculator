@@ -176,6 +176,11 @@ h1::after {
   min-height: var(--row-height);
 }
 
+.field option {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+}
+
 .field {
   display: flex;
   align-items: center;
@@ -720,6 +725,11 @@ body[data-theme="dark"] {
   background: linear-gradient(90deg, transparent, #777b85 22%, #62596e 50%, #777b85 78%, transparent);
 }
 [data-theme="dark"] .category-title { color: var(--dark-text-color); }
+[data-theme="dark"] .field option {
+  background-color: #505050;
+  color: var(--dark-text-color);
+}
+
 [data-theme="dark"] .field,
 [data-theme="dark"] .value-input,
 [data-theme="dark"] .editable-section-name,
