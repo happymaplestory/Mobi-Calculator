@@ -42,10 +42,10 @@ body {
 
 h1 {
   position: relative;
-  left: calc(50% + 55px);
+  left: calc(50% + 65px);
   transform: translateX(-50%);
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
   column-gap: 0.28em;
@@ -56,7 +56,7 @@ h1 {
   padding: 0;
   color: #555555;
   font-size: 26px;
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: 0.04em;
   line-height: 1.35;
   text-align: center;
@@ -773,4 +773,17 @@ body[data-theme="dark"] {
 
 [data-theme="dark"] .theme-toggle-button.is-dark:hover {
   background: #505050;
+}
+
+
+/* 제목 너비 325px 미만에서는 '모바일 계산기'를 한 묶음으로 줄바꿈하고,
+   210px 미만에서는 세 단어를 각각 한 줄로 배치합니다. */
+@media (max-width: 585px) {
+  h1 { flex-wrap: wrap; }
+  h1 span:nth-child(3) { display: none; }
+  h1 span:nth-child(2)::after { content: " 계산기"; }
+}
+@media (max-width: 470px) {
+  h1 span:nth-child(2)::after { content: ""; }
+  h1 span:nth-child(3) { display: inline-block; }
 }
