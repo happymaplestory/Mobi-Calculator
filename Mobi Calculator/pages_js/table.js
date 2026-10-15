@@ -166,7 +166,7 @@ function enableRowDragging(tableArea) {
   function getDropGroup(target) {
     const column = target?.closest?.(".category-column");
     const group = column?.querySelector(".category-group");
-    return group && group.querySelector(".add-row-button") ? group : null;
+    return group || null;
   }
 
   function getRows(group) {
@@ -180,7 +180,7 @@ function enableRowDragging(tableArea) {
       return clientY < rect.top + rect.height / 2;
     });
     const addButton = group.querySelector(".add-row-button");
-    const nextSibling = nextRow || addButton;
+    const nextSibling = nextRow || addButton || null;
     if (placeholder.parentElement === group && placeholder.nextElementSibling === nextSibling) return;
 
     // FLIP: 레이아웃 변경 전후의 행 위치 차이를 애니메이션으로 보정해 주변 행이 부드럽게 밀리도록 합니다.
@@ -376,7 +376,7 @@ function createLocationColumn(location) {
     sectionRows.forEach(section => group.appendChild(createSectionRow(section)));
   }
 
-  {
+  if (location.id < 3000 || location.id > 6000) {
     const addButton = document.createElement("button");
     addButton.type = "button";
     addButton.className = "add-row-button";
