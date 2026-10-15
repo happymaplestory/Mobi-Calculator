@@ -367,14 +367,16 @@ function createLocationColumn(location) {
   title.textContent = location.name;
   group.appendChild(title);
 
-  // ID 7000과 8000의 기본 행 구성은 후속 요구사항에서 정의합니다.
+  // 전투 스킬 열(ID 7000, 8000)은 기본 행 없이 선택 행 추가 버튼만 표시합니다.
   if (location.id !== 7000 && location.id !== 8000) {
     const sectionRows = MOBI_DATA_MODEL.sectionTable
       .filter(section => location.attributeGroups.includes(section.group))
       .sort((a, b) => a.id - b.id);
 
     sectionRows.forEach(section => group.appendChild(createSectionRow(section)));
+  }
 
+  {
     const addButton = document.createElement("button");
     addButton.type = "button";
     addButton.className = "add-row-button";
