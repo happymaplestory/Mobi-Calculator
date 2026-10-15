@@ -391,18 +391,26 @@
     return JSON.stringify(collectCurrentState(), null, 2);
   }
 
+  function showSaveMessage(title, message) {
+    if (window.MobiCustomDialogs?.alert) {
+      window.MobiCustomDialogs.alert({ title, message, confirmText: "확인" });
+      return;
+    }
+    window.alert(message);
+  }
+
   function handleSaveToBrowser() {
     try {
       const serialized = getSerializedCurrentState();
       window.localStorage.setItem(STORAGE_KEY, serialized);
-      window.alert("현재 입력 데이터를 이 브라우저에 저장했습니다.");
+      showSaveMessage("브라우저 저장 완료", "현재 입력 데이터를 이 브라우저에 저장했습니다.");
     } catch (error) {
       const detail = error && error.name === "QuotaExceededError"
         ? "브라우저의 저장 공간이 부족합니다."
         : error && error.name === "SecurityError"
           ? "브라우저 설정으로 인해 로컬 저장소에 접근할 수 없습니다."
           : "브라우저 로컬 저장소에 기록하지 못했습니다.";
-      window.alert("저장에 실패했습니다.\n" + detail + "\n오류 내용: " + (error?.message || "알 수 없는 오류"));
+      showSaveMessage("브라우저 저장 실패", "저장에 실패했습니다.\n" + detail + "\n오류 내용: " + (error?.message || "알 수 없는 오류"));
     }
   }
 
@@ -433,10 +441,11 @@
 
       window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
       objectUrl = null;
-      window.alert("현재 입력 데이터를 JSON 파일로 저장하도록 요청했습니다.");
+      showSaveMessage("파일 저장 안내", "현재 입력 데이터를 JSON 파일로 저장하도록 요청했습니다.");
     } catch (error) {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
-      window.alert(
+      showSaveMessage(
+        "파일 저장 실패",
         "파일 저장에 실패했습니다.\n" +
         "브라우저가 파일 다운로드를 차단했거나 파일을 생성하지 못했습니다.\n" +
         "오류 내용: " + (error?.message || "알 수 없는 오류")
