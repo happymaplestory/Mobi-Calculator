@@ -678,7 +678,7 @@ input.section-name {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #d5d5d5;
+  border: 2px solid var(--border-color);
   border-radius: 14px;
   background: var(--background-color);
   color: var(--text-color);
@@ -1076,7 +1076,6 @@ body[data-theme="dark"] {
   .full-page-pagination-option {
     min-width: 75px;
     padding: 0 4px;
-    font-size: 12px;
   }
 }
 
