@@ -69,8 +69,20 @@
 </script>
 
     <div class="data-action-buttons" aria-label="데이터 저장 및 불러오기">
-      <button id="save-button" class="data-action-button" type="button">저장</button>
-      <button id="load-button" class="data-action-button" type="button">불러오기</button>
+      <div class="data-action-item" id="save-action-item">
+        <button id="save-button" class="data-action-button" type="button" aria-expanded="false" aria-controls="save-submenu">저장</button>
+        <div id="save-submenu" class="data-action-submenu" hidden>
+          <button id="save-browser-button" class="data-action-submenu-button" type="button">브라우저</button>
+          <button id="save-file-button" class="data-action-submenu-button" type="button">파일</button>
+        </div>
+      </div>
+      <div class="data-action-item" id="load-action-item">
+        <button id="load-button" class="data-action-button" type="button" aria-expanded="false" aria-controls="load-submenu">불러오기</button>
+        <div id="load-submenu" class="data-action-submenu" hidden>
+          <button id="load-browser-button" class="data-action-submenu-button" type="button">브라우저</button>
+          <button id="load-file-button" class="data-action-submenu-button" type="button">파일</button>
+        </div>
+      </div>
     </div>
 
     <button id="theme-toggle" class="theme-toggle-button" type="button" aria-label="다크모드로 전환" title="다크모드로 전환" aria-pressed="false"><svg class="theme-toggle-icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="theme-icon-moon" d="M20.2 14.6A8.6 8.6 0 0 1 9.4 3.8 8.7 8.7 0 1 0 20.2 14.6Z" fill="#d0cda9" stroke="#c3c09f" stroke-width="0.6" stroke-linejoin="round"/><g class="theme-icon-sun" fill="none" stroke="#f1d88b" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="#f1d88b" stroke="none"/><path d="M12 2.5v2.1M12 19.4v2.1M2.5 12h2.1M19.4 12h2.1M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M18.7 5.3l-1.5 1.5M6.8 17.2l-1.5 1.5"/></g></svg></button>
