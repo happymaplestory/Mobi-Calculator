@@ -20,10 +20,7 @@
       if (title.dataset.titleLayout === layout) return;
 
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const header = document.getElementById("page-header");
-      const paginationGroup = header?.querySelector(".pagination-fade-group");
-      const beforeHeaderHeight = header?.getBoundingClientRect().height;
-      const beforePaginationTop = paginationGroup?.getBoundingClientRect().top;
+      const beforeTitleHeight = title.getBoundingClientRect().height;
       const words = [...title.querySelectorAll("span")];
       const beforeRects = new Map(
         words.map(word => [word, word.getBoundingClientRect()])
@@ -33,38 +30,19 @@
       title.dataset.titleLayout = layout;
       if (reducedMotion) return;
 
-      if (header && paginationGroup && Number.isFinite(beforeHeaderHeight) && Number.isFinite(beforePaginationTop)) {
-        const afterHeaderHeight = header.getBoundingClientRect().height;
-        const afterPaginationTop = paginationGroup.getBoundingClientRect().top;
-        const paginationShift = beforePaginationTop - afterPaginationTop;
-
-        if (Math.abs(afterHeaderHeight - beforeHeaderHeight) > 1) {
-          header.style.height = `${beforeHeaderHeight}px`;
-          header.getBoundingClientRect();
-          requestAnimationFrame(() => {
-            header.style.height = `${afterHeaderHeight}px`;
-            const clearHeight = event => {
-              if (event.target !== header || event.propertyName !== "height") return;
-              header.style.removeProperty("height");
-              header.removeEventListener("transitionend", clearHeight);
-            };
-            header.addEventListener("transitionend", clearHeight);
-          });
-        }
-
-        if (Math.abs(paginationShift) > 1) {
-          paginationGroup.style.setProperty("--pagination-layout-shift", `${paginationShift}px`);
-          paginationGroup.getBoundingClientRect();
-          requestAnimationFrame(() => {
-            paginationGroup.style.setProperty("--pagination-layout-shift", "0px");
-            const clearShift = event => {
-              if (event.target !== paginationGroup || event.propertyName !== "transform") return;
-              paginationGroup.style.removeProperty("--pagination-layout-shift");
-              paginationGroup.removeEventListener("transitionend", clearShift);
-            };
-            paginationGroup.addEventListener("transitionend", clearShift);
-          });
-        }
+      const afterTitleHeight = title.getBoundingClientRect().height;
+      if (Math.abs(afterTitleHeight - beforeTitleHeight) > 1) {
+        title.style.height = `${beforeTitleHeight}px`;
+        title.getBoundingClientRect();
+        requestAnimationFrame(() => {
+          title.style.height = `${afterTitleHeight}px`;
+          const clearHeight = event => {
+            if (event.target !== title || event.propertyName !== "height") return;
+            title.style.removeProperty("height");
+            title.removeEventListener("transitionend", clearHeight);
+          };
+          title.addEventListener("transitionend", clearHeight);
+        });
       }
 
       const animations = [];
