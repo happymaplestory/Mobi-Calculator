@@ -415,7 +415,17 @@
   }
 
   function restoreFromData(data) {
-    validateStoredState(data);
+    let prepared;
+    try {
+      validateStoredState(data);
+      prepared = prepareRestore(data);
+    } catch (error) {
+      window.alert(
+        "불러오기를 진행할 수 없습니다.\n" +
+        (error?.message || "저장 데이터의 구조 또는 현재 화면과의 호환성을 검증하지 못했습니다.")
+      );
+      return;
+    }
 
     const confirmed = window.confirm(
       "현재 입력해 둔 데이터는 모두 유실되고, 선택한 저장 기록으로 대체됩니다.\n" +
@@ -424,7 +434,6 @@
     if (!confirmed) return;
 
     try {
-      const prepared = prepareRestore(data);
       applyRestoredState(prepared);
       window.alert("저장 기록을 불러왔습니다.");
     } catch (error) {
