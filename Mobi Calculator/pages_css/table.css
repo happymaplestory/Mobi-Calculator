@@ -1139,6 +1139,7 @@ body[data-theme="dark"] {
   min-width: 410px;
   height: 30px;
   margin: 60px 20px 10px;
+  transform: translateY(-50px);
   padding: 0;
   border: 0;
   background: transparent;
