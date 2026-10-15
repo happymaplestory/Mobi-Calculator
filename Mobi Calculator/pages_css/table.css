@@ -632,8 +632,14 @@ input.section-name {
   background: var(--background-color);
 }
 
-/* 스크롤 콘텐츠가 상단 고정 영역 아래로 지나갈 때 가장자리를 부드럽게 페이드합니다. */
-.page-header::after {
+/* 페이지 선택 UI와 세로 페이드 영역을 하나의 그룹으로 유지합니다. */
+.pagination-fade-group {
+  position: relative;
+  display: flow-root;
+  width: 100%;
+}
+
+.pagination-fade-group::after {
   content: "";
   position: absolute;
   z-index: 2;
@@ -722,15 +728,13 @@ input.section-name {
 /* 접기 시 상단 UI를 위로 이동하며 페이드아웃합니다. 숨긴 컨트롤은 inert로 조작할 수 없습니다. */
 .page-header h1,
 .page-header .data-action-buttons,
-.page-header #theme-toggle,
-.page-header #full-page-pagination {
+.page-header #theme-toggle {
   opacity: 1;
   transition: opacity 260ms ease, transform 260ms ease;
 }
 .page-header h1 { transform: translateX(-50%); }
 .page-header .data-action-buttons,
-.page-header #theme-toggle,
-.page-header #full-page-pagination { transform: translateY(0); }
+.page-header #theme-toggle { transform: translateY(0); }
 
 .page-header.is-collapsed h1 {
   opacity: 0;
@@ -738,8 +742,7 @@ input.section-name {
   pointer-events: none;
 }
 .page-header.is-collapsed .data-action-buttons,
-.page-header.is-collapsed #theme-toggle,
-.page-header.is-collapsed #full-page-pagination {
+.page-header.is-collapsed #theme-toggle {
   opacity: 0;
   transform: translateY(-80px);
   pointer-events: none;
