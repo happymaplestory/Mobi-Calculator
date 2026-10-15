@@ -1157,8 +1157,8 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   margin: 5px 20px 5px;
   padding: 0;
   border: 0;
-  background: transparent;
-  transition: width 260ms ease, margin-left 260ms ease, margin-right 260ms ease;
+  background-color: var(--background-color);
+  transition: background-color 160ms ease, width 260ms ease, margin-left 260ms ease, margin-right 260ms ease;
 }
 
 .full-page-pagination-option {
