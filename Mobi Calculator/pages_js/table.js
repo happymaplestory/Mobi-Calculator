@@ -52,6 +52,7 @@ function requestCustomConfirmation({
   message,
   confirmText = "확인",
   showSkipCheckbox = false,
+  showCancelButton = true,
   skipPreference = null
 }) {
   if (skipPreference === "delete" && skipDeleteConfirmation) return Promise.resolve(true);
@@ -80,6 +81,7 @@ function requestCustomConfirmation({
     option.hidden = !showSkipCheckbox;
     const checkbox = overlay.querySelector(".delete-confirm-skip-checkbox");
     const cancelButton = overlay.querySelector(".delete-confirm-cancel");
+    cancelButton.hidden = !showCancelButton;
     const acceptButton = overlay.querySelector(".delete-confirm-accept");
     acceptButton.textContent = confirmText;
     let finished = false;
@@ -129,6 +131,13 @@ function requestDeleteConfirmation(value) {
 window.MobiCustomDialogs = {
   confirm(options) {
     return requestCustomConfirmation(options);
+  },
+  alert(options) {
+    return requestCustomConfirmation({
+      ...options,
+      showSkipCheckbox: false,
+      showCancelButton: false
+    });
   }
 };
 
