@@ -155,7 +155,9 @@
       }),
       preferences: {
         skipDeleteConfirmation:
-          window.MobiDeleteConfirmation?.getSkipDeleteConfirmation() === true
+          window.MobiDeleteConfirmation?.getSkipDeleteConfirmation() === true,
+        skipMoveConfirmation:
+          window.MobiMoveConfirmation?.getSkipMoveConfirmation() === true
       }
     };
   }
@@ -236,7 +238,9 @@
         (!data.preferences || typeof data.preferences !== "object" ||
          Array.isArray(data.preferences) ||
          (data.preferences.skipDeleteConfirmation !== undefined &&
-          typeof data.preferences.skipDeleteConfirmation !== "boolean"))) {
+          typeof data.preferences.skipDeleteConfirmation !== "boolean") ||
+         (data.preferences.skipMoveConfirmation !== undefined &&
+          typeof data.preferences.skipMoveConfirmation !== "boolean"))) {
       throw new Error("저장된 삭제 확인 설정이 올바르지 않습니다.");
     }
   }
@@ -344,7 +348,8 @@
     return {
       preparedColumns,
       globalBooleanChanges,
-      skipDeleteConfirmation: data.preferences?.skipDeleteConfirmation === true
+      skipDeleteConfirmation: data.preferences?.skipDeleteConfirmation === true,
+      skipMoveConfirmation: data.preferences?.skipMoveConfirmation === true
     };
   }
 
@@ -376,6 +381,9 @@
     // 이전 저장 데이터에 설정이 없으면 기본값 false로 복원합니다.
     window.MobiDeleteConfirmation?.setSkipDeleteConfirmation(
       prepared.skipDeleteConfirmation
+    );
+    window.MobiMoveConfirmation?.setSkipMoveConfirmation(
+      prepared.skipMoveConfirmation
     );
   }
 
@@ -436,7 +444,7 @@
     }
   }
 
-  function restoreFromData(data) {
+  async function restoreFromData(data) {
     let prepared;
     try {
       validateStoredState(data);
@@ -449,10 +457,12 @@
       return;
     }
 
-    const confirmed = window.confirm(
-      "현재 입력해 둔 데이터는 모두 유실되고, 선택한 저장 기록으로 대체됩니다.\n" +
-      "계속 불러오시겠습니까?"
-    );
+    const confirmed = await window.MobiCustomDialogs.confirm({
+      title: "저장 기록 불러오기 확인",
+      message: "현재 입력해 둔 데이터는 모두 유실되고, 선택한 저장 기록으로 대체됩니다.\n계속 불러오시겠습니까?",
+      confirmText: "불러오기",
+      showSkipCheckbox: false
+    });
     if (!confirmed) return;
 
     try {
