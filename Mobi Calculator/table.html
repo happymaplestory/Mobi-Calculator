@@ -8,6 +8,27 @@
 </head>
 <body>
     <h1 aria-label="마비노기 모바일 계산기"><span>마비노기</span><span>모바일</span><span>계산기</span></h1>
+<script>
+  (() => {
+    const title = document.querySelector("h1");
+    if (!title) return;
+
+    const updateTitleLayout = () => {
+      const width = title.getBoundingClientRect().width;
+      const layout = width < 210 ? "three" : width < 325 ? "two" : "single";
+      if (title.dataset.titleLayout !== layout) {
+        title.dataset.titleLayout = layout;
+      }
+    };
+
+    updateTitleLayout();
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(updateTitleLayout).observe(title);
+    } else {
+      window.addEventListener("resize", updateTitleLayout);
+    }
+  })();
+</script>
 
     <div class="data-action-buttons" aria-label="데이터 저장 및 불러오기">
       <button id="save-button" class="data-action-button" type="button">저장</button>
