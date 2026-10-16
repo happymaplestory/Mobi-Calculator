@@ -460,6 +460,11 @@ input.section-name {
   margin-top: 10px;
 }
 
+/* 세로 배치에서는 두 영역 사이의 기존 100px 간격(행 간격 80px + carousel 상단 여백 20px)을 절반인 50px로 줄입니다. */
+.table-area.is-stacked {
+  row-gap: 30px;
+}
+
 
 /* 6개 입력 열의 슬라이드형 탐색 UI */
 .column-carousel {
