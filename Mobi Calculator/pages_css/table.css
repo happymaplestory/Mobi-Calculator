@@ -670,9 +670,18 @@ input.section-name {
   background: transparent;
 }
 
-/* 접힌 상태에서는 하단 여백을 음수 margin으로 줄여 다음 콘텐츠를 20px 위로 당깁니다. */
-.page-header.is-collapsed {
-  margin-bottom: -20px;
+/* 제목 줄 수와 접기 상태가 헤더의 문서 흐름 높이를 바꾸지 않도록 합니다. */
+.page-header h1 {
+  position: absolute;
+}
+
+/* 접기 상태의 콘텐츠 이동은 문서 흐름이 아닌 독립 transform으로 처리합니다. */
+.page-content-stage {
+  transition: transform 260ms cubic-bezier(.22,.72,.22,1);
+}
+
+body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
+  transform: translateY(-20px);
 }
 
 /* 헤더 UI는 유지하되, 배경만 하단에서 투명해져 스크롤 콘텐츠가 페이드 영역에 보이도록 합니다. */
