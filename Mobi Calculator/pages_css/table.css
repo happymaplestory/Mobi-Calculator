@@ -683,7 +683,7 @@ input.section-name {
   top: 0;
   left: 0;
   right: 0;
-  bottom: calc(-30px - var(--header-y-offset));
+  bottom: calc(-60px - var(--header-y-offset));
   background: var(--background-color);
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
   mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
