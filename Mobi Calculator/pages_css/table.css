@@ -838,7 +838,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   --save-submenu-color: hsl(from var(--save-hover-color) h calc(s * 0.8) calc(l * 1.2));
   --load-submenu-color: hsl(from var(--load-hover-color) h calc(s * 0.8) calc(l * 1.2));
   position: absolute;
-  z-index: 1;
+  z-index: 3;
   top: 20px;
   left: 20px;
 }
