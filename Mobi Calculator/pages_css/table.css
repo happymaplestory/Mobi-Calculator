@@ -701,9 +701,9 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
   transform: translateY(-20px);
 }
 
-/* 접힌 상태에서는 페이지 메뉴의 기존 왼쪽 위치를 유지하고, 오른쪽 경계까지 늘어나는 폭 확장을 제거합니다. */
+/* 접힌 상태에서는 화면 너비를 기준으로 페이지 메뉴를 확장하고 좌우 여백을 각각 고정합니다. */
 body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
-  width: calc(100% - 110px) !important;
+  width: calc(100vw - 110px) !important;
   min-width: 0;
   margin-left: 20px !important;
   margin-right: 90px !important;
