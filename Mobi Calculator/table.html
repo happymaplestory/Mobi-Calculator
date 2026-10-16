@@ -24,8 +24,6 @@
 
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const beforeTitleHeight = title.getBoundingClientRect().height;
-      const stage = document.getElementById("page-content-stage");
-      const beforeStageTop = stage?.getBoundingClientRect().top ?? null;
       const words = [...title.querySelectorAll("span")];
       const beforeRects = new Map(
         words.map(word => [word, word.getBoundingClientRect()])
@@ -43,31 +41,6 @@
       // 이전 전환에서 남아 있을 수 있는 고정 높이를 먼저 제거해 새 목표 높이를 측정합니다.
       title.style.removeProperty("height");
       const afterTitleHeight = title.getBoundingClientRect().height;
-
-      // 제목 줄 배치 변경으로 문서 흐름에서 이동하는 콘텐츠 영역도 같은 시간축으로 보정합니다.
-      if (stage && beforeStageTop !== null) {
-        const afterStageTop = stage.getBoundingClientRect().top;
-        const stageDeltaY = beforeStageTop - afterStageTop;
-        if (!reducedMotion && Math.abs(stageDeltaY) > 1) {
-          stage.style.transition = "none";
-          stage.style.transform = `translateY(${stageDeltaY}px)`;
-          stage.getBoundingClientRect();
-          requestAnimationFrame(() => {
-            stage.style.transition = "transform 280ms cubic-bezier(.22,.72,.22,1)";
-            stage.style.transform = "translateY(0)";
-          });
-          const clearStageTransition = event => {
-            if (event.target !== stage || event.propertyName !== "transform") return;
-            stage.style.removeProperty("transition");
-            stage.style.removeProperty("transform");
-            stage.removeEventListener("transitionend", clearStageTransition);
-          };
-          stage.addEventListener("transitionend", clearStageTransition);
-        } else if (reducedMotion) {
-          stage.style.removeProperty("transition");
-          stage.style.removeProperty("transform");
-        }
-      }
 
       if (reducedMotion) return;
 
