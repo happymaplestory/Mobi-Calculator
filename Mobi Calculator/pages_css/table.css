@@ -1175,6 +1175,11 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
   transform: none !important;
 }
 
+/* 제목이 세 줄이고 상단 메뉴가 펼쳐진 경우 오른쪽 여백을 20px로 줄입니다. */
+body:has(#header-collapse-toggle[aria-expanded="true"]) .page-header:has(h1[data-title-layout="three"]) .full-page-pagination {
+  margin-right: 20px !important;
+}
+
 @media (max-width: 584px) {
   body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination,
   body:has(#header-collapse-toggle[aria-expanded="true"]) .page-content-stage {
