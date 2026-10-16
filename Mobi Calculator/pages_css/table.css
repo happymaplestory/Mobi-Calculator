@@ -701,7 +701,7 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .header-cover-layer {
 
 /* 접힌 상태에서는 제목 줄 수에 따른 Y축 보정을 적용하지 않습니다. */
 .page-content-stage {
-  transition: transform 260ms cubic-bezier(.22,.72,.22,1);
+  transition: transform 260ms cubic-bezier(.22,.72,.22,1), translate 260ms cubic-bezier(.22,.72,.22,1);
 }
 
 body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
@@ -1306,5 +1306,4 @@ body:has(#header-collapse-toggle[aria-expanded="true"]):has(#action-submenu[aria
 
 body:has(#header-collapse-toggle[aria-expanded="true"]):has(#action-submenu[aria-hidden="false"]):has(.page-header h1[data-title-layout="single"]) #page-content-stage {
   translate: 0 60px;
-  transition: transform 260ms cubic-bezier(.22,.72,.22,1), translate 260ms cubic-bezier(.22,.72,.22,1);
 }
