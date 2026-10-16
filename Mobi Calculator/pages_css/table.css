@@ -685,21 +685,10 @@ input.section-name {
   right: 0;
   bottom: calc(-30px - var(--header-y-offset));
   background: var(--background-color);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
   pointer-events: none;
   transition: bottom 260ms cubic-bezier(.22,.72,.22,1), background-color 160ms ease;
-}
-
-.header-cover-layer::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 30px;
-  background: var(--background-color);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
-  transition: background-color 160ms ease;
 }
 
 /* 접힌 상태에서는 제목 줄 수에 따른 Y축 보정을 적용하지 않습니다. */
