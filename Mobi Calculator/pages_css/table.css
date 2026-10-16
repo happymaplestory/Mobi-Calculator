@@ -680,7 +680,7 @@ input.section-name {
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
   mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
   pointer-events: none;
-  transition: background-color 160ms ease, inset 260ms ease;
+  transition: background-color 160ms ease, inset 260ms cubic-bezier(.22,.72,.22,1);
 }
 
 /* 접기 시 페이지 전환 그룹과 같은 거리만큼 배경 페이드 영역도 위로 이동합니다. */
@@ -694,11 +694,7 @@ input.section-name {
   display: flow-root;
   width: 100%;
   margin-top: 5px;
-  transition: margin-top 260ms ease, transform 260ms ease;
-}
-
-body:has(#header-collapse-toggle[aria-expanded="false"]) .pagination-fade-group {
-  margin-top: 30px;
+  transition: transform 260ms cubic-bezier(.22,.72,.22,1);
 }
 
 .page-header.is-collapsed .pagination-fade-group {
@@ -722,7 +718,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .pagination-fade-group 
 .theme-toggle-button {
   position: absolute;
   z-index: 1;
-  top: 60px;
+  top: 55px;
   right: 20px;
   display: flex;
   align-items: center;
