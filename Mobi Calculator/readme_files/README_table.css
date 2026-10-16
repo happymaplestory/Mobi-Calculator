@@ -8,3 +8,5 @@
 - 페이지 콘텐츠 전환은 이전 패널의 opacity/translateY/scale을 260ms 동안 전환하고, 새 패널은 100ms 지연 후 opacity/translateX를 260ms 동안 전환합니다. 선택 페이지가 이전 페이지보다 왼쪽이면 새 패널은 왼쪽에서, 오른쪽이면 오른쪽에서 중앙으로 이동합니다. `prefers-reduced-motion: reduce`에서는 전환 애니메이션을 실행하지 않습니다.
 
 - 상단 메뉴가 펼쳐져 있고 (#header-collapse-toggle의 aria-expanded="true"), 저장/불러오기 하위 메뉴 (#action-submenu의 aria-hidden="false")가 열려 있으며 제목이 한 줄 (h1[data-title-layout="single"])인 경우에만 추가 이동을 적용합니다. .header-cover-layer는 기존 하단 위치에서 60px 더 확장하고, #full-page-pagination과 #page-content-stage는 각각 아래로 60px 이동합니다. 기존 transform 및 반응형 이동과 충돌하지 않도록 페이지 메뉴와 콘텐츠 영역에는 독립적인 CSS translate를 사용합니다. 덮개 bottom, 페이지 메뉴 translate, 콘텐츠 translate는 기존의 260ms cubic-bezier(.22,.72,.22,1) 전환으로 부드럽게 움직이며, 조건이 해제되면 원래 위치로 돌아옵니다. 다른 조건에서는 기존 동작을 유지합니다.
+
+- `.page-content-stage`의 `translate` 전환은 기본 규칙에서 항상 260ms로 유지합니다. 하위 메뉴가 열린 조건부 규칙에는 목표 이동값만 지정하여, 메뉴를 열 때뿐 아니라 닫을 때도 60px 이동이 부드럽게 되돌아오도록 합니다.
