@@ -105,6 +105,7 @@ h1[data-title-layout="three"] span {
 .page-content-stage {
   position: relative;
   width: 100%;
+  margin-top: 40px;
   padding-top: 20px;
 }
 
