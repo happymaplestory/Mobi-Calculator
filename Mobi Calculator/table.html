@@ -172,16 +172,13 @@
     ].filter(Boolean);
     if (!header || !toggle) return;
 
-    let headerMotionToken = 0;
-    let clearHeaderHeightTransition = null;
-
-    const setCollapsed = (collapsed) => {
+    const setCollapsed = collapsed => {
       header.classList.toggle("is-collapsed", collapsed);
       toggle.setAttribute("aria-expanded", String(!collapsed));
       const label = collapsed ? "상단 메뉴 펼치기" : "상단 메뉴 접기";
       toggle.setAttribute("aria-label", label);
       toggle.setAttribute("title", label);
-      controlled.forEach((element) => {
+      controlled.forEach(element => {
         if (collapsed) {
           element.setAttribute("inert", "");
           element.setAttribute("aria-hidden", "true");
@@ -192,62 +189,8 @@
       });
     };
 
-    const toggleHeader = (collapsed) => {
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const motionToken = ++headerMotionToken;
-      if (clearHeaderHeightTransition) {
-        header.removeEventListener("transitionend", clearHeaderHeightTransition);
-        clearHeaderHeightTransition = null;
-      }
-
-      // 진행 중인 전환 도중 다시 누른 경우에도 현재 화면 높이에서 새 전환을 시작합니다.
-      const beforeHeight = header.getBoundingClientRect().height;
-      header.style.transition = "none";
-      header.style.height = `${beforeHeight}px`;
-      header.getBoundingClientRect();
-
-      setCollapsed(collapsed);
-
-      // auto 높이를 잠시 복원해 이번 상태의 실제 목표 높이를 측정합니다.
-      header.style.removeProperty("height");
-      const afterHeight = header.getBoundingClientRect().height;
-
-      if (reducedMotion || Math.abs(afterHeight - beforeHeight) < 1) {
-        header.style.removeProperty("transition");
-        header.style.removeProperty("height");
-        return;
-      }
-
-      // 헤더 높이를 실제로 전환하므로 문서 흐름에 있는 table-area가 같은 시간축으로 이동합니다.
-      header.style.transition = "none";
-      header.style.height = `${beforeHeight}px`;
-      header.getBoundingClientRect();
-
-      const clearHeightTransition = (event) => {
-        if (
-          event.target !== header ||
-          event.propertyName !== "height" ||
-          motionToken !== headerMotionToken
-        ) return;
-        header.style.removeProperty("transition");
-        header.style.removeProperty("height");
-        header.removeEventListener("transitionend", clearHeightTransition);
-        if (clearHeaderHeightTransition === clearHeightTransition) {
-          clearHeaderHeightTransition = null;
-        }
-      };
-      clearHeaderHeightTransition = clearHeightTransition;
-      header.addEventListener("transitionend", clearHeightTransition);
-
-      requestAnimationFrame(() => {
-        if (motionToken !== headerMotionToken) return;
-        header.style.transition = "height 260ms cubic-bezier(.22,.72,.22,1)";
-        header.style.height = `${afterHeight}px`;
-      });
-    };
-
     toggle.addEventListener("click", () => {
-      toggleHeader(!header.classList.contains("is-collapsed"));
+      setCollapsed(!header.classList.contains("is-collapsed"));
     });
   })();
   </script>
