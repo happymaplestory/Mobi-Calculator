@@ -1217,6 +1217,7 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
 /* 전체 페이지 전환 UI */
 .full-page-pagination {
   position: relative;
+  translate: 0 20px;
   z-index: 2;
   display: flex;
   align-items: stretch;
@@ -1228,7 +1229,7 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
   padding: 0;
   border: 0;
   background-color: var(--background-color);
-  transition: background-color 160ms ease, width 260ms ease, margin-left 260ms ease, margin-right 260ms ease, transform 260ms cubic-bezier(.22,.72,.22,1);
+  transition: background-color 160ms ease, width 260ms ease, margin-left 260ms ease, margin-right 260ms ease, transform 260ms cubic-bezier(.22,.72,.22,1), translate 260ms cubic-bezier(.22,.72,.22,1);
 }
 
 .full-page-pagination-option {
