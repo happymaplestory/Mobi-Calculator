@@ -714,7 +714,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   min-width: 0;
   margin-left: 20px !important;
   margin-right: 90px !important;
-  transform: translateY(-20px);
+  transform: translateY(-40px);
 }
 
 /* 페이지 선택 UI는 공통 덮개 위에 직접 배치합니다. */
