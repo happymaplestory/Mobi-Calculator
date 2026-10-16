@@ -691,8 +691,6 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
   z-index: -1;
   inset: 0;
   background-color: var(--background-color);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
   pointer-events: none;
   transition: background-color 160ms ease, inset 260ms cubic-bezier(.22,.72,.22,1);
 }
@@ -705,6 +703,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
 /* 페이지 선택 UI와 세로 페이드 영역을 하나의 그룹으로 유지합니다. */
 .pagination-fade-group {
   position: relative;
+  z-index: 1;
   display: flow-root;
   width: 100%;
   margin-top: 5px;
@@ -721,8 +720,10 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
 /* 페이드는 실제 문서 흐름에 높이를 차지해 콘텐츠가 그 아래에서 시작하도록 합니다. */
 .pagination-fade-group::after {
   content: "";
-  position: relative;
-  top: 0px;
+  position: absolute;
+  z-index: 1;
+  top: 34px;
+  left: 0;
   display: block;
   width: 100%;
   height: 30px;
@@ -1216,6 +1217,8 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
 
 /* 전체 페이지 전환 UI */
 .full-page-pagination {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: stretch;
   gap: 10px;
