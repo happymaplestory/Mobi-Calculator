@@ -10,3 +10,5 @@
 - 상단 메뉴가 펼쳐져 있고 (#header-collapse-toggle의 aria-expanded="true"), 저장/불러오기 하위 메뉴 (#action-submenu의 aria-hidden="false")가 열려 있을 때 제목 줄 수에 따라 추가 이동을 적용합니다. h1[data-title-layout="single"]이면 .header-cover-layer 하단을 60px 더 확장하고 #full-page-pagination과 #page-content-stage를 각각 아래로 60px 이동합니다. h1[data-title-layout="two"]이면 세 요소를 각각 30px 이동합니다. h1[data-title-layout="three"]이면 이 추가 이동을 적용하지 않습니다. 페이지 메뉴와 콘텐츠 영역은 기존 transform 및 반응형 이동과 충돌하지 않도록 독립적인 CSS translate를 사용합니다. 덮개 bottom, 페이지 메뉴 translate, 콘텐츠 translate의 transition은 조건부 규칙 밖에 유지하여 single↔two↔three 변경과 하위 메뉴 열기/닫기 양방향에서 260ms cubic-bezier(.22,.72,.22,1)로 부드럽게 이동합니다. 특히 single 상태에서 하위 메뉴가 닫힐 때 .page-content-stage의 translate 전환을 조건부 규칙 안으로 옮기지 않아 순간 이동이 재발하지 않도록 합니다.
 
 - `.page-content-stage`의 `translate` 전환은 기본 규칙에서 항상 260ms로 유지합니다. 하위 메뉴가 열린 조건부 규칙에는 목표 이동값만 지정하여, 메뉴를 열 때뿐 아니라 닫을 때도 60px 이동이 부드럽게 되돌아오도록 합니다.
+
+- 제목의 실제 측정 너비가 125px 이하이면 `h1[data-title-visibility="hidden"]`을 적용해 opacity를 0으로 전환하고, 125px를 초과하면 표시 상태로 복귀합니다. 기존 `.page-header h1`의 opacity transition을 사용해 260ms 동안 페이드아웃/페이드인하며, 제목의 레이아웃과 공간은 유지합니다.
