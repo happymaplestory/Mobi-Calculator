@@ -116,6 +116,6 @@ HTML 구조나 테마 상태 처리를 수정할 때는 테이블 스크립트�
 ## 저장/불러오기 하위 메뉴가 열린 상태의 위치 조정
 
 - 상단 메뉴가 펼쳐져 있고 (#header-collapse-toggle의 aria-expanded="true"), 공통 하위 메뉴 (#action-submenu)의 aria-hidden이 false이며 제목이 한 줄 (h1[data-title-layout="single"])이면 공통 덮개 .header-cover-layer의 하단을 60px 더 확장하고, #full-page-pagination과 #page-content-stage를 각각 아래로 60px 이동합니다.
-- 같은 조건에서 제목이 두 줄 (h1[data-title-layout="two)이면 공통 덮개 하단을 30px 더 확장하고, #full-page-pagination과 #page-content-stage를 각각 아래로 30px 이동합니다. 제목이 세 줄 (h1[data-title-layout="three)이면 이 추가 이동을 적용하지 않습니다.
+- 같은 조건에서 제목이 두 줄 (h1[data-title-layout="two"]이면 공통 덮개 하단을 30px 더 확장하고, #full-page-pagination과 #page-content-stage를 각각 아래로 30px 이동합니다. 제목이 세 줄 (h1[data-title-layout="three"]이면 이 추가 이동을 적용하지 않습니다.
 - 기존 접기/펼치기, 반응형 위치 보정 및 페이지 콘텐츠 전환을 보존하기 위해 페이지 메뉴와 콘텐츠 영역은 별도 CSS translate 속성을 사용합니다. 제목이 single, two, three 사이에서 어느 방향으로 변경되더라도 덮개 bottom, 페이지 메뉴 translate, 콘텐츠 translate는 기존 260ms cubic-bezier(.22,.72,.22,1) 전환으로 부드럽게 이동합니다.
 - `.page-content-stage`의 `translate` 전환은 기본 CSS 규칙에서 항상 유지하고, 조건부 규칙에는 목표 이동값만 설정합니다. 특히 제목이 한 줄인 상태에서 하위 메뉴가 열림에서 닫힘으로 바뀔 때도 60px 이동이 부드럽게 되돌아가야 하며, 전환 선언을 조건부 규칙 안으로 옮겨 순간 이동이 재발하지 않도록 합니다.
