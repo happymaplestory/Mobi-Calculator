@@ -1307,3 +1307,17 @@ body:has(#header-collapse-toggle[aria-expanded="true"]):has(#action-submenu[aria
 body:has(#header-collapse-toggle[aria-expanded="true"]):has(#action-submenu[aria-hidden="false"]):has(.page-header h1[data-title-layout="single"]) #page-content-stage {
   translate: 0 60px;
 }
+
+/* 같은 조건에서 제목이 두 줄이면 세 요소를 30px씩 이동합니다.
+   단일/두 줄/세 줄 분기 사이에서도 기존 transition을 유지해 양방향으로 부드럽게 전환합니다. */
+body:has(#header-collapse-toggle[aria-expanded="true"]):has(#action-submenu[aria-hidden="false"]):has(.page-header h1[data-title-layout="two"]) .header-cover-layer {
+  bottom: calc(-70px - var(--header-y-offset) - var(--header-collapse-offset) - 30px);
+}
+
+body:has(#header-collapse-toggle[aria-expanded="true"]):has(#action-submenu[aria-hidden="false"]):has(.page-header h1[data-title-layout="two"]) #full-page-pagination {
+  translate: 0 70px;
+}
+
+body:has(#header-collapse-toggle[aria-expanded="true"]):has(#action-submenu[aria-hidden="false"]):has(.page-header h1[data-title-layout="two"]) #page-content-stage {
+  translate: 0 30px;
+}
