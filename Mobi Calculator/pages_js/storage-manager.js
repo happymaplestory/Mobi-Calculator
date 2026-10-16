@@ -606,4 +606,19 @@
     if (event.key !== "Escape") return;
     closeMenu();
   });
+
+  let previousViewportWidth = window.innerWidth;
+  let previousViewportHeight = window.innerHeight;
+  window.addEventListener("resize", () => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    if (viewportWidth === previousViewportWidth && viewportHeight === previousViewportHeight) return;
+
+    previousViewportWidth = viewportWidth;
+    previousViewportHeight = viewportHeight;
+
+    if (actionSubmenu.getAttribute("aria-hidden") === "false") {
+      closeMenu();
+    }
+  });
 })();
