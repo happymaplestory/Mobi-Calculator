@@ -1185,7 +1185,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   gap: 10px;
   width: calc(100% - 40px);
   min-width: 410px;
-  height: 30px;
+  height: 34px;
   margin: 0 20px;
   padding: 0;
   border: 0;
@@ -1194,7 +1194,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
 }
 
 .full-page-pagination-option {
-  height: 30px;
+  height: 34px;
   flex: 1 1 0;
   padding: 0 12px;
   border: 2px solid var(--border-color);
