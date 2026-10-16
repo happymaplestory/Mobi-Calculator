@@ -710,20 +710,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   transform: translateY(-20px);
 }
 
-/* 페이지 선택 UI는 공통 덮개 위에 표시하고 접힐 때만 그룹 단위로 이동합니다. */
-.pagination-fade-group {
-  position: relative;
-  z-index: 2;
-  display: flow-root;
-  width: 100%;
-  margin-top: 5px;
-  padding-top: 10px;
-  transition: transform 260ms cubic-bezier(.22,.72,.22,1);
-}
-
-.page-header.is-collapsed .pagination-fade-group {
-  transform: translateY(-10px);
-}
+/* 페이지 선택 UI는 공통 덮개 위에 직접 배치합니다. */
 
 /* 다크모드 버튼: 쿠키에 저장된 상태에 따라 버튼 자체의 표시를 전환합니다. */
 .theme-toggle-button {
@@ -827,7 +814,6 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   .page-header h1,
   .page-header .data-action-buttons,
   .page-header #theme-toggle,
-  .page-header .pagination-fade-group,
   .full-page-pagination,
   .page-content-stage,
   .header-collapse-toggle {
