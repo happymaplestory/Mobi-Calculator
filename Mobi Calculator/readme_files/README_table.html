@@ -118,3 +118,5 @@ HTML 구조나 테마 상태 처리를 수정할 때는 테이블 스크립트�
 - 상단 메뉴가 펼쳐져 있고 (#header-collapse-toggle의 aria-expanded="true"), 공통 하위 메뉴 (#action-submenu)의 aria-hidden이 false이며 제목이 한 줄 (h1[data-title-layout="single"])인 경우에만 추가 이동을 적용합니다.
 - 이 조건에서 공통 덮개 .header-cover-layer의 하단을 60px 더 확장하고, #full-page-pagination과 #page-content-stage를 각각 아래로 60px 이동합니다.
 - 기존 접기/펼치기, 반응형 위치 보정 및 페이지 콘텐츠 전환을 보존하기 위해 페이지 메뉴와 콘텐츠 영역은 별도 CSS translate 속성을 사용합니다. 각 이동은 기존 260ms cubic-bezier(.22,.72,.22,1) 전환으로 부드럽게 진행되며, 조건이 해제되면 원래 위치로 복귀합니다.
+
+- 하위 메뉴 열림 조건이 해제될 때 `.page-content-stage`가 순간 이동하지 않도록 `translate`의 260ms 전환은 기본 CSS 규칙에 상시 선언하고, 조건부 규칙에는 `translate: 0 60px`만 설정합니다. 이에 따라 열기와 닫기 양방향 모두 부드럽게 이동합니다.
