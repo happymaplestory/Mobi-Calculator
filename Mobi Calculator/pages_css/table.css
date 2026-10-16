@@ -689,7 +689,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: 0 0 -5px;
+  inset: 0 0 -7px;
   background-color: var(--background-color);
   pointer-events: none;
   transition: background-color 160ms ease, inset 260ms cubic-bezier(.22,.72,.22,1);
@@ -697,7 +697,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
 
 /* 접기 시에도 배경이 페이지 메뉴 상단까지 이어지도록 확장량을 반영합니다. */
 .page-header.is-collapsed::before {
-  inset: 0 0 45px;
+  inset: 0 0 43px;
 }
 
 /* 페이지 선택 UI와 세로 페이드 영역을 하나의 그룹으로 유지합니다. */
@@ -722,7 +722,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
   content: "";
   position: absolute;
   z-index: 1;
-  top: 34px;
+  top: 33px;
   left: 0;
   display: block;
   width: 100%;
