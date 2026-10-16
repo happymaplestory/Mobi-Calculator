@@ -693,7 +693,7 @@ input.section-name {
   position: relative;
   display: flow-root;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 10px;
   transition: transform 260ms ease;
 }
 
@@ -1155,7 +1155,7 @@ body[data-theme="dark"] {
 /* 제목이 한 줄일 때만 페이지 전환 UI의 좌우 여백과 시각적 Y 위치를 별도 조정합니다. */
 .page-header:has(h1[data-title-layout="single"]) .full-page-pagination {
   position: relative;
-  top: -10px;
+  top: 0;
   width: calc(100% - 315px);
   min-width: 0;
   margin-left: 215px;
