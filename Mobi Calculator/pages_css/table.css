@@ -729,7 +729,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
   background-color: var(--background-color);
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
   mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
-  transition: background-color 160ms ease;
+  transition: background-color 160ms ease, transform 260ms cubic-bezier(.22,.72,.22,1);
   pointer-events: none;
 }
 
@@ -836,6 +836,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
   .page-header .data-action-buttons,
   .page-header #theme-toggle,
   .page-header .pagination-fade-group,
+  .pagination-fade-group::after,
   .full-page-pagination,
   .page-content-stage,
   .header-collapse-toggle {
@@ -1198,13 +1199,17 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
 }
 
 @media (max-width: 584px) {
-  body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination,
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .pagination-fade-group::after,
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .page-content-stage {
     transform: translateY(35px) !important;
   }
 }
 
 @media (max-width: 469px) {
-  body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination,
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .pagination-fade-group::after,
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .page-content-stage {
     transform: translateY(70px) !important;
   }
 }
