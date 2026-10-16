@@ -1221,7 +1221,7 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
   padding: 0;
   border: 0;
   background-color: var(--background-color);
-  transition: background-color 160ms ease, width 260ms ease, margin-left 260ms ease, margin-right 260ms ease;
+  transition: background-color 160ms ease, width 260ms ease, margin-left 260ms ease, margin-right 260ms ease, transform 260ms cubic-bezier(.22,.72,.22,1);
 }
 
 .full-page-pagination-option {
