@@ -689,15 +689,15 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: 0;
+  inset: 0 0 -5px;
   background-color: var(--background-color);
   pointer-events: none;
   transition: background-color 160ms ease, inset 260ms cubic-bezier(.22,.72,.22,1);
 }
 
-/* 접기 시 페이지 전환 그룹과 같은 거리만큼 배경 페이드 영역도 위로 이동합니다. */
+/* 접기 시에도 배경이 페이지 메뉴 상단까지 이어지도록 확장량을 반영합니다. */
 .page-header.is-collapsed::before {
-  inset: 0 0 50px;
+  inset: 0 0 45px;
 }
 
 /* 페이지 선택 UI와 세로 페이드 영역을 하나의 그룹으로 유지합니다. */
