@@ -258,6 +258,17 @@
     <button class="full-page-pagination-option" type="button" data-page="equipment" aria-pressed="false">장비</button>
     <button class="full-page-pagination-option" type="button" data-page="other" aria-pressed="false">기타</button>
   </nav>
+
+  </div>
+  </div>
+
+  <main id="page-content-stage" class="page-content-stage">
+    <div id="table-area" class="table-area page-content-panel"></div>
+    <section id="runes-page" class="page-content-panel page-test-panel" data-page="runes" hidden aria-label="룬 페이지 테스트 콘텐츠"></section>
+    <section id="equipment-page" class="page-content-panel page-test-panel" data-page="equipment" hidden aria-label="장비 페이지 테스트 콘텐츠"></section>
+    <section id="other-page" class="page-content-panel page-test-panel" data-page="other" hidden aria-label="기타 페이지 테스트 콘텐츠"></section>
+  </main>
+
   <script>
     (() => {
       const pagination = document.getElementById("full-page-pagination");
@@ -360,15 +371,6 @@
       });
     })();
   </script>
-  </div>
-  </div>
-
-  <main id="page-content-stage" class="page-content-stage">
-    <div id="table-area" class="table-area page-content-panel"></div>
-    <section id="runes-page" class="page-content-panel page-test-panel" data-page="runes" hidden aria-label="룬 페이지 테스트 콘텐츠"></section>
-    <section id="equipment-page" class="page-content-panel page-test-panel" data-page="equipment" hidden aria-label="장비 페이지 테스트 콘텐츠"></section>
-    <section id="other-page" class="page-content-panel page-test-panel" data-page="other" hidden aria-label="기타 페이지 테스트 콘텐츠"></section>
-  </main>
 
   <script src="pages_js/data-model.js"></script>
   <script src="pages_js/table.js"></script>
