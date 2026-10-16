@@ -105,6 +105,7 @@ h1[data-title-layout="three"] span {
 .page-content-stage {
   position: relative;
   width: 100%;
+  padding-top: 20px;
 }
 
 .page-content-stage.is-transitioning {
@@ -698,6 +699,12 @@ input.section-name {
 
 body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
   transform: translateY(-20px);
+}
+
+/* 접힌 상태에서는 페이지 메뉴의 기존 왼쪽 위치를 유지하고, 오른쪽 경계까지 늘어나는 폭 확장을 제거합니다. */
+body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
+  width: fit-content !important;
+  min-width: 0;
 }
 
 /* 페이지 선택 UI는 공통 덮개 위에 표시하고 접힐 때만 그룹 단위로 이동합니다. */
