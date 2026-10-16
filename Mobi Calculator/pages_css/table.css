@@ -707,6 +707,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   min-width: 0;
   margin-left: 20px !important;
   margin-right: 90px !important;
+  transform: translateY(-20px);
 }
 
 /* 페이지 선택 UI는 공통 덮개 위에 표시하고 접힐 때만 그룹 단위로 이동합니다. */
