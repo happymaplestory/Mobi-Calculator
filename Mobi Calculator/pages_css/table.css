@@ -837,6 +837,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
   .page-header #theme-toggle,
   .page-header .pagination-fade-group,
   .full-page-pagination,
+  .page-content-stage,
   .header-collapse-toggle {
     transition: none !important;
   }
