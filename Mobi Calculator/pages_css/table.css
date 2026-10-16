@@ -1173,7 +1173,7 @@ body[data-theme="dark"] {
 }
 
 
-/* 제목이 한 줄일 때만 페이지 전환 UI의 좌우 여백과 시각적 Y 위치를 별도 조정합니다. */
+/* 제목이 한 줄일 때만 페이지 전환 UI의 좌우 여백을 별도 조정합니다. */
 .page-header:has(h1[data-title-layout="single"]) .full-page-pagination {
   position: relative;
   top: 0;
@@ -1183,8 +1183,10 @@ body[data-theme="dark"] {
   margin-right: 90px;
 }
 
-/* 상단 메뉴가 접힌 동안에는 제목 줄 수 및 페이지 너비 변화에 따른 페이지네이션의 Y축 보정을 해제합니다.
-   기존 margin-right: 90px은 유지하고, 박스 너비만 남은 공간에 맞춰 확장합니다. */
+/* 접힌 상태에서도 제목 줄바꿈과 같은 너비 분기를 독립적으로 적용합니다.
+   제목의 실제 위치나 높이를 측정하지 않고, 제목 레이아웃과 병렬로 페이지 선택 바를 이동합니다.
+   너비 585px 미만은 두 줄 배치(+35px), 470px 미만은 세 줄 배치(+70px)입니다.
+   페이지 선택 바의 X축 배치 규칙은 기존 값을 유지합니다. */
 body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   position: relative;
   width: calc(100% - 110px) !important;
@@ -1193,6 +1195,18 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   margin-right: 90px !important;
   top: 0 !important;
   transform: none !important;
+}
+
+@media (max-width: 584px) {
+  body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
+    transform: translateY(35px) !important;
+  }
+}
+
+@media (max-width: 469px) {
+  body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
+    transform: translateY(70px) !important;
+  }
 }
 
 /* 전체 페이지 전환 UI */
