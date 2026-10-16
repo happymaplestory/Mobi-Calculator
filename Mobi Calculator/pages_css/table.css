@@ -693,8 +693,12 @@ input.section-name {
   position: relative;
   display: flow-root;
   width: 100%;
-  margin-top: 10px;
-  transition: transform 260ms ease;
+  margin-top: 5px;
+  transition: margin-top 260ms ease, transform 260ms ease;
+}
+
+body:has(#header-collapse-toggle[aria-expanded="false"]) .pagination-fade-group {
+  margin-top: 30px;
 }
 
 .page-header.is-collapsed .pagination-fade-group {
@@ -1182,7 +1186,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   width: calc(100% - 40px);
   min-width: 410px;
   height: 30px;
-  margin: 5px 20px 5px;
+  margin: 0 20px;
   padding: 0;
   border: 0;
   background-color: var(--background-color);
