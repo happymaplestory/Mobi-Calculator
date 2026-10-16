@@ -1183,11 +1183,11 @@ body[data-theme="dark"] {
   margin-right: 90px;
 }
 
-/* 접힌 상태에서도 제목 줄바꿈과 같은 너비 분기를 독립적으로 적용합니다.
+/* 펼친 상태에서 제목 줄바꿈과 같은 너비 분기를 독립적으로 적용합니다.
    제목의 실제 위치나 높이를 측정하지 않고, 제목 레이아웃과 병렬로 페이지 선택 바를 이동합니다.
    너비 585px 미만은 두 줄 배치(+35px), 470px 미만은 세 줄 배치(+70px)입니다.
    페이지 선택 바의 X축 배치 규칙은 기존 값을 유지합니다. */
-body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
+body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
   position: relative;
   width: calc(100% - 110px) !important;
   min-width: 0;
@@ -1198,13 +1198,13 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
 }
 
 @media (max-width: 584px) {
-  body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
     transform: translateY(35px) !important;
   }
 }
 
 @media (max-width: 469px) {
-  body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
     transform: translateY(70px) !important;
   }
 }
