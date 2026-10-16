@@ -683,10 +683,10 @@ input.section-name {
   top: 0;
   left: 0;
   right: 0;
-  height: calc(100% + 30px + var(--header-y-offset));
+  bottom: calc(-30px - var(--header-y-offset));
   background: var(--background-color);
   pointer-events: none;
-  transition: height 260ms cubic-bezier(.22,.72,.22,1), background-color 160ms ease;
+  transition: bottom 260ms cubic-bezier(.22,.72,.22,1), background-color 160ms ease;
 }
 
 .header-cover-layer::after {
@@ -823,6 +823,8 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .header-cover-layer,
+  .header-cover-layer::after,
   .page-header h1,
   .page-header .data-action-buttons,
   .page-header #theme-toggle,
@@ -836,7 +838,6 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
 
 /* 저장/불러오기 통합 버튼과 공통 하위 메뉴 */
 .data-action-buttons {
-  z-index: 2;
   --save-hover-color: #ffbd66;
   --load-hover-color: #79aaff;
   --save-submenu-color: hsl(from var(--save-hover-color) h calc(s * 0.8) calc(l * 1.2));
