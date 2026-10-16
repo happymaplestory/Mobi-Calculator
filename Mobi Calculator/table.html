@@ -20,6 +20,7 @@
 
     const updateTitleLayout = () => {
       const width = title.getBoundingClientRect().width;
+      title.dataset.titleVisibility = width <= 125 ? "hidden" : "visible";
       const layout = width < 210 ? "three" : width < 325 ? "two" : "single";
       if (title.dataset.titleLayout === layout) return;
 
