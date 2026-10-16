@@ -24,6 +24,15 @@ button,
   -webkit-tap-highlight-color: transparent;
 }
 
+/* 문서 전체의 스크롤바만 숨기고, 휠·터치패드·키보드によるスクロールは維持します。 */
+html {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   margin: 0;
   padding: 24px 0;
