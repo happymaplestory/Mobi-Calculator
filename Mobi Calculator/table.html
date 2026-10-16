@@ -269,15 +269,21 @@
             return;
           }
 
+          const outgoingStageHeight = stage.getBoundingClientRect().height;
           const outgoingHeight = outgoing.getBoundingClientRect().height;
           incoming.hidden = false;
           const incomingHeight = incoming.getBoundingClientRect().height;
+          const stageStyle = getComputedStyle(stage);
+          const incomingStyle = getComputedStyle(incoming);
+          const stagePaddingTop = parseFloat(stageStyle.paddingTop) || 0;
+          const incomingMarginTop = parseFloat(incomingStyle.marginTop) || 0;
+          const incomingStageHeight = incomingHeight + stagePaddingTop + incomingMarginTop;
           incoming.style.position = "absolute";
-          incoming.style.inset = "0";
+          incoming.style.inset = `${stagePaddingTop}px 0 0`;
           stage.classList.add("is-transitioning");
-          stage.style.height = `${outgoingHeight}px`;
+          stage.style.height = `${outgoingStageHeight}px`;
           outgoing.style.position = "absolute";
-          outgoing.style.inset = "0";
+          outgoing.style.inset = `${stagePaddingTop}px 0 0`;
           stage.getBoundingClientRect();
 
           const previousIndex = pageOrder.indexOf(previousPage);
@@ -298,7 +304,7 @@
             { duration: 260, delay: 100, easing: "cubic-bezier(.22,.72,.22,1)", fill: "both" }
           );
           const stageAnimation = stage.animate(
-            [{ height: `${outgoingHeight}px` }, { height: `${incomingHeight}px` }],
+            [{ height: `${outgoingStageHeight}px` }, { height: `${incomingStageHeight}px` }],
             { duration: 260, delay: 100, easing: "cubic-bezier(.22,.72,.22,1)", fill: "forwards" }
           );
           activeAnimations = [exitAnimation, enterAnimation, stageAnimation];
