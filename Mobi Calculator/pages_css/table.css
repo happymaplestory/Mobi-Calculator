@@ -27,7 +27,6 @@ button,
 body {
   margin: 0;
   padding: 24px 0;
-  min-width: 450px;
   min-height: 300px;
   overflow-x: clip;
   background: var(--background-color);
