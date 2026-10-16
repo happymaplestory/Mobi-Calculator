@@ -809,6 +809,9 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
   transform: translate(-50%, -80px);
   pointer-events: none;
 }
+.page-header h1[data-title-visibility="hidden"] {
+  opacity: 0;
+}
 .page-header.is-collapsed .data-action-buttons,
 .page-header.is-collapsed #theme-toggle {
   opacity: 0;
