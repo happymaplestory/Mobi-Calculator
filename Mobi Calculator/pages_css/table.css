@@ -676,20 +676,27 @@ input.section-name {
   z-index: 2;
 }
 
-/* 공통 덮개 본체와 하단 그라데이션을 한 구조로 묶어 함께 확장·축소합니다. */
+/* 공통 덮개 본체와 하단 그라데이션을 한 구조로 묶어 함께 확장·축소합니다.
+   접힌 상태를 기준으로 두고, 펼친 상태에서는 20px 더 확장해 다른 상단 UI와 동기화합니다. */
 .header-cover-layer {
   --header-y-offset: 0px;
+  --header-collapse-offset: 0px;
   position: absolute;
   z-index: 1;
   top: 0;
   left: 0;
   right: 0;
-  bottom: calc(-70px - var(--header-y-offset));
+  bottom: calc(-70px - var(--header-y-offset) - var(--header-collapse-offset));
   background: var(--background-color);
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
   mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 30px), transparent 100%);
   pointer-events: none;
   transition: bottom 260ms cubic-bezier(.22,.72,.22,1), background-color 160ms ease;
+}
+
+/* aria-expanded 상태에 따라 덮개 하단을 20px 늘리거나 줄입니다. */
+body:has(#header-collapse-toggle[aria-expanded="true"]) .header-cover-layer {
+  --header-collapse-offset: 20px;
 }
 
 /* 접힌 상태에서는 제목 줄 수에 따른 Y축 보정을 적용하지 않습니다. */
