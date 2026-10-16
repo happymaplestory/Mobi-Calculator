@@ -666,16 +666,43 @@ input.section-name {
   isolation: isolate;
   margin-top: -24px;
   padding-top: 24px;
-  padding-bottom: 0px;
+  padding-bottom: 0;
   background: transparent;
 }
 
-/* 제목 줄 수와 접기 상태가 헤더의 문서 흐름 높이를 바꾸지 않도록 합니다. */
 .page-header h1 {
   position: absolute;
+  z-index: 2;
 }
 
-/* 접기 상태의 콘텐츠 이동은 문서 흐름이 아닌 독립 transform으로 처리합니다. */
+/* 공통 덮개 본체와 하단 그라데이션을 한 구조로 묶어 함께 확장·축소합니다. */
+.header-cover-layer {
+  --header-y-offset: 0px;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(100% + 30px + var(--header-y-offset));
+  background: var(--background-color);
+  pointer-events: none;
+  transition: height 260ms cubic-bezier(.22,.72,.22,1), background-color 160ms ease;
+}
+
+.header-cover-layer::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 30px;
+  background: var(--background-color);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+  transition: background-color 160ms ease;
+}
+
+/* 접힌 상태에서는 제목 줄 수에 따른 Y축 보정을 적용하지 않습니다. */
 .page-content-stage {
   transition: transform 260ms cubic-bezier(.22,.72,.22,1);
 }
@@ -684,60 +711,24 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
   transform: translateY(-20px);
 }
 
-/* 헤더 UI는 유지하되, 배경만 하단에서 투명해져 스크롤 콘텐츠가 페이드 영역에 보이도록 합니다. */
-.page-header::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0 0 -7px;
-  background-color: var(--background-color);
-  pointer-events: none;
-  transition: background-color 160ms ease, inset 260ms cubic-bezier(.22,.72,.22,1);
-}
-
-/* 접기 시에도 배경이 페이지 메뉴 상단까지 이어지도록 확장량을 반영합니다. */
-.page-header.is-collapsed::before {
-  inset: 0 0 43px;
-}
-
-/* 페이지 선택 UI와 세로 페이드 영역을 하나의 그룹으로 유지합니다. */
+/* 페이지 선택 UI는 공통 덮개 위에 표시하고 접힐 때만 그룹 단위로 이동합니다. */
 .pagination-fade-group {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flow-root;
   width: 100%;
   margin-top: 5px;
-  /* 다른 일반 transition 선언에 의해 이동 시간이 짧아지지 않도록 260ms를 명시합니다. */
-  transition: transform 260ms cubic-bezier(.22,.72,.22,1) !important;
-  transition-delay: 0ms !important;
+  transition: transform 260ms cubic-bezier(.22,.72,.22,1);
 }
 
 .page-header.is-collapsed .pagination-fade-group {
-  /* 접힌 상태에서는 그룹을 위로 10px 이동해 기존보다 20px 덜 올라가도록 합니다. */
   transform: translateY(-10px);
-}
-
-/* 페이드는 실제 문서 흐름에 높이를 차지해 콘텐츠가 그 아래에서 시작하도록 합니다. */
-.pagination-fade-group::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  top: 33px;
-  left: 0;
-  display: block;
-  width: 100%;
-  height: 30px;
-  background-color: var(--background-color);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
-  transition: background-color 160ms ease, transform 260ms cubic-bezier(.22,.72,.22,1);
-  pointer-events: none;
 }
 
 /* 다크모드 버튼: 쿠키에 저장된 상태에 따라 버튼 자체의 표시를 전환합니다. */
 .theme-toggle-button {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: 55px;
   right: 20px;
   display: flex;
@@ -832,12 +823,10 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .page-header::before,
   .page-header h1,
   .page-header .data-action-buttons,
   .page-header #theme-toggle,
   .page-header .pagination-fade-group,
-  .pagination-fade-group::after,
   .full-page-pagination,
   .page-content-stage,
   .header-collapse-toggle {
@@ -847,6 +836,7 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
 
 /* 저장/불러오기 통합 버튼과 공통 하위 메뉴 */
 .data-action-buttons {
+  z-index: 2;
   --save-hover-color: #ffbd66;
   --load-hover-color: #79aaff;
   --save-submenu-color: hsl(from var(--save-hover-color) h calc(s * 0.8) calc(l * 1.2));
@@ -1201,27 +1191,25 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
 
 @media (max-width: 584px) {
   body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination,
-  body:has(#header-collapse-toggle[aria-expanded="true"]) .pagination-fade-group::after,
   body:has(#header-collapse-toggle[aria-expanded="true"]) .page-content-stage {
     transform: translateY(35px) !important;
   }
 
-  /* 제목이 두 줄로 배치되는 분기점에서는 가림막 하단도 같은 거리만큼 확장합니다. */
-  body:has(#header-collapse-toggle[aria-expanded="true"]) .page-header::before {
-    inset: 0 0 -42px;
+  /* 펼친 상태의 두 줄 분기에서는 공통 덮개와 그라데이션을 같은 거리만큼 확장합니다. */
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .header-cover-layer {
+    --header-y-offset: 35px;
   }
 }
 
 @media (max-width: 469px) {
   body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination,
-  body:has(#header-collapse-toggle[aria-expanded="true"]) .pagination-fade-group::after,
   body:has(#header-collapse-toggle[aria-expanded="true"]) .page-content-stage {
     transform: translateY(70px) !important;
   }
 
-  /* 제목이 세 줄로 배치되는 분기점에서도 가림막 하단을 병렬 확장합니다. */
-  body:has(#header-collapse-toggle[aria-expanded="true"]) .page-header::before {
-    inset: 0 0 -77px;
+  /* 펼친 상태의 세 줄 분기에서도 공통 덮개와 그라데이션을 같은 거리만큼 확장합니다. */
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .header-cover-layer {
+    --header-y-offset: 70px;
   }
 }
 
