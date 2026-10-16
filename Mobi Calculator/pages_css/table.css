@@ -694,7 +694,9 @@ input.section-name {
   display: flow-root;
   width: 100%;
   margin-top: 5px;
-  transition: transform 260ms cubic-bezier(.22,.72,.22,1);
+  /* 다른 일반 transition 선언에 의해 이동 시간이 짧아지지 않도록 260ms를 명시합니다. */
+  transition: transform 260ms cubic-bezier(.22,.72,.22,1) !important;
+  transition-delay: 0ms !important;
 }
 
 .page-header.is-collapsed .pagination-fade-group {
