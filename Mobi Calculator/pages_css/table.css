@@ -813,7 +813,6 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
 
 @media (prefers-reduced-motion: reduce) {
   .header-cover-layer,
-  .header-cover-layer::after,
   .page-header h1,
   .page-header .data-action-buttons,
   .page-header #theme-toggle,
