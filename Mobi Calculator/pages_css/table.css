@@ -670,6 +670,11 @@ input.section-name {
   background: transparent;
 }
 
+/* 접힌 상태에서는 하단 여백을 음수 margin으로 줄여 다음 콘텐츠를 20px 위로 당깁니다. */
+.page-header.is-collapsed {
+  margin-bottom: -20px;
+}
+
 /* 헤더 UI는 유지하되, 배경만 하단에서 투명해져 스크롤 콘텐츠가 페이드 영역에 보이도록 합니다. */
 .page-header::before {
   content: "";
@@ -720,7 +725,7 @@ input.section-name {
 .theme-toggle-button {
   position: absolute;
   z-index: 1;
-  top: 55px;
+  top: 65px;
   right: 20px;
   display: flex;
   align-items: center;
