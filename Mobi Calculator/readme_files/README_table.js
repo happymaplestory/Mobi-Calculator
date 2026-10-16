@@ -110,6 +110,7 @@
 - `table.html`의 `.full-page-pagination-option` 버튼은 `data-page`로 각각 `stats`, `runes`, `equipment`, `other` 페이지를 식별합니다.
 - 최초 방문 및 새로고침 시 `스탯`이 기본 선택이며, `#table-area`의 입력 콘텐츠를 표시합니다.
 - 버튼을 누르면 해당 버튼에만 `.is-active`와 `aria-pressed="true"`를 적용합니다. `#table-area`는 `stats` 페이지에서만 표시하고 나머지 페이지에서는 `hidden` 상태로 숨깁니다.
+- 페이지 버튼 초기화 스크립트는 `#page-content-stage`와 모든 패널이 DOM에 생성된 뒤 실행합니다. 이를 통해 초기화 시점에 `stage`가 `null`이라 이벤트 등록 코드 전체가 조기 종료되는 문제를 방지합니다.
 - 페이지 전환 시 `#table-area`와 그 하위 입력 DOM을 제거하거나 다시 생성하지 않으므로, 스탯 페이지로 돌아오면 입력 상태가 유지됩니다.
 
 
