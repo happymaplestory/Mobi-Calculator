@@ -112,3 +112,9 @@ HTML 구조나 테마 상태 처리를 수정할 때는 테이블 스크립트�
 - 페이지 전환 옵션의 최소 너비는 75px입니다. 첫 번째 옵션의 문구는 `스탯`입니다.
 - 비활성 옵션의 배경은 현재 body 배경색과 동일하게 표시하고, `aria-pressed="true"`인 선택 옵션만 별도 배경색을 사용합니다.
 - 라이트모드에서 저장/불러오기 버튼, 하위 메뉴 버튼 및 테마 전환 버튼의 테두리 색상은 페이지 전환 옵션의 테두리 색상과 동일한 `var(--border-color)`를 사용합니다. 다크모드 테두리 색상은 기존 값을 유지합니다.
+
+## 저장/불러오기 하위 메뉴가 열린 상태의 위치 조정
+
+- 상단 메뉴가 펼쳐져 있고 (#header-collapse-toggle의 aria-expanded="true"), 공통 하위 메뉴 (#action-submenu)의 aria-hidden이 false이며 제목이 한 줄 (h1[data-title-layout="single"])인 경우에만 추가 이동을 적용합니다.
+- 이 조건에서 공통 덮개 .header-cover-layer의 하단을 60px 더 확장하고, #full-page-pagination과 #page-content-stage를 각각 아래로 60px 이동합니다.
+- 기존 접기/펼치기, 반응형 위치 보정 및 페이지 콘텐츠 전환을 보존하기 위해 페이지 메뉴와 콘텐츠 영역은 별도 CSS translate 속성을 사용합니다. 각 이동은 기존 260ms cubic-bezier(.22,.72,.22,1) 전환으로 부드럽게 진행되며, 조건이 해제되면 원래 위치로 복귀합니다.
