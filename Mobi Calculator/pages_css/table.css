@@ -1205,6 +1205,11 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
   body:has(#header-collapse-toggle[aria-expanded="true"]) .page-content-stage {
     transform: translateY(35px) !important;
   }
+
+  /* 제목이 두 줄로 배치되는 분기점에서는 가림막 하단도 같은 거리만큼 확장합니다. */
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .page-header::before {
+    inset: 0 0 -42px;
+  }
 }
 
 @media (max-width: 469px) {
@@ -1212,6 +1217,11 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
   body:has(#header-collapse-toggle[aria-expanded="true"]) .pagination-fade-group::after,
   body:has(#header-collapse-toggle[aria-expanded="true"]) .page-content-stage {
     transform: translateY(70px) !important;
+  }
+
+  /* 제목이 세 줄로 배치되는 분기점에서도 가림막 하단을 병렬 확장합니다. */
+  body:has(#header-collapse-toggle[aria-expanded="true"]) .page-header::before {
+    inset: 0 0 -77px;
   }
 }
 
