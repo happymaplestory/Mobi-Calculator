@@ -701,9 +701,9 @@ body:has(#header-collapse-toggle[aria-expanded="false"]) .page-content-stage {
   transform: translateY(-20px);
 }
 
-/* 접힌 상태에서도 펼친 상태와 같은 너비 및 좌우 여백 규칙을 사용합니다. */
+/* 접힌 상태에서도 좌우 margin으로 가로 폭을 제한하며, 남은 공간을 자동으로 채웁니다. */
 body:has(#header-collapse-toggle[aria-expanded="false"]) .full-page-pagination {
-  width: calc(100% - 110px) !important;
+  width: auto !important;
   min-width: 0;
   margin-left: 20px !important;
   margin-right: 90px !important;
@@ -1151,23 +1151,22 @@ body[data-theme="dark"] {
 }
 
 
-/* 제목이 한 줄일 때만 페이지 전환 UI의 좌우 여백을 별도 조정합니다. */
+/* 제목이 한 줄일 때는 좌우 margin으로 가로 폭을 제한하고, 박스 너비는 남은 공간에 맞춰 자동으로 채웁니다. */
 .page-header:has(h1[data-title-layout="single"]) .full-page-pagination {
   position: relative;
   top: 0;
-  width: calc(100% - 315px);
+  width: auto;
   min-width: 0;
   margin-left: 215px;
   margin-right: 90px;
 }
 
-/* 펼친 상태에서 제목 줄바꿈과 같은 너비 분기를 독립적으로 적용합니다.
-   제목의 실제 위치나 높이를 측정하지 않고, 제목 레이아웃과 병렬로 페이지 선택 바를 이동합니다.
-   너비 585px 미만은 두 줄 배치(+35px), 470px 미만은 세 줄 배치(+70px)입니다.
-   페이지 선택 바의 X축 배치 규칙은 기존 값을 유지합니다. */
+/* 펼친 상태에서도 좌우 margin만으로 가로 폭을 제한합니다.
+   width:auto로 남은 공간을 자동으로 채우며, margin과 화면 너비 변화에 맞춰 너비가 따라가도록 합니다.
+   너비 585px 미만은 두 줄 배치(+35px), 470px 미만은 세 줄 배치(+70px)입니다. */
 body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
   position: relative;
-  width: calc(100% - 110px) !important;
+  width: auto !important;
   min-width: 0;
   margin-left: 20px !important;
   margin-right: 90px !important;
@@ -1175,7 +1174,8 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .full-page-pagination {
   transform: none !important;
 }
 
-/* 제목이 세 줄이고 상단 메뉴가 펼쳐진 경우 오른쪽 여백을 20px로 줄입니다. */
+/* 제목이 세 줄이고 상단 메뉴가 펼쳐진 경우 오른쪽 여백을 20px로 줄입니다.
+   width:auto가 남은 공간을 자동으로 채우므로 줄어든 여백만큼 박스가 확장됩니다. */
 body:has(#header-collapse-toggle[aria-expanded="true"]) .page-header:has(h1[data-title-layout="three"]) .full-page-pagination {
   margin-right: 20px !important;
 }
@@ -1212,14 +1212,14 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .page-header:has(h1[data
   display: flex;
   align-items: stretch;
   gap: 10px;
-  width: calc(100% - 40px);
+  width: auto;
   min-width: 410px;
   height: 34px;
   margin: 0 20px;
   padding: 0;
   border: 0;
   background-color: var(--background-color);
-  transition: background-color 160ms ease, width 260ms ease, margin-left 260ms ease, margin-right 260ms ease, transform 260ms cubic-bezier(.22,.72,.22,1), translate 260ms cubic-bezier(.22,.72,.22,1);
+  transition: background-color 160ms ease, width 260ms cubic-bezier(.22,.72,.22,1), margin-left 260ms cubic-bezier(.22,.72,.22,1), margin-right 260ms cubic-bezier(.22,.72,.22,1), transform 260ms cubic-bezier(.22,.72,.22,1), translate 260ms cubic-bezier(.22,.72,.22,1);
 }
 
 .full-page-pagination-option {
