@@ -1293,3 +1293,18 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .page-header:has(h1[data
     transition: none;
   }
 }
+
+/* 펼친 상태에서 저장/불러오기 하위 메뉴가 열리고 제목이 한 줄이면,
+   덮개 하단·페이지 메뉴·콘텐츠 영역을 60px씩 독립적으로 부드럽게 이동합니다. */
+body:has(#header-collapse-toggle[aria-expanded="true"]):has(#action-submenu[aria-hidden="false"]):has(.page-header h1[data-title-layout="single"]) .header-cover-layer {
+  bottom: calc(-70px - var(--header-y-offset) - var(--header-collapse-offset) - 60px);
+}
+
+body:has(#header-collapse-toggle[aria-expanded="true"]):has(#action-submenu[aria-hidden="false"]):has(.page-header h1[data-title-layout="single"]) #full-page-pagination {
+  translate: 0 100px;
+}
+
+body:has(#header-collapse-toggle[aria-expanded="true"]):has(#action-submenu[aria-hidden="false"]):has(.page-header h1[data-title-layout="single"]) #page-content-stage {
+  translate: 0 60px;
+  transition: transform 260ms cubic-bezier(.22,.72,.22,1), translate 260ms cubic-bezier(.22,.72,.22,1);
+}
