@@ -113,7 +113,7 @@ h1[data-title-layout="three"] span {
 .page-content-stage {
   position: relative;
   width: 100%;
-  margin-top: 40px;
+  margin-top: 50px;
   padding-top: 20px;
 }
 
@@ -140,7 +140,7 @@ h1[data-title-layout="three"] span {
 .table-area {
   position: relative;
   display: flex;
-  margin-top: 17px;
+  margin-top: 7px;
   width: 100%;
   flex-wrap: wrap;
   justify-content: center;
