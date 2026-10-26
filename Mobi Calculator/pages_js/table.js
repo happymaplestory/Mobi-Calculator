@@ -422,6 +422,13 @@ function enableRowDragging(tableArea) {
       active.style.display = "none";
       ghost.style.width = rect.width + "px";
       ghost.style.height = rect.height + "px";
+      // 복제 행은 body에 추가되므로 상위 category-card의 테마 변수를 직접 전달합니다.
+      const sourceCard = sourceGroup.closest(".category-card");
+      if (sourceCard) {
+        const cardStyle = getComputedStyle(sourceCard);
+        ghost.style.setProperty("--category-border-color", cardStyle.getPropertyValue("--category-border-color").trim() || cardStyle.borderColor);
+        ghost.style.setProperty("--surface-color", cardStyle.backgroundColor);
+      }
       ghost.style.left = rect.left + "px";
       ghost.style.top = rect.top + "px";
       document.body.appendChild(ghost);
