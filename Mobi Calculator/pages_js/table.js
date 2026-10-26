@@ -53,7 +53,8 @@ function requestCustomConfirmation({
   confirmText = "확인",
   showSkipCheckbox = false,
   showCancelButton = true,
-  skipPreference = null
+  skipPreference = null,
+  temporarilyHideElement = null
 }) {
   if (skipPreference === "delete" && skipDeleteConfirmation) return Promise.resolve(true);
   if (skipPreference === "move" && skipMoveConfirmation) return Promise.resolve(true);
@@ -86,9 +87,16 @@ function requestCustomConfirmation({
     acceptButton.textContent = confirmText;
     let finished = false;
 
+    const previousVisibility = temporarilyHideElement?.style.visibility ?? "";
+    if (temporarilyHideElement) temporarilyHideElement.style.visibility = "hidden";
+
     const finish = confirmed => {
       if (finished) return;
       finished = true;
+      if (temporarilyHideElement) {
+        if (previousVisibility) temporarilyHideElement.style.visibility = previousVisibility;
+        else temporarilyHideElement.style.removeProperty("visibility");
+      }
       if (confirmed && showSkipCheckbox) {
         if (skipPreference === "delete") skipDeleteConfirmation = checkbox.checked;
         if (skipPreference === "move") skipMoveConfirmation = checkbox.checked;
@@ -474,7 +482,8 @@ function enableRowDragging(tableArea) {
           message: "입력 값만 이동됩니다.",
           confirmText: "이동",
           showSkipCheckbox: true,
-          skipPreference: "move"
+          skipPreference: "move",
+          temporarilyHideElement: ghost
         });
       }
 
