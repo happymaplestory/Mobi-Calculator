@@ -309,7 +309,7 @@ input.section-name {
   width: 21px;
   height: 25px;
   padding: 0;
-  border: 1px solid var(--category-border-color, #cfd9e5);
+  border: 2px solid var(--category-border-color, #cfd9e5);
   border-radius: 6px;
   background: var(--category-card-background, var(--surface-color));
   color: var(--text-color);
@@ -320,7 +320,7 @@ input.section-name {
 }
 
 .delete-row-button:hover {
-  background: var(--category-card-background, var(--surface-color));
+  background: var(--category-hover-color, var(--category-card-background, var(--surface-color)));
   border-color: var(--category-border-color, #cfd9e5);
 }
 
@@ -391,7 +391,14 @@ input.section-name {
   transform: scale(1.015);
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
 }
-.row-drag-ghost > * { min-width: 0; overflow: hidden; }
+.row-drag-ghost > * { min-width: 0; overflow: visible; }
+
+/* 다크모드에서 복제 행의 하단 테두리가 자식 요소에 가려지지 않도록
+   마지막 셀의 아래쪽 공간과 테두리를 명시적으로 확보합니다. */
+.row-drag-ghost > :last-child {
+  border-bottom: 1px solid var(--category-border-color, #cfd9e5);
+  overflow: visible;
+}
 .row-drag-ghost .delete-row-button { display: none; }
 .row-placeholder {
   position: relative;
