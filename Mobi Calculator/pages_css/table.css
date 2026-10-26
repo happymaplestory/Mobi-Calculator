@@ -311,7 +311,7 @@ input.section-name {
   padding: 0;
   border: 1px solid var(--category-border-color, #cfd9e5);
   border-radius: 6px;
-  background: var(--category-title-color, #eaf0f7);
+  background: var(--category-card-background, var(--surface-color));
   color: var(--text-color);
   font-size: 18px;
   line-height: 1;
@@ -320,26 +320,26 @@ input.section-name {
 }
 
 .delete-row-button:hover {
-  background: var(--category-hover-color, #dce8f5);
+  background: var(--category-card-background, var(--surface-color));
   border-color: var(--category-border-color, #cfd9e5);
 }
 
-.category-card[data-location-id="1000"] { --category-border-color: #cfd9e5; --category-title-color: #eaf0f7; --category-hover-color: #dce8f5; border-color: #cfd9e5; background: #fafcff; }
-[data-theme="dark"] .category-card[data-location-id="1000"] { --category-border-color: #526174; --category-title-color: #354454; --category-hover-color: #414f60; border-color: #526174; background: #303945; }
-.category-card[data-location-id="2000"] { --category-border-color: #d8d0e5; --category-title-color: #eee8f5; --category-hover-color: #e3d9f0; border-color: #d8d0e5; background: #fcfaff; }
-[data-theme="dark"] .category-card[data-location-id="2000"] { --category-border-color: #62536f; --category-title-color: #453b53; --category-hover-color: #554760; border-color: #62536f; background: #393340; }
-.category-card[data-location-id="3000"] { --category-border-color: #e5d2d0; --category-title-color: #f6e9e7; --category-hover-color: #f0d9d6; border-color: #e5d2d0; background: #fffafa; }
-[data-theme="dark"] .category-card[data-location-id="3000"] { --category-border-color: #755453; --category-title-color: #543d3d; --category-hover-color: #664848; border-color: #755453; background: #3e3335; }
-.category-card[data-location-id="4000"] { --category-border-color: #d4dfd0; --category-title-color: #edf3e9; --category-hover-color: #dce9d5; border-color: #d4dfd0; background: #fbfdf9; }
-[data-theme="dark"] .category-card[data-location-id="4000"] { --category-border-color: #53674e; --category-title-color: #3d4b39; --category-hover-color: #4b5a44; border-color: #53674e; background: #333a31; }
-.category-card[data-location-id="5000"] { --category-border-color: #d9d2c5; --category-title-color: #f3eee4; --category-hover-color: #e9dfcb; border-color: #d9d2c5; background: #fffdf8; }
-[data-theme="dark"] .category-card[data-location-id="5000"] { --category-border-color: #70624d; --category-title-color: #514838; --category-hover-color: #61543f; border-color: #70624d; background: #3b3832; }
-.category-card[data-location-id="6000"] { --category-border-color: #cfdede; --category-title-color: #e7f1f1; --category-hover-color: #d2e8e8; border-color: #cfdede; background: #f9fdfd; }
-[data-theme="dark"] .category-card[data-location-id="6000"] { --category-border-color: #4e6b6b; --category-title-color: #35494b; --category-hover-color: #43595b; border-color: #4e6b6b; background: #303a3c; }
-.category-card[data-location-id="7000"] { --category-border-color: #d8d0e5; --category-title-color: #eee8f5; --category-hover-color: #e3d9f0; border-color: #d8d0e5; background: #fcfaff; }
-[data-theme="dark"] .category-card[data-location-id="7000"] { --category-border-color: #62536f; --category-title-color: #453b53; --category-hover-color: #554760; border-color: #62536f; background: #393340; }
-.category-card[data-location-id="8000"] { --category-border-color: #cfd9e5; --category-title-color: #eaf0f7; --category-hover-color: #dce8f5; border-color: #cfd9e5; background: #fafcff; }
-[data-theme="dark"] .category-card[data-location-id="8000"] { --category-border-color: #526174; --category-title-color: #354454; --category-hover-color: #414f60; border-color: #526174; background: #303945; }
+.category-card[data-location-id="1000"] { --category-border-color: #cfd9e5; --category-title-color: #eaf0f7; --category-hover-color: #dce8f5; border-color: #cfd9e5; --category-card-background: #fafcff; background: #fafcff; }
+[data-theme="dark"] .category-card[data-location-id="1000"] { --category-border-color: #526174; --category-title-color: #354454; --category-hover-color: #414f60; border-color: #526174; --category-card-background: #303945; background: #303945; }
+.category-card[data-location-id="2000"] { --category-border-color: #d8d0e5; --category-title-color: #eee8f5; --category-hover-color: #e3d9f0; border-color: #d8d0e5; --category-card-background: #fcfaff; background: #fcfaff; }
+[data-theme="dark"] .category-card[data-location-id="2000"] { --category-border-color: #62536f; --category-title-color: #453b53; --category-hover-color: #554760; border-color: #62536f; --category-card-background: #393340; background: #393340; }
+.category-card[data-location-id="3000"] { --category-border-color: #e5d2d0; --category-title-color: #f6e9e7; --category-hover-color: #f0d9d6; border-color: #e5d2d0; --category-card-background: #fffafa; background: #fffafa; }
+[data-theme="dark"] .category-card[data-location-id="3000"] { --category-border-color: #755453; --category-title-color: #543d3d; --category-hover-color: #664848; border-color: #755453; --category-card-background: #3e3335; background: #3e3335; }
+.category-card[data-location-id="4000"] { --category-border-color: #d4dfd0; --category-title-color: #edf3e9; --category-hover-color: #dce9d5; border-color: #d4dfd0; --category-card-background: #fbfdf9; background: #fbfdf9; }
+[data-theme="dark"] .category-card[data-location-id="4000"] { --category-border-color: #53674e; --category-title-color: #3d4b39; --category-hover-color: #4b5a44; border-color: #53674e; --category-card-background: #333a31; background: #333a31; }
+.category-card[data-location-id="5000"] { --category-border-color: #d9d2c5; --category-title-color: #f3eee4; --category-hover-color: #e9dfcb; border-color: #d9d2c5; --category-card-background: #fffdf8; background: #fffdf8; }
+[data-theme="dark"] .category-card[data-location-id="5000"] { --category-border-color: #70624d; --category-title-color: #514838; --category-hover-color: #61543f; border-color: #70624d; --category-card-background: #3b3832; background: #3b3832; }
+.category-card[data-location-id="6000"] { --category-border-color: #cfdede; --category-title-color: #e7f1f1; --category-hover-color: #d2e8e8; border-color: #cfdede; --category-card-background: #f9fdfd; background: #f9fdfd; }
+[data-theme="dark"] .category-card[data-location-id="6000"] { --category-border-color: #4e6b6b; --category-title-color: #35494b; --category-hover-color: #43595b; border-color: #4e6b6b; --category-card-background: #303a3c; background: #303a3c; }
+.category-card[data-location-id="7000"] { --category-border-color: #d8d0e5; --category-title-color: #eee8f5; --category-hover-color: #e3d9f0; border-color: #d8d0e5; --category-card-background: #fcfaff; background: #fcfaff; }
+[data-theme="dark"] .category-card[data-location-id="7000"] { --category-border-color: #62536f; --category-title-color: #453b53; --category-hover-color: #554760; border-color: #62536f; --category-card-background: #393340; background: #393340; }
+.category-card[data-location-id="8000"] { --category-border-color: #cfd9e5; --category-title-color: #eaf0f7; --category-hover-color: #dce8f5; border-color: #cfd9e5; --category-card-background: #fafcff; background: #fafcff; }
+[data-theme="dark"] .category-card[data-location-id="8000"] { --category-border-color: #526174; --category-title-color: #354454; --category-hover-color: #414f60; border-color: #526174; --category-card-background: #303945; background: #303945; }
 
 .category-card[data-location-id="1000"] .category-title { background: var(--category-title-color); }
 .category-card[data-location-id="2000"] .category-title { background: var(--category-title-color); }
