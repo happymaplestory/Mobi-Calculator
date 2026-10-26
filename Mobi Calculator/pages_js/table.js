@@ -414,10 +414,12 @@ function enableRowDragging(tableArea) {
       placeholder.style.gridColumn = "1 / -1";
       sourceGroup.insertBefore(placeholder, active);
       // 원본 행은 레이아웃에서 제외하고 placeholder만 공간을 차지하게 합니다.
-      active.style.display = "none";
-
       ghost = active.cloneNode(true);
+      // 원본 행의 display:none 인라인 스타일이 복제본에 전파되지 않도록 제거합니다.
+      ghost.style.removeProperty("display");
       ghost.classList.add("row-drag-ghost");
+
+      active.style.display = "none";
       ghost.style.width = rect.width + "px";
       ghost.style.height = rect.height + "px";
       ghost.style.left = rect.left + "px";
