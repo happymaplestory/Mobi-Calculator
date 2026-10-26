@@ -393,11 +393,15 @@ input.section-name {
 }
 .row-drag-ghost > * { min-width: 0; overflow: visible; }
 
-/* 다크모드에서 복제 행의 하단 테두리가 자식 요소에 가려지지 않도록
-   마지막 셀의 아래쪽 공간과 테두리를 명시적으로 확보합니다. */
-.row-drag-ghost > :last-child {
+/* 자식 셀과 겹쳐도 복제 행의 하단 테두리가 항상 전체 너비로 보이게 합니다. */
+.row-drag-ghost::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   border-bottom: 1px solid var(--category-border-color, #cfd9e5);
-  overflow: visible;
+  pointer-events: none;
 }
 .row-drag-ghost .delete-row-button { display: none; }
 .row-placeholder {
