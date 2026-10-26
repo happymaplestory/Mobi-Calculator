@@ -479,8 +479,8 @@ input.section-name {
 /* 세로 배치에서는 스택 상단 여백을 줄여 불필요한 공백을 방지합니다. */
 .table-area.is-stacked .level-paladin-stack {
   margin-top: 10px;
-  margin-left: 45px;
-  margin-right: 55px;
+  margin-left: 43px;
+  margin-right: 57px;
 }
 
 /* 세로 배치에서는 두 영역 사이의 기존 100px 간격(행 간격 80px + carousel 상단 여백 20px)을 절반인 50px로 줄입니다. */
