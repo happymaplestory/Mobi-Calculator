@@ -18,6 +18,13 @@
 
 * { box-sizing: border-box; }
 
+/* 모든 요소와 가상 요소에서 모바일 터치 시 브라우저 기본 파란색 탭 하이라이트를 제거합니다. */
+*,
+*::before,
+*::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* 모바일 탭 시 브라우저가 표시하는 기본 파란색 하이라이트를 제거합니다. */
 button,
 [role="button"] {
