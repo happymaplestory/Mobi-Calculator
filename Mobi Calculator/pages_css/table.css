@@ -105,8 +105,7 @@ h1[data-title-layout="three"] span {
   flex: 0 0 auto;
 }
 
-.table-area[hidden],
-.page-test-panel[hidden] {
+.page-content-panel[hidden] {
   display: none !important;
 }
 
@@ -168,6 +167,7 @@ h1[data-title-layout="three"] span {
 
 #runes-search-box {
   height: 750px;
+  background-color: #888888;
 }
 
 @media (prefers-reduced-motion: reduce) {
