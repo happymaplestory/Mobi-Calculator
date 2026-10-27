@@ -189,8 +189,12 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
   border-radius:14px; background:transparent; color:var(--text-color);
   box-shadow:0 0 18px rgba(0,0,0,.10);
   transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease,box-shadow 160ms ease;
-  -webkit-user-select:text; user-select:text;
+  -webkit-user-select:none; user-select:none;
 }
+#runes-search-box.runes-search-panel * { -webkit-user-select:none; user-select:none; }
+#runes-search-box.runes-search-panel input,
+#runes-search-box.runes-search-panel textarea,
+#runes-search-box.runes-search-panel [contenteditable="true"] { -webkit-user-select:text; user-select:text; }
 #runes-search-box.runes-search-panel::-webkit-scrollbar { display:none; width:0; height:0; }
 .rune-controls { display:grid; gap:10px; margin:0 0 14px; flex:0 0 auto; }
 .rune-filter-row { display:flex; flex-wrap:nowrap; gap:5px; width:100%; }
