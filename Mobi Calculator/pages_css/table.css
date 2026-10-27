@@ -199,6 +199,7 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-filter[aria-pressed="true"] { background:var(--rune-filter-base,var(--background-color)); border-color:var(--rune-filter-border,var(--border-color)); }
 .rune-filter:hover,.rune-filter[aria-pressed="true"]:hover { background:var(--rune-filter-hover,var(--hover-color)); border-color:var(--rune-filter-hover-border,var(--rune-filter-border,var(--border-color))); }
 .rune-sort-button:hover,.rune-page-button:not(:disabled):hover,.rune-description-close:hover { background:var(--hover-color); }
+[data-theme="light"] .rune-sort-button:hover { background:color-mix(in srgb,var(--background-color) 80%,#000000 20%); }
 .rune-sort-button[aria-pressed="true"],.rune-page-button[aria-current="page"] { background:var(--hover-color); border-color:var(--border-color); font-weight:700; }
 .rune-filter[data-filter-value="전설"] { --rune-filter-base:#fff0df; --rune-filter-border:#e9bd91; --rune-filter-hover:color-mix(in srgb,#fff0df 78%,#000 22%); --rune-filter-hover-border:#d49b69; }
 .rune-filter[data-filter-value="신화"] { --rune-filter-base:#fffbd8; --rune-filter-border:#e6d77b; --rune-filter-hover:color-mix(in srgb,#fffbd8 78%,#000 22%); --rune-filter-hover-border:#c9b64e; }
@@ -1407,6 +1408,10 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .page-header:has(h1[data
 .full-page-pagination-option:hover {
   background: var(--hover-color);
   filter: saturate(1.2) brightness(1.02);
+}
+
+[data-theme="light"] .full-page-pagination-option[aria-pressed="false"]:hover {
+  background: color-mix(in srgb, var(--background-color) 80%, #000000 20%);
 }
 
 .full-page-pagination-option[aria-pressed="true"] {
