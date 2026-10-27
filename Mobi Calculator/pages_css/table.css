@@ -224,6 +224,7 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-page-arrow-icon { display:block; width:18px; height:18px; flex:0 0 18px; margin:0; }
 .rune-page-button:disabled { opacity:.38; cursor:default; }
 .rune-page-ellipsis { padding:0 2px; color:var(--text-color); }
+.rune-description-overlay[hidden] { display: none !important; }
 .rune-description-overlay { position:fixed; inset:0; z-index:10000; display:grid; place-items:center; padding:20px; background:rgba(0,0,0,.42); animation:delete-confirm-backdrop-in 220ms ease-out both; }
 .rune-description-dialog { width:min(100%,420px); max-height:min(80vh,680px); overflow-y:auto; }
 .rune-description-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px; }
