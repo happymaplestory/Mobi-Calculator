@@ -196,10 +196,13 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-filter-row { display:flex; flex-wrap:nowrap; gap:5px; width:100%; }
 .rune-filter,.rune-sort-button,.rune-page-button,.rune-description-close { font:inherit; color:var(--text-color); cursor:pointer; -webkit-tap-highlight-color:transparent; }
 .rune-filter { flex:1 1 0; min-width:0; min-height:34px; padding:6px 3px; border:2px solid var(--rune-filter-border,var(--border-color)); border-radius:10px; background:var(--background-color); font-size:13px; font-weight:700; transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease; }
+.rune-filter[aria-pressed="false"] { border-color:var(--border-color); }
+.rune-filter[aria-pressed="false"]:hover { border-color:var(--border-color); }
 .rune-filter[aria-pressed="true"] { background:var(--rune-filter-base,var(--background-color)); border-color:var(--rune-filter-border,var(--border-color)); }
 .rune-filter:hover,.rune-filter[aria-pressed="true"]:hover { background:var(--rune-filter-hover,var(--hover-color)); border-color:var(--rune-filter-hover-border,var(--rune-filter-border,var(--border-color))); }
 .rune-sort-button:hover,.rune-page-button:not(:disabled):hover,.rune-description-close:hover { background:var(--hover-color); }
 [data-theme="light"] .rune-sort-button:hover { background:color-mix(in srgb,var(--background-color) 80%,#000000 20%); }
+[data-theme="light"] .rune-page-button:not(:disabled):hover { background:color-mix(in srgb,var(--background-color) 80%,#000000 20%); }
 .rune-sort-button[aria-pressed="true"],.rune-page-button[aria-current="page"] { background:var(--hover-color); border-color:var(--border-color); font-weight:700; }
 .rune-filter[data-filter-value="전설"] { --rune-filter-base:#fff0df; --rune-filter-border:#e9bd91; --rune-filter-hover:color-mix(in srgb,#fff0df 78%,#000 22%); --rune-filter-hover-border:#d49b69; }
 .rune-filter[data-filter-value="신화"] { --rune-filter-base:#fffbd8; --rune-filter-border:#e6d77b; --rune-filter-hover:color-mix(in srgb,#fffbd8 78%,#000 22%); --rune-filter-hover-border:#c9b64e; }
