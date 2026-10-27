@@ -454,7 +454,7 @@
           nextNodes.push(createPageButton(String(totalPages),totalPages,{current:currentPage===totalPages}));
           if(currentPage<totalPages)nextNodes.push(createPageButton("다음",currentPage+1,{arrow:"right"}));
         }
-        const oldNodes=[...pagination.children].filter(node=>!node.classList.contains("rune-pagination-exit")),key=node=>node.textContent+"|"+node.className,oldRects=new Map();
+        const oldNodes=[...pagination.children].filter(node=>!node.classList.contains("rune-pagination-exit")),key=node=>(node.getAttribute("aria-label")||node.textContent)+"|"+node.className,oldRects=new Map();
         for(const node of oldNodes){const k=key(node);if(!oldRects.has(k))oldRects.set(k,[]);oldRects.get(k).push(node.getBoundingClientRect());}
         const oldKeys=new Set(oldNodes.map(key)),nextKeys=new Set(nextNodes.map(key)),outgoing=[];
         for(const node of oldNodes){if(nextKeys.has(key(node)))continue;const rect=node.getBoundingClientRect(),clone=node.cloneNode(true),computed=getComputedStyle(node);
@@ -462,7 +462,7 @@
         pagination.replaceChildren(...nextNodes,...outgoing);pagination.classList.toggle("is-empty",isEmpty);
         for(const clone of outgoing)clone.animate([{opacity:1},{opacity:0}],{duration:260,easing:"ease-out",fill:"forwards"}).onfinish=()=>clone.remove();
         requestAnimationFrame(()=>{for(const node of nextNodes){const previous=oldRects.get(key(node));
-          if(previous?.length){const rect=previous.shift(),next=node.getBoundingClientRect(),dx=rect.left-next.left,dy=rect.top-next.top;
+          if(node.hasAttribute("aria-label")&&(node.getAttribute("aria-label")==="이전"||node.getAttribute("aria-label")==="다음")){if(!oldKeys.has(key(node)))node.animate([{opacity:0},{opacity:1}],{duration:260,easing:"ease-out",fill:"both"});continue;}if(previous?.length){const rect=previous.shift(),next=node.getBoundingClientRect(),dx=rect.left-next.left,dy=rect.top-next.top;
             if(Math.abs(dx)>=1||Math.abs(dy)>=1)node.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:"translate(0,0)"}],{duration:260,easing:"cubic-bezier(.22,.72,.22,1)"});
           }else if(!oldKeys.has(key(node)))node.animate([{opacity:0},{opacity:1}],{duration:260,easing:"ease-out",fill:"both"});}});
       }
