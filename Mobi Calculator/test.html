@@ -45,13 +45,6 @@
     .rune-page-button[aria-current="page"] { background: #e5e5e5; border-color: #777; font-weight: 700; }
     .rune-page-button:disabled { opacity: .38; cursor: default; }
     .rune-page-ellipsis { padding: 0 2px; color: #777; }
-    @media (max-width: 480px) {
-      .rune-filter-row { gap: 4px; }
-      .rune-filter { padding: 6px 2px; font-size: 13px; }
-      .rune-search-row { gap: 5px; }
-      .rune-sort-button { flex-basis: 42px; min-width: 42px; }
-    }
-
     .rune-table-wrap {
       width: 100%;
       overflow-x: auto;
@@ -200,16 +193,6 @@
     @keyframes rune-dialog-in {
       from { opacity: 0; transform: translateY(8px) scale(0.98); }
       to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    @media (max-width: 480px) {
-      body { margin: 12px; }
-      #rune-table th, #rune-table td { padding-top: 8px; padding-bottom: 8px; }
-      #rune-table .rune-slot, #rune-table th:first-child {
-        padding-right: 1px;
-        padding-left: 1px;
-      }
-      .rune-description-dialog { padding: 18px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
