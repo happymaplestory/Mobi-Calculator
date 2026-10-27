@@ -25,7 +25,13 @@
 
     h1, h2 { line-height: 1.4; }
 
-.rune-controls { display: grid; gap: 10px; margin: 0 0 14px; }
+ .rune-test-box {
+      box-sizing: border-box; display: flex; flex-direction: column; gap: 0;
+      width: 350px; height: 750px; max-width: 100%; overflow: auto;
+      padding: 12px; border: 1px solid var(--border-color, #c9c9c9);
+      border-radius: 10px; background: var(--surface-color, #fff);
+    }
+    .rune-controls { display: grid; gap: 10px; margin: 0 0 14px; flex: 0 0 auto; }
     .rune-filter-row { display: flex; flex-wrap: nowrap; gap: 5px; width: 100%; max-width: 350px; }
     .rune-filter {
       flex: 1 1 0; min-width: 0; min-height: 34px; padding: 6px 4px; border: 1px solid #c9c9c9;
@@ -39,8 +45,13 @@
     .rune-sort-button[aria-pressed="true"] { background: #e5e5e5; border-color: #777; }
     .rune-sort-glyph { font-size: 20px; line-height: 1; }
     .rune-sort-triangle { align-self: center; font-size: 9px; line-height: 1; }
-    #rune-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 5px; margin-top: 14px; }
-    #rune-pagination[hidden] { display: none !important; }
+    #rune-pagination {
+      position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: 5px; flex: 0 0 auto; max-height: 80px; margin-top: 14px; overflow: hidden; opacity: 1;
+      transition: max-height 240ms ease, margin-top 240ms ease, opacity 180ms ease;
+    }
+    #rune-pagination.is-empty { max-height: 0; margin-top: 0; opacity: 0; pointer-events: none; }
+    .rune-pagination-exit { position: absolute; z-index: 1; margin: 0; pointer-events: none; will-change: transform, opacity; }
     .rune-page-button { min-width: 32px; height: 32px; padding: 0 7px; border: 1px solid #d0d0d0; border-radius: 7px; background: #fff; color: #222; font: inherit; cursor: pointer; }
     .rune-page-button[aria-current="page"] { background: #e5e5e5; border-color: #777; font-weight: 700; }
     .rune-page-button:disabled { opacity: .38; cursor: default; }
@@ -198,6 +209,10 @@
     @media (prefers-reduced-motion: reduce) {
       #rune-table tbody tr,
       .rune-description-overlay,
+      #rune-pagination, .rune-page-button, .rune-page-ellipsis, .rune-pagination-exit {
+        animation: none !important;
+        transition: none !important;
+      }
       .rune-description-dialog {
         animation: none !important;
         transition: none !important;
@@ -209,7 +224,8 @@
   <h1>마비노기 모바일 계산기 개발 테스트</h1>
   <p>이 페이지는 다른 웹페이지의 기능을 실제 페이지에 반영하기 전에 HTML, CSS, JavaScript 및 브라우저 동작을 테스트하기 위한 개발 테스트 환경입니다.</p>
 
-<section class="rune-controls" aria-label="룬 검색 및 필터">
+<section class="rune-test-box" aria-label="룬 검색 및 결과 테스트 영역">
+  <section class="rune-controls" aria-label="룬 검색 및 필터">
     <div class="rune-filter-row" aria-label="등급 필터">
       <button class="rune-filter" type="button" data-filter-group="grade" data-filter-value="신화" aria-pressed="true">신화</button>
       <button class="rune-filter" type="button" data-filter-group="grade" data-filter-value="전설" aria-pressed="true">전설</button>
@@ -233,7 +249,8 @@
       <tbody id="rune-table-body"></tbody>
     </table>
   </div>
-  <nav id="rune-pagination" aria-label="룬 검색 결과 페이지" hidden></nav>
+  <nav id="rune-pagination" class="is-empty" aria-label="룬 검색 결과 페이지" aria-hidden="true"></nav>
+  </section>
 
   <div id="rune-description-overlay" class="rune-description-overlay" hidden>
     <section class="rune-description-dialog" role="dialog" aria-modal="true" aria-labelledby="rune-description-title" aria-describedby="rune-description-text">
@@ -308,41 +325,82 @@ const overlay = document.getElementById("rune-description-overlay");
     }
 
     function renderPagination(totalPages) {
-      pagination.replaceChildren();
-      pagination.hidden = totalPages <= 1;
-      if (totalPages <= 1) return;
+      const nextNodes = [];
+      const isEmpty = totalPages <= 1;
+      pagination.classList.toggle("is-empty", isEmpty);
+      pagination.setAttribute("aria-hidden", String(isEmpty));
 
-      pagination.append(createPageButton("<", currentPage - 1, { disabled: currentPage === 1 }));
-      pagination.append(createPageButton("1", 1, { current: currentPage === 1 }));
+      if (!isEmpty) {
+        nextNodes.push(createPageButton("<", currentPage - 1, { disabled: currentPage === 1 }));
+        nextNodes.push(createPageButton("1", 1, { current: currentPage === 1 }));
 
-      if (currentPage > 3) {
-        const ellipsis = document.createElement("span");
-        ellipsis.className = "rune-page-ellipsis";
-        ellipsis.textContent = "...";
-        pagination.append(ellipsis);
+        if (currentPage > 3) {
+          const ellipsis = document.createElement("span");
+          ellipsis.className = "rune-page-ellipsis";
+          ellipsis.textContent = "...";
+          nextNodes.push(ellipsis);
+        }
+
+        if (currentPage > 1 && currentPage < totalPages) {
+          if (currentPage - 1 > 1) nextNodes.push(createPageButton(String(currentPage - 1), currentPage - 1));
+          nextNodes.push(createPageButton(String(currentPage), currentPage, { current: true }));
+          if (currentPage + 1 < totalPages) nextNodes.push(createPageButton(String(currentPage + 1), currentPage + 1));
+        } else if (currentPage === 1 && totalPages > 2) {
+          nextNodes.push(createPageButton("2", 2));
+        } else if (currentPage === totalPages && totalPages > 2) {
+          nextNodes.push(createPageButton(String(totalPages - 1), totalPages - 1));
+        }
+
+        if (currentPage < totalPages - 2) {
+          const ellipsis = document.createElement("span");
+          ellipsis.className = "rune-page-ellipsis";
+          ellipsis.textContent = "...";
+          nextNodes.push(ellipsis);
+        }
+        nextNodes.push(createPageButton(String(totalPages), totalPages, { current: currentPage === totalPages }));
+        nextNodes.push(createPageButton(">", currentPage + 1, { disabled: currentPage === totalPages }));
       }
 
-      if (currentPage > 1 && currentPage < totalPages) {
-        if (currentPage - 1 > 1) pagination.append(createPageButton(String(currentPage - 1), currentPage - 1));
-        pagination.append(createPageButton(String(currentPage), currentPage, { current: true }));
-        if (currentPage + 1 < totalPages) pagination.append(createPageButton(String(currentPage + 1), currentPage + 1));
-      } else if (currentPage === 1 && totalPages > 2) {
-        pagination.append(createPageButton("2", 2));
-      } else if (currentPage === totalPages && totalPages > 2) {
-        pagination.append(createPageButton(String(totalPages - 1), totalPages - 1));
+      const oldNodes = [...pagination.children].filter(node => !node.classList.contains("rune-pagination-exit"));
+      const oldRect = pagination.getBoundingClientRect();
+      const oldKeys = new Set(oldNodes.map(node => node.textContent + "|" + node.className));
+      const nextKeys = new Set(nextNodes.map(node => node.textContent + "|" + node.className));
+      const outgoing = [];
+
+      for (const node of oldNodes) {
+        if (nextKeys.has(node.textContent + "|" + node.className)) continue;
+        const rect = node.getBoundingClientRect();
+        const clone = node.cloneNode(true);
+        const computed = getComputedStyle(node);
+        Object.assign(clone.style, {
+          left: `${rect.left - oldRect.left}px`, top: `${rect.top - oldRect.top}px`,
+          width: `${rect.width}px`, height: `${rect.height}px`,
+          boxSizing: "border-box", font: computed.font
+        });
+        clone.classList.add("rune-pagination-exit");
+        outgoing.push(clone);
       }
 
-      if (currentPage < totalPages - 2) {
-        const ellipsis = document.createElement("span");
-        ellipsis.className = "rune-page-ellipsis";
-        ellipsis.textContent = "...";
-        pagination.append(ellipsis);
+      pagination.replaceChildren(...nextNodes, ...outgoing);
+      for (const clone of outgoing) {
+        clone.animate(
+          [{ opacity: 1, transform: "translateY(0) scale(1)" }, { opacity: 0, transform: "translateY(-5px) scale(.94)" }],
+          { duration: 180, easing: "ease-out", fill: "forwards" }
+        ).onfinish = () => clone.remove();
       }
-      if (totalPages > 1) pagination.append(createPageButton(String(totalPages), totalPages, { current: currentPage === totalPages }));
-      pagination.append(createPageButton(">", currentPage + 1, { disabled: currentPage === totalPages }));
+      for (const node of nextNodes) {
+        if (!oldKeys.has(node.textContent + "|" + node.className)) {
+          node.animate(
+            [{ opacity: 0, transform: "translateY(6px) scale(.94)" }, { opacity: 1, transform: "translateY(0) scale(1)" }],
+            { duration: 220, easing: "cubic-bezier(.2,.75,.25,1)", fill: "both" }
+          );
+        }
+      }
     }
 
     function renderRunes() {
+      const box = document.querySelector(".rune-test-box");
+      const layoutBefore = [...box.children].map(element => ({ element, rect: element.getBoundingClientRect() }));
       const filtered = getFilteredRunes();
       const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
       currentPage = Math.max(1, Math.min(currentPage, totalPages || 1));
@@ -374,6 +432,21 @@ const overlay = document.getElementById("rune-description-overlay");
       }
 
 renderPagination(totalPages);
+
+      // FLIP: animate controls/table/pagination into position when the pagination area expands or collapses.
+      requestAnimationFrame(() => {
+        for (const { element, rect } of layoutBefore) {
+          if (!element.isConnected) continue;
+          const nextRect = element.getBoundingClientRect();
+          const dx = rect.left - nextRect.left;
+          const dy = rect.top - nextRect.top;
+          if (Math.abs(dx) < 1 && Math.abs(dy) < 1) continue;
+          element.animate(
+            [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "translate(0, 0)" }],
+            { duration: 240, easing: "cubic-bezier(.2,.75,.25,1)" }
+          );
+        }
+      });
     }
 
     document.querySelectorAll("[data-filter-group]").forEach(button => {
