@@ -458,7 +458,7 @@
         for(const node of oldNodes){const k=key(node);if(!oldRects.has(k))oldRects.set(k,[]);oldRects.get(k).push(node.getBoundingClientRect());}
         const oldKeys=new Set(oldNodes.map(key)),nextKeys=new Set(nextNodes.map(key)),outgoing=[];
         for(const node of oldNodes){if(nextKeys.has(key(node)))continue;const rect=node.getBoundingClientRect(),clone=node.cloneNode(true),computed=getComputedStyle(node);
-          Object.assign(clone.style,{left:`${rect.left-oldRect.left}px`,top:`${rect.top-oldRect.top}px`,width:`${rect.width}px`,height:`${rect.height}px`,boxSizing:"border-box",font:computed.font});clone.classList.add("rune-pagination-exit");outgoing.push(clone);}
+          Object.assign(clone.style,{left:`${rect.left-oldRect.left}px`,top:`${rect.top-oldRect.top}px`,width:`${rect.width}px`,height:`${rect.height}px`,boxSizing:"border-box",font:computed.font,transform:"none",transition:"none"});clone.classList.add("rune-pagination-exit");outgoing.push(clone);}
         pagination.replaceChildren(...nextNodes,...outgoing);pagination.classList.toggle("is-empty",isEmpty);
         for(const clone of outgoing)clone.animate([{opacity:1},{opacity:0}],{duration:260,easing:"ease-out",fill:"forwards"}).onfinish=()=>clone.remove();
         requestAnimationFrame(()=>{for(const node of nextNodes){const previous=oldRects.get(key(node));
