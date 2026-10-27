@@ -175,7 +175,7 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 
 #runes-search-box {
   height: 750px;
-  background-color: #888888;
+  background-color: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -186,7 +186,7 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 #runes-search-box.runes-search-panel {
   display:flex; flex-direction:column; gap:0; padding:12px; overflow:hidden;
   scrollbar-width:none; -ms-overflow-style:none; border:2px solid var(--border-color);
-  border-radius:14px; background:var(--surface-color); color:var(--text-color);
+  border-radius:14px; background:transparent; color:var(--text-color);
   box-shadow:0 0 18px rgba(0,0,0,.10);
   transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease,box-shadow 160ms ease;
   -webkit-user-select:text; user-select:text;
@@ -216,7 +216,7 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-table-wrap { width:100%; overflow:hidden; }
 .rune-table { width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; }
 .rune-table thead { display:none; }
-.rune-table-body { display:block; border:2px solid var(--border-color); border-radius:12px; overflow:hidden; }
+.rune-table-body { display:block; border:0; border-radius:12px; overflow:hidden; }
 .rune-table-body tr { display:table; width:100%; table-layout:fixed; }
 .rune-table tbody tr:first-child td:first-child { border-top-left-radius:10px; }
 .rune-table tbody tr:first-child td:last-child { border-top-right-radius:10px; }
@@ -1396,6 +1396,10 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .page-header:has(h1[data
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, filter 160ms ease;
 }
 
+.full-page-pagination:hover {
+  background-color: var(--hover-color);
+}
+
 .full-page-pagination-option:hover {
   background: var(--hover-color);
   filter: saturate(1.2) brightness(1.02);
@@ -1411,6 +1415,10 @@ body:has(#header-collapse-toggle[aria-expanded="true"]) .page-header:has(h1[data
   border-color: #666a73;
   background: var(--dark-surface-color);
   color: var(--dark-text-color);
+}
+
+[data-theme="dark"] .full-page-pagination:hover {
+  background-color: var(--dark-hover-color);
 }
 
 [data-theme="dark"] .full-page-pagination-option:hover {
