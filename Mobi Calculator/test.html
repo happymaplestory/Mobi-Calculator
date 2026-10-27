@@ -27,6 +27,34 @@
 
     #rune-count { margin-bottom: 12px; }
 
+
+    .rune-controls { display: grid; gap: 10px; margin: 0 0 14px; }
+    .rune-filter-row { display: flex; flex-wrap: wrap; gap: 7px; }
+    .rune-filter {
+      min-height: 34px; padding: 6px 12px; border: 1px solid #c9c9c9;
+      border-radius: 8px; background: #f5f5f5; color: #333; font: inherit;
+      cursor: pointer; transition: background-color 140ms ease, border-color 140ms ease;
+    }
+    .rune-filter[aria-pressed="true"] { background: #e5e5e5; border-color: #777; font-weight: 600; }
+    .rune-search-row { display: flex; align-items: stretch; gap: 7px; min-width: 0; }
+    #rune-search { flex: 1 1 auto; min-width: 0; height: 40px; padding: 8px 11px; border: 1px solid #bdbdbd; border-radius: 8px; background: #fff; color: #222; font: inherit; }
+    .rune-sort-button { display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex: 0 0 48px; min-width: 48px; border: 1px solid #bdbdbd; border-radius: 8px; background: #f5f5f5; color: #222; font: inherit; cursor: pointer; }
+    .rune-sort-button[aria-pressed="true"] { background: #e5e5e5; border-color: #777; }
+    .rune-sort-glyph { font-size: 20px; line-height: 1; }
+    .rune-sort-triangle { align-self: center; font-size: 9px; line-height: 1; }
+    #rune-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 5px; margin-top: 14px; }
+    #rune-pagination[hidden] { display: none !important; }
+    .rune-page-button { min-width: 32px; height: 32px; padding: 0 7px; border: 1px solid #d0d0d0; border-radius: 7px; background: #fff; color: #222; font: inherit; cursor: pointer; }
+    .rune-page-button[aria-current="page"] { background: #e5e5e5; border-color: #777; font-weight: 700; }
+    .rune-page-button:disabled { opacity: .38; cursor: default; }
+    .rune-page-ellipsis { padding: 0 2px; color: #777; }
+    @media (max-width: 480px) {
+      .rune-filter-row { gap: 5px; }
+      .rune-filter { padding: 6px 9px; }
+      .rune-search-row { gap: 5px; }
+      .rune-sort-button { flex-basis: 42px; min-width: 42px; }
+    }
+
     .rune-table-wrap {
       width: 100%;
       overflow-x: auto;
@@ -203,6 +231,20 @@
 
   <h2>룬 데이터 목록</h2>
   <p id="rune-count">룬 데이터를 불러오는 중입니다.</p>
+  <section class="rune-controls" aria-label="룬 검색 및 필터">
+    <div class="rune-filter-row" aria-label="등급 필터">
+      <button class="rune-filter" type="button" data-filter-group="grade" data-filter-value="신화" aria-pressed="true">신화</button>
+      <button class="rune-filter" type="button" data-filter-group="grade" data-filter-value="전설" aria-pressed="true">전설</button>
+      <button class="rune-filter" type="button" data-filter-group="slot" data-filter-value="무기" aria-pressed="true">무기</button>
+      <button class="rune-filter" type="button" data-filter-group="slot" data-filter-value="방어구" aria-pressed="true">방어구</button>
+      <button class="rune-filter" type="button" data-filter-group="slot" data-filter-value="엠블럼" aria-pressed="true">엠블럼</button>
+    </div>
+    <div class="rune-search-row">
+      <input id="rune-search" type="search" placeholder="룬 이름 또는 설명 검색" aria-label="룬 이름 또는 설명 검색">
+      <button id="rune-sort-asc" class="rune-sort-button" type="button" aria-label="가나다순 정렬" aria-pressed="true"><span class="rune-sort-glyph">≡</span><span class="rune-sort-triangle">▽</span></button>
+      <button id="rune-sort-desc" class="rune-sort-button" type="button" aria-label="가나다 역순 정렬" aria-pressed="false"><span class="rune-sort-glyph">≡</span><span class="rune-sort-triangle">△</span></button>
+    </div>
+  </section>
   <div class="rune-table-wrap">
     <table id="rune-table">
       <thead>
@@ -214,6 +256,7 @@
       <tbody id="rune-table-body"></tbody>
     </table>
   </div>
+  <nav id="rune-pagination" aria-label="룬 검색 결과 페이지" hidden></nav>
 
   <div id="rune-description-overlay" class="rune-description-overlay" hidden>
     <section class="rune-description-dialog" role="dialog" aria-modal="true" aria-labelledby="rune-description-title" aria-describedby="rune-description-text">
@@ -251,29 +294,140 @@
       closeButton.focus();
     }
 
-    for (const rune of RUNES.items) {
-      const row = document.createElement("tr");
-      row.dataset.grade = rune.grade ?? "";
-      row.tabIndex = 0;
-      row.setAttribute("aria-label", `${rune.name ?? "이름 없는 룬"} 설명 보기`);
+    const searchInput = document.getElementById("rune-search");
+    const pagination = document.getElementById("rune-pagination");
+    const sortAscButton = document.getElementById("rune-sort-asc");
+    const sortDescButton = document.getElementById("rune-sort-desc");
+    const PAGE_SIZE = 10;
+    const activeFilters = {
+      grade: new Set(["신화", "전설"]),
+      slot: new Set(["무기", "방어구", "엠블럼"])
+    };
+    let sortDirection = "asc";
+    let currentPage = 1;
 
-      const slotCell = document.createElement("td");
-      slotCell.className = "rune-slot";
-      slotCell.textContent = rune.slot ?? "";
-
-      const nameCell = document.createElement("td");
-      nameCell.className = "rune-name";
-      nameCell.textContent = rune.name ?? "";
-
-      row.append(slotCell, nameCell);
-      row.addEventListener("click", () => openDescription(rune));
-      row.addEventListener("keydown", event => {
-        if (event.target !== row || (event.key !== "Enter" && event.key !== " ")) return;
-        event.preventDefault();
-        openDescription(rune);
-      });
-      tableBody.appendChild(row);
+    function getFilteredRunes() {
+      const query = searchInput.value.trim().toLocaleLowerCase("ko-KR");
+      return RUNES.items
+        .filter(rune => activeFilters.grade.has(rune.grade) && activeFilters.slot.has(rune.slot))
+        .filter(rune => !query || `${rune.name ?? ""} ${rune.desc ?? ""}`.toLocaleLowerCase("ko-KR").includes(query))
+        .sort((a, b) => {
+          const result = (a.name ?? "").localeCompare(b.name ?? "", "ko-KR");
+          return sortDirection === "asc" ? result : -result;
+        });
     }
+
+    function createPageButton(label, page, options = {}) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "rune-page-button";
+      button.textContent = label;
+      if (options.current) button.setAttribute("aria-current", "page");
+      if (options.disabled) button.disabled = true;
+      if (!options.disabled && !options.current) button.addEventListener("click", () => {
+        currentPage = page;
+        renderRunes();
+      });
+      return button;
+    }
+
+    function renderPagination(totalPages) {
+      pagination.replaceChildren();
+      pagination.hidden = totalPages <= 1;
+      if (totalPages <= 1) return;
+
+      pagination.append(createPageButton("<", 1, { disabled: currentPage === 1 }));
+      pagination.append(createPageButton("처음", 1, { disabled: currentPage === 1 }));
+
+      if (currentPage > 3) {
+        const ellipsis = document.createElement("span");
+        ellipsis.className = "rune-page-ellipsis";
+        ellipsis.textContent = "...";
+        pagination.append(ellipsis);
+      }
+
+      if (currentPage > 1) pagination.append(createPageButton(String(currentPage - 1), currentPage - 1));
+      pagination.append(createPageButton(String(currentPage), currentPage, { current: true }));
+      if (currentPage < totalPages) pagination.append(createPageButton(String(currentPage + 1), currentPage + 1));
+
+      if (currentPage < totalPages - 2) {
+        const ellipsis = document.createElement("span");
+        ellipsis.className = "rune-page-ellipsis";
+        ellipsis.textContent = "...";
+        pagination.append(ellipsis);
+      }
+
+      pagination.append(createPageButton("끝", totalPages, { disabled: currentPage === totalPages }));
+      pagination.append(createPageButton(">", totalPages, { disabled: currentPage === totalPages }));
+    }
+
+    function renderRunes() {
+      const filtered = getFilteredRunes();
+      const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+      currentPage = Math.max(1, Math.min(currentPage, totalPages || 1));
+      const visibleRunes = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+      tableBody.replaceChildren();
+
+      for (const rune of visibleRunes) {
+        const row = document.createElement("tr");
+        row.dataset.grade = rune.grade ?? "";
+        row.tabIndex = 0;
+        row.setAttribute("aria-label", `${rune.name ?? "이름 없는 룬"} 설명 보기`);
+
+        const slotCell = document.createElement("td");
+        slotCell.className = "rune-slot";
+        slotCell.textContent = rune.slot ?? "";
+
+        const nameCell = document.createElement("td");
+        nameCell.className = "rune-name";
+        nameCell.textContent = rune.name ?? "";
+
+        row.append(slotCell, nameCell);
+        row.addEventListener("click", () => openDescription(rune));
+        row.addEventListener("keydown", event => {
+          if (event.target !== row || (event.key !== "Enter" && event.key !== " ")) return;
+          event.preventDefault();
+          openDescription(rune);
+        });
+        tableBody.appendChild(row);
+      }
+
+      countLabel.textContent = `검색 결과 ${filtered.length}개`;
+      renderPagination(totalPages);
+    }
+
+    document.querySelectorAll("[data-filter-group]").forEach(button => {
+      button.addEventListener("click", () => {
+        const group = button.dataset.filterGroup;
+        const value = button.dataset.filterValue;
+        if (activeFilters[group].has(value)) activeFilters[group].delete(value);
+        else activeFilters[group].add(value);
+        button.setAttribute("aria-pressed", String(activeFilters[group].has(value)));
+        currentPage = 1;
+        renderRunes();
+      });
+    });
+
+    searchInput.addEventListener("input", () => {
+      currentPage = 1;
+      renderRunes();
+    });
+
+    sortAscButton.addEventListener("click", () => {
+      sortDirection = "asc";
+      sortAscButton.setAttribute("aria-pressed", "true");
+      sortDescButton.setAttribute("aria-pressed", "false");
+      currentPage = 1;
+      renderRunes();
+    });
+
+    sortDescButton.addEventListener("click", () => {
+      sortDirection = "desc";
+      sortAscButton.setAttribute("aria-pressed", "false");
+      sortDescButton.setAttribute("aria-pressed", "true");
+      currentPage = 1;
+      renderRunes();
+    });
 
     overlay.addEventListener("click", event => {
       if (event.target === overlay) closeDescription();
@@ -283,7 +437,7 @@
       if (event.key === "Escape" && !overlay.hidden) closeDescription();
     });
 
-    countLabel.textContent = `총 ${RUNES.items.length}개 룬`;
+    renderRunes();
   </script>
 </body>
 </html>
