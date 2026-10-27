@@ -441,7 +441,7 @@
       function renderPagination(totalPages){
         const nextNodes=[],isEmpty=totalPages<=1,oldRect=pagination.getBoundingClientRect();pagination.setAttribute("aria-hidden",String(isEmpty));
         if(!isEmpty){
-          nextNodes.push(createPageButton("이전",currentPage-1,{disabled:currentPage===1,arrow:"left"}));
+          if(currentPage>1)nextNodes.push(createPageButton("이전",currentPage-1,{arrow:"left"}));
           nextNodes.push(createPageButton("1",1,{current:currentPage===1}));
           if(currentPage>3){const e=document.createElement("span");e.className="rune-page-ellipsis";e.textContent="...";nextNodes.push(e);}
           if(currentPage>1&&currentPage<totalPages){
@@ -452,7 +452,7 @@
           else if(currentPage===totalPages&&totalPages>2)nextNodes.push(createPageButton(String(totalPages-1),totalPages-1));
           if(currentPage<totalPages-2){const e=document.createElement("span");e.className="rune-page-ellipsis";e.textContent="...";nextNodes.push(e);}
           nextNodes.push(createPageButton(String(totalPages),totalPages,{current:currentPage===totalPages}));
-          nextNodes.push(createPageButton("다음",currentPage+1,{disabled:currentPage===totalPages,arrow:"right"}));
+          if(currentPage<totalPages)nextNodes.push(createPageButton("다음",currentPage+1,{arrow:"right"}));
         }
         const oldNodes=[...pagination.children].filter(node=>!node.classList.contains("rune-pagination-exit")),key=node=>node.textContent+"|"+node.className,oldRects=new Map();
         for(const node of oldNodes){const k=key(node);if(!oldRects.has(k))oldRects.set(k,[]);oldRects.get(k).push(node.getBoundingClientRect());}
