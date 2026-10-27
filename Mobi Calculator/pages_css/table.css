@@ -164,7 +164,7 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
   box-sizing: border-box;
   flex: 0 0 350px;
   width: 350px;
-  margin: 15px 25px 35px;
+  margin: 15px 25px 15px;
   transition: margin 260ms cubic-bezier(.22,.72,.22,1), transform 260ms cubic-bezier(.22,.72,.22,1);
 }
 
