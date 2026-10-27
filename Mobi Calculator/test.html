@@ -47,10 +47,10 @@
     .rune-sort-triangle { align-self: center; font-size: 9px; line-height: 1; }
     #rune-pagination {
       position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
-      gap: 5px; flex: 0 0 auto; max-height: 80px; margin-top: 14px; overflow: hidden; opacity: 1;
-      transition: max-height 240ms ease, margin-top 240ms ease, opacity 180ms ease;
+      gap: 5px; flex: 0 0 auto; max-height: 80px; margin-top: 14px; overflow: visible;
+      transition: max-height 240ms ease, margin-top 240ms ease;
     }
-    #rune-pagination.is-empty { max-height: 0; margin-top: 0; opacity: 0; pointer-events: none; }
+    #rune-pagination.is-empty { max-height: 0; margin-top: 0; pointer-events: none; }
     .rune-pagination-exit { position: absolute; z-index: 1; margin: 0; pointer-events: none; will-change: transform, opacity; }
     .rune-page-button { min-width: 32px; height: 32px; padding: 0 7px; border: 1px solid #d0d0d0; border-radius: 7px; background: #fff; color: #222; font: inherit; cursor: pointer; }
     .rune-page-button[aria-current="page"] { background: #e5e5e5; border-color: #777; font-weight: 700; }
@@ -327,7 +327,7 @@ const overlay = document.getElementById("rune-description-overlay");
     function renderPagination(totalPages) {
       const nextNodes = [];
       const isEmpty = totalPages <= 1;
-      pagination.classList.toggle("is-empty", isEmpty);
+      const oldRect = pagination.getBoundingClientRect();
       pagination.setAttribute("aria-hidden", String(isEmpty));
 
       if (!isEmpty) {
@@ -362,7 +362,6 @@ const overlay = document.getElementById("rune-description-overlay");
       }
 
       const oldNodes = [...pagination.children].filter(node => !node.classList.contains("rune-pagination-exit"));
-      const oldRect = pagination.getBoundingClientRect();
       const oldKeys = new Set(oldNodes.map(node => node.textContent + "|" + node.className));
       const nextKeys = new Set(nextNodes.map(node => node.textContent + "|" + node.className));
       const outgoing = [];
@@ -382,6 +381,7 @@ const overlay = document.getElementById("rune-description-overlay");
       }
 
       pagination.replaceChildren(...nextNodes, ...outgoing);
+      pagination.classList.toggle("is-empty", isEmpty);
       for (const clone of outgoing) {
         clone.animate(
           [{ opacity: 1, transform: "translateY(0) scale(1)" }, { opacity: 0, transform: "translateY(-5px) scale(.94)" }],
