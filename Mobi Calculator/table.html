@@ -163,6 +163,45 @@
   })();
 </script>
 
+<script>
+  (() => {
+    const themeToggle = document.getElementById("theme-toggle");
+    const pagination = document.getElementById("full-page-pagination");
+    if (!themeToggle || !pagination) return;
+
+    const options = [...pagination.querySelectorAll(".full-page-pagination-option")];
+    const isEditableTarget = target =>
+      target instanceof Element &&
+      (target.isContentEditable || target.closest('input, textarea, select, [contenteditable="true"], [role="textbox"]'));
+
+    document.addEventListener("keydown", event => {
+      if (event.defaultPrevented || event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      if (isEditableTarget(event.target)) return;
+
+      const visibleModal = [...document.querySelectorAll('[role="dialog"][aria-modal="true"]')]
+        .some(dialog => dialog.getClientRects().length > 0);
+      if (visibleModal) return;
+
+      const key = event.key.toLowerCase();
+      if (key === "d") {
+        event.preventDefault();
+        themeToggle.click();
+        return;
+      }
+
+      if (key !== "q" && key !== "w") return;
+      const currentIndex = options.findIndex(option => option.getAttribute("aria-pressed") === "true");
+      if (currentIndex < 0) return;
+
+      const nextIndex = Math.max(0, Math.min(options.length - 1, currentIndex + (key === "q" ? -1 : 1)));
+      if (nextIndex === currentIndex) return;
+
+      event.preventDefault();
+      options[nextIndex].click();
+    });
+  })();
+</script>
+
   <script>
   (() => {
     const header = document.getElementById("page-header");
