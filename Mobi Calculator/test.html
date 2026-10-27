@@ -45,8 +45,8 @@
     #rune-search { flex: 1 1 auto; min-width: 0; height: 40px; padding: 8px 11px; border: 1px solid #bdbdbd; border-radius: 8px; background: #fff; color: #222; font: inherit; }
     .rune-sort-button { display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex: 0 0 48px; min-width: 48px; border: 1px solid #bdbdbd; border-radius: 8px; background: #f5f5f5; color: #222; font: inherit; cursor: pointer; }
     .rune-sort-button[aria-pressed="true"] { background: #e5e5e5; border-color: #777; }
-    .rune-sort-glyph { font-size: 20px; line-height: 1; }
-    .rune-sort-triangle { align-self: center; font-size: 9px; line-height: 1; }
+    .rune-sort-icon { display: block; width: 22px; height: 22px; flex: 0 0 22px; }
+    .rune-sort-icon path, .rune-sort-icon line, .rune-sort-icon polyline { vector-effect: non-scaling-stroke; }
     #rune-pagination {
       position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
       gap: 5px; flex: 0 0 auto; max-height: 80px; margin-top: 14px; overflow: visible;
@@ -54,7 +54,7 @@
     }
     #rune-pagination.is-empty { max-height: 0; margin-top: 0; pointer-events: none; }
     .rune-pagination-exit { position: absolute; z-index: 1; margin: 0; pointer-events: none; will-change: transform, opacity; }
-    .rune-page-button { min-width: 32px; height: 32px; padding: 0 7px; border: 1px solid #d0d0d0; border-radius: 7px; background: #fff; color: #222; font: inherit; cursor: pointer; }
+    .rune-page-button { min-width: 32px; height: 32px; padding: 0 7px; border: 1px solid #d0d0d0; border-radius: 7px; background: #fff; color: #222; font: inherit; cursor: pointer; }\n    .rune-page-arrow-icon { display: block; width: 18px; height: 18px; margin: auto; }
     .rune-page-button[aria-current="page"] { background: #e5e5e5; border-color: #777; font-weight: 700; }
     .rune-page-button:disabled { opacity: .38; cursor: default; }
     .rune-page-ellipsis { padding: 0 2px; color: #777; }
@@ -237,7 +237,7 @@
     </div>
     <div class="rune-search-row">
       <input id="rune-search" type="search" placeholder="룬 이름 또는 설명 검색" aria-label="룬 이름 또는 설명 검색">
-      <button id="rune-sort-toggle" class="rune-sort-button" type="button" aria-label="정렬 순서: 가나다순. 눌러서 가나다 역순으로 변경" aria-pressed="false"><span class="rune-sort-glyph">≡</span><span id="rune-sort-triangle" class="rune-sort-triangle">▽</span></button>
+      <button id="rune-sort-toggle" class="rune-sort-button" type="button" aria-label="정렬 순서: 가나다순. 눌러서 가나다 역순으로 변경" aria-pressed="false"><svg class="rune-sort-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3.5" y1="6" x2="13.5" y2="6"/><line x1="3.5" y1="10.5" x2="11.5" y2="10.5"/><line x1="3.5" y1="15" x2="9.5" y2="15"/><path id="rune-sort-direction" d="M17 5v13m-4-4 4 4 4-4"/></g></svg></button>
     </div>
   </section>
   <div class="rune-table-wrap">
@@ -292,7 +292,6 @@ const overlay = document.getElementById("rune-description-overlay");
     const searchInput = document.getElementById("rune-search");
     const pagination = document.getElementById("rune-pagination");
     const sortToggleButton = document.getElementById("rune-sort-toggle");
-    const sortTriangle = document.getElementById("rune-sort-triangle");
     const PAGE_SIZE = 10;
     const activeFilters = {
       grade: new Set(["신화", "전설"]),
@@ -316,7 +315,14 @@ const overlay = document.getElementById("rune-description-overlay");
       const button = document.createElement("button");
       button.type = "button";
       button.className = "rune-page-button";
-      button.textContent = label;
+      if (options.arrow) {
+        button.setAttribute("aria-label", label);
+        button.innerHTML = options.arrow === "left"
+          ? '<svg class="rune-page-arrow-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+          : '<svg class="rune-page-arrow-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9.5 5.5 6.5 6.5-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      } else {
+        button.textContent = label;
+      }
       if (options.current) button.setAttribute("aria-current", "page");
       if (options.disabled) button.disabled = true;
       if (!options.disabled && !options.current) button.addEventListener("click", () => {
@@ -333,7 +339,7 @@ const overlay = document.getElementById("rune-description-overlay");
       pagination.setAttribute("aria-hidden", String(isEmpty));
 
       if (!isEmpty) {
-        nextNodes.push(createPageButton("<", currentPage - 1, { disabled: currentPage === 1 }));
+        nextNodes.push(createPageButton("이전", currentPage - 1, { disabled: currentPage === 1, arrow: "left" }));
         nextNodes.push(createPageButton("1", 1, { current: currentPage === 1 }));
 
         if (currentPage > 3) {
@@ -360,7 +366,7 @@ const overlay = document.getElementById("rune-description-overlay");
           nextNodes.push(ellipsis);
         }
         nextNodes.push(createPageButton(String(totalPages), totalPages, { current: currentPage === totalPages }));
-        nextNodes.push(createPageButton(">", currentPage + 1, { disabled: currentPage === totalPages }));
+        nextNodes.push(createPageButton("다음", currentPage + 1, { disabled: currentPage === totalPages, arrow: "right" }));
       }
 
       const oldNodes = [...pagination.children].filter(node => !node.classList.contains("rune-pagination-exit"));
@@ -492,7 +498,7 @@ renderPagination(totalPages);
 
     sortToggleButton.addEventListener("click", () => {
       sortDirection = sortDirection === "asc" ? "desc" : "asc";
-      sortTriangle.textContent = sortDirection === "asc" ? "▽" : "△";
+      document.getElementById("rune-sort-direction").setAttribute("d", sortDirection === "asc" ? "M17 5v13m-4-4 4 4 4-4" : "M17 19V6m-4 4 4-4 4 4");
       sortToggleButton.setAttribute("aria-pressed", String(sortDirection === "desc"));
       sortToggleButton.setAttribute("aria-label", sortDirection === "asc"
         ? "정렬 순서: 가나다순. 눌러서 가나다 역순으로 변경"
