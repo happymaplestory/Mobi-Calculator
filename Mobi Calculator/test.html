@@ -5,7 +5,203 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mobi Calculator 개발 테스트</title>
   <style>
-    td { white-space: pre-wrap; }
+    :root {
+      color-scheme: light;
+      --page-background: #ffffff;
+      --text-color: #242424;
+      --surface-color: #ffffff;
+      --border-color: #d5d5d5;
+      --dialog-backdrop: rgba(0, 0, 0, 0.42);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 20px;
+      background: var(--page-background);
+      color: var(--text-color);
+      font-family: Arial, "Noto Sans KR", sans-serif;
+    }
+
+    h1, h2 { line-height: 1.4; }
+
+    #rune-count { margin-bottom: 12px; }
+
+    .rune-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    #rune-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    #rune-table th,
+    #rune-table td {
+      padding: 9px 10px;
+      border: 1px solid var(--rune-border, #d5d5d5);
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    #rune-table th {
+      background: #f2f2f2;
+      font-weight: 600;
+    }
+
+    #rune-table .rune-slot,
+    #rune-table th:first-child {
+      width: 60px;
+      min-width: 60px;
+      max-width: 60px;
+      padding-right: 2px;
+      padding-left: 2px;
+      text-align: center;
+      white-space: nowrap;
+      overflow-wrap: normal;
+    }
+
+    #rune-table .rune-name {
+      width: auto;
+      font-weight: 600;
+    }
+
+    #rune-table .rune-grade,
+    #rune-table th:nth-child(3) {
+      width: 76px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    #rune-table tbody tr {
+      cursor: pointer;
+      transition: filter 140ms ease;
+    }
+
+    #rune-table tbody tr[data-grade="전설"] {
+      --rune-background: #fff0df;
+      --rune-border: #e9bd91;
+    }
+
+    #rune-table tbody tr[data-grade="신화"] {
+      --rune-background: #fffbd8;
+      --rune-border: #e6d77b;
+    }
+
+    #rune-table tbody tr {
+      background: var(--rune-background, #ffffff);
+    }
+
+    #rune-table tbody tr:hover {
+      filter: brightness(0.97);
+    }
+
+    .rune-description-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: var(--dialog-backdrop);
+      animation: rune-backdrop-in 220ms ease both;
+    }
+
+    .rune-description-dialog {
+      box-sizing: border-box;
+      width: min(100%, 420px);
+      max-height: min(80vh, 680px);
+      overflow-y: auto;
+      padding: 22px;
+      border: 2px solid var(--border-color);
+      border-radius: 14px;
+      background: var(--surface-color);
+      color: var(--text-color);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
+      animation: rune-dialog-in 220ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+    }
+
+    .rune-description-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .rune-description-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .rune-description-meta {
+      margin: 5px 0 0;
+      color: #777777;
+      font-size: 13px;
+    }
+
+    .rune-description-text {
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .rune-description-close {
+      flex: 0 0 auto;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .rune-description-close:hover {
+      background: rgba(127, 127, 127, 0.12);
+    }
+
+    [hidden] { display: none !important; }
+
+    @keyframes rune-backdrop-in {
+      from { background-color: rgba(0, 0, 0, 0); }
+      to { background-color: var(--dialog-backdrop); }
+    }
+
+    @keyframes rune-dialog-in {
+      from { opacity: 0; transform: translateY(8px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (max-width: 480px) {
+      body { margin: 12px; }
+      #rune-table th, #rune-table td { padding-top: 8px; padding-bottom: 8px; }
+      #rune-table .rune-slot, #rune-table th:first-child {
+        padding-right: 1px;
+        padding-left: 1px;
+      }
+      .rune-description-dialog { padding: 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #rune-table tbody tr,
+      .rune-description-overlay,
+      .rune-description-dialog {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -14,35 +210,90 @@
 
   <h2>룬 데이터 목록</h2>
   <p id="rune-count">룬 데이터를 불러오는 중입니다.</p>
-  <table border="1">
-    <thead>
-      <tr>
-        <th>name</th>
-        <th>slot</th>
-        <th>grade</th>
-        <th>desc</th>
-      </tr>
-    </thead>
-    <tbody id="rune-table-body"></tbody>
-  </table>
+  <div class="rune-table-wrap">
+    <table id="rune-table">
+      <thead>
+        <tr>
+          <th scope="col">slot</th>
+          <th scope="col">name</th>
+          <th scope="col">grade</th>
+        </tr>
+      </thead>
+      <tbody id="rune-table-body"></tbody>
+    </table>
+  </div>
+
+  <div id="rune-description-overlay" class="rune-description-overlay" hidden>
+    <section class="rune-description-dialog" role="dialog" aria-modal="true" aria-labelledby="rune-description-title" aria-describedby="rune-description-text">
+      <div class="rune-description-heading">
+        <div>
+          <h2 id="rune-description-title" class="rune-description-title"></h2>
+          <p id="rune-description-meta" class="rune-description-meta"></p>
+        </div>
+        <button id="rune-description-close" class="rune-description-close" type="button" aria-label="설명 팝업 닫기">×</button>
+      </div>
+      <p id="rune-description-text" class="rune-description-text"></p>
+    </section>
+  </div>
 
   <script type="module">
     import { RUNES } from "./pages_js/runes-data.js";
 
     const tableBody = document.getElementById("rune-table-body");
     const countLabel = document.getElementById("rune-count");
+    const overlay = document.getElementById("rune-description-overlay");
+    const dialogTitle = document.getElementById("rune-description-title");
+    const dialogMeta = document.getElementById("rune-description-meta");
+    const dialogText = document.getElementById("rune-description-text");
+    const closeButton = document.getElementById("rune-description-close");
+
+    function closeDescription() {
+      overlay.hidden = true;
+    }
+
+    function openDescription(rune) {
+      dialogTitle.textContent = rune.name ?? "";
+      dialogMeta.textContent = [rune.slot, rune.grade].filter(Boolean).join(" · ");
+      dialogText.textContent = rune.desc ?? "";
+      overlay.hidden = false;
+      closeButton.focus();
+    }
 
     for (const rune of RUNES.items) {
       const row = document.createElement("tr");
+      row.dataset.grade = rune.grade ?? "";
+      row.tabIndex = 0;
+      row.setAttribute("aria-label", `${rune.name ?? "이름 없는 룬"} 설명 보기`);
 
-      for (const field of ["name", "slot", "grade", "desc"]) {
-        const cell = document.createElement("td");
-        cell.textContent = rune[field] ?? "";
-        row.appendChild(cell);
-      }
+      const slotCell = document.createElement("td");
+      slotCell.className = "rune-slot";
+      slotCell.textContent = rune.slot ?? "";
 
+      const nameCell = document.createElement("td");
+      nameCell.className = "rune-name";
+      nameCell.textContent = rune.name ?? "";
+
+      const gradeCell = document.createElement("td");
+      gradeCell.className = "rune-grade";
+      gradeCell.textContent = rune.grade ?? "";
+
+      row.append(slotCell, nameCell, gradeCell);
+      row.addEventListener("click", () => openDescription(rune));
+      row.addEventListener("keydown", event => {
+        if (event.target !== row || (event.key !== "Enter" && event.key !== " ")) return;
+        event.preventDefault();
+        openDescription(rune);
+      });
       tableBody.appendChild(row);
     }
+
+    overlay.addEventListener("click", event => {
+      if (event.target === overlay) closeDescription();
+    });
+    closeButton.addEventListener("click", closeDescription);
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !overlay.hidden) closeDescription();
+    });
 
     countLabel.textContent = `총 ${RUNES.items.length}개 룬`;
   </script>
