@@ -530,8 +530,9 @@ input.section-name {
   margin-right: 57px;
 }
 
-/* 세로 배치에서는 두 영역 사이의 기존 100px 간격(행 간격 80px + carousel 상단 여백 20px)을 절반인 50px로 줄입니다. */
-.table-area.is-stacked {
+/* 스탯과 룬 페이지의 세로 배치에서 공통으로 30px의 row-gap을 사용합니다. */
+.table-area.is-stacked,
+.runes-page.is-stacked {
   row-gap: 30px;
 }
 
