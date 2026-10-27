@@ -206,13 +206,70 @@
 
   <main id="page-content-stage" class="page-content-stage">
     <div id="table-area" class="table-area page-content-panel"></div>
-    <section id="runes-page" class="page-content-panel page-test-panel" data-page="runes" hidden aria-label="룬 페이지 테스트 콘텐츠"></section>
+    <section id="runes-page" class="page-content-panel runes-page" data-page="runes" hidden aria-label="룬 페이지"><div id="runes-select-box" class="runes-content-box" aria-label="룬 선택 영역"></div><div id="runes-search-box" class="runes-content-box" aria-label="룬 검색 영역"></div></section>
     <section id="equipment-page" class="page-content-panel page-test-panel" data-page="equipment" hidden aria-label="장비 페이지 테스트 콘텐츠"></section>
     <section id="other-page" class="page-content-panel page-test-panel" data-page="other" hidden aria-label="기타 페이지 테스트 콘텐츠"></section>
   </main>
 
   <script>
     (() => {
+  <script>
+    (() => {
+      const runesPage = document.getElementById("runes-page");
+      const selectBox = document.getElementById("runes-select-box");
+      const searchBox = document.getElementById("runes-search-box");
+      if (!runesPage || !selectBox || !searchBox) return;
+
+      const boxes = [selectBox, searchBox];
+      const duration = 260;
+      let previousStacked = null;
+      let activeAnimations = [];
+
+      function updateRunesLayout(animate = true) {
+        const before = boxes.map(box => box.getBoundingClientRect());
+        const stacked = Math.abs(before[0].top - before[1].top) > 1;
+        if (previousStacked === null || stacked === previousStacked) {
+          runesPage.classList.toggle("is-stacked", stacked);
+          previousStacked = stacked;
+          return;
+        }
+
+        activeAnimations.forEach(animation => animation.cancel());
+        activeAnimations = [];
+        runesPage.classList.toggle("is-stacked", stacked);
+        const after = boxes.map(box => box.getBoundingClientRect());
+        if (!animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          previousStacked = stacked;
+          return;
+        }
+
+        boxes.forEach((box, index) => {
+          const dx = before[index].left - after[index].left;
+          const dy = before[index].top - after[index].top;
+          if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+          const animation = box.animate(
+            [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "translate(0, 0)" }],
+            { duration, easing: "cubic-bezier(.22,.72,.22,1)" }
+          );
+          animation.onfinish = () => {
+            animation.cancel();
+            activeAnimations = activeAnimations.filter(item => item !== animation);
+          };
+          activeAnimations.push(animation);
+        });
+        previousStacked = stacked;
+      }
+
+      const observer = new MutationObserver(() => {
+        if (!runesPage.hidden) requestAnimationFrame(() => updateRunesLayout(false));
+      });
+      observer.observe(runesPage, { attributes: true, attributeFilter: ["hidden"] });
+      window.addEventListener("resize", () => {
+        if (!runesPage.hidden) requestAnimationFrame(() => updateRunesLayout(true));
+      });
+    })();
+  </script>
+
       const pagination = document.getElementById("full-page-pagination");
       const stage = document.getElementById("page-content-stage");
       if (!pagination || !stage) return;
