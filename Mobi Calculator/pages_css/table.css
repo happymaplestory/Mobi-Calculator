@@ -138,7 +138,7 @@ h1[data-title-layout="three"] span {
 /* 룬 페이지 콘텐츠 박스는 반응형 줄바꿈 및 260ms 이동 모션을 사용합니다. */
 .runes-page {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
   align-items: flex-start;
   width: 100%;
@@ -146,6 +146,11 @@ h1[data-title-layout="three"] span {
   max-width: none;
   margin: 0;
   row-gap: 80px;
+}
+
+.runes-page.is-stacked {
+  flex-direction: column;
+  align-items: center;
 }
 
 .runes-content-box {
