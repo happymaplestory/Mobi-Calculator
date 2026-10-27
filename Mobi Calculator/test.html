@@ -25,13 +25,10 @@
 
     h1, h2 { line-height: 1.4; }
 
-    #rune-count { margin-bottom: 12px; }
-
-
-    .rune-controls { display: grid; gap: 10px; margin: 0 0 14px; }
-    .rune-filter-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.rune-controls { display: grid; gap: 10px; margin: 0 0 14px; }
+    .rune-filter-row { display: flex; flex-wrap: nowrap; gap: 5px; width: 100%; max-width: 350px; }
     .rune-filter {
-      min-height: 34px; padding: 6px 12px; border: 1px solid #c9c9c9;
+      flex: 1 1 0; min-width: 0; min-height: 34px; padding: 6px 4px; border: 1px solid #c9c9c9;
       border-radius: 8px; background: #f5f5f5; color: #333; font: inherit;
       cursor: pointer; transition: background-color 140ms ease, border-color 140ms ease;
     }
@@ -49,8 +46,8 @@
     .rune-page-button:disabled { opacity: .38; cursor: default; }
     .rune-page-ellipsis { padding: 0 2px; color: #777; }
     @media (max-width: 480px) {
-      .rune-filter-row { gap: 5px; }
-      .rune-filter { padding: 6px 9px; }
+      .rune-filter-row { gap: 4px; }
+      .rune-filter { padding: 6px 2px; font-size: 13px; }
       .rune-search-row { gap: 5px; }
       .rune-sort-button { flex-basis: 42px; min-width: 42px; }
     }
@@ -229,9 +226,7 @@
   <h1>마비노기 모바일 계산기 개발 테스트</h1>
   <p>이 페이지는 다른 웹페이지의 기능을 실제 페이지에 반영하기 전에 HTML, CSS, JavaScript 및 브라우저 동작을 테스트하기 위한 개발 테스트 환경입니다.</p>
 
-  <h2>룬 데이터 목록</h2>
-  <p id="rune-count">룬 데이터를 불러오는 중입니다.</p>
-  <section class="rune-controls" aria-label="룬 검색 및 필터">
+<section class="rune-controls" aria-label="룬 검색 및 필터">
     <div class="rune-filter-row" aria-label="등급 필터">
       <button class="rune-filter" type="button" data-filter-group="grade" data-filter-value="신화" aria-pressed="true">신화</button>
       <button class="rune-filter" type="button" data-filter-group="grade" data-filter-value="전설" aria-pressed="true">전설</button>
@@ -241,8 +236,7 @@
     </div>
     <div class="rune-search-row">
       <input id="rune-search" type="search" placeholder="룬 이름 또는 설명 검색" aria-label="룬 이름 또는 설명 검색">
-      <button id="rune-sort-asc" class="rune-sort-button" type="button" aria-label="가나다순 정렬" aria-pressed="true"><span class="rune-sort-glyph">≡</span><span class="rune-sort-triangle">▽</span></button>
-      <button id="rune-sort-desc" class="rune-sort-button" type="button" aria-label="가나다 역순 정렬" aria-pressed="false"><span class="rune-sort-glyph">≡</span><span class="rune-sort-triangle">△</span></button>
+      <button id="rune-sort-toggle" class="rune-sort-button" type="button" aria-label="정렬 순서: 가나다순. 눌러서 가나다 역순으로 변경" aria-pressed="false"><span class="rune-sort-glyph">≡</span><span id="rune-sort-triangle" class="rune-sort-triangle">▽</span></button>
     </div>
   </section>
   <div class="rune-table-wrap">
@@ -275,8 +269,7 @@
     import { RUNES } from "./pages_js/runes-data.js";
 
     const tableBody = document.getElementById("rune-table-body");
-    const countLabel = document.getElementById("rune-count");
-    const overlay = document.getElementById("rune-description-overlay");
+const overlay = document.getElementById("rune-description-overlay");
     const dialogTitle = document.getElementById("rune-description-title");
     const dialogMeta = document.getElementById("rune-description-meta");
     const dialogText = document.getElementById("rune-description-text");
@@ -296,8 +289,8 @@
 
     const searchInput = document.getElementById("rune-search");
     const pagination = document.getElementById("rune-pagination");
-    const sortAscButton = document.getElementById("rune-sort-asc");
-    const sortDescButton = document.getElementById("rune-sort-desc");
+    const sortToggleButton = document.getElementById("rune-sort-toggle");
+    const sortTriangle = document.getElementById("rune-sort-triangle");
     const PAGE_SIZE = 10;
     const activeFilters = {
       grade: new Set(["신화", "전설"]),
@@ -336,8 +329,8 @@
       pagination.hidden = totalPages <= 1;
       if (totalPages <= 1) return;
 
-      pagination.append(createPageButton("<", 1, { disabled: currentPage === 1 }));
-      pagination.append(createPageButton("처음", 1, { disabled: currentPage === 1 }));
+      pagination.append(createPageButton("<", currentPage - 1, { disabled: currentPage === 1 }));
+      pagination.append(createPageButton("1", 1, { current: currentPage === 1 }));
 
       if (currentPage > 3) {
         const ellipsis = document.createElement("span");
@@ -346,9 +339,15 @@
         pagination.append(ellipsis);
       }
 
-      if (currentPage > 1) pagination.append(createPageButton(String(currentPage - 1), currentPage - 1));
-      pagination.append(createPageButton(String(currentPage), currentPage, { current: true }));
-      if (currentPage < totalPages) pagination.append(createPageButton(String(currentPage + 1), currentPage + 1));
+      if (currentPage > 1 && currentPage < totalPages) {
+        if (currentPage - 1 > 1) pagination.append(createPageButton(String(currentPage - 1), currentPage - 1));
+        pagination.append(createPageButton(String(currentPage), currentPage, { current: true }));
+        if (currentPage + 1 < totalPages) pagination.append(createPageButton(String(currentPage + 1), currentPage + 1));
+      } else if (currentPage === 1 && totalPages > 2) {
+        pagination.append(createPageButton("2", 2));
+      } else if (currentPage === totalPages && totalPages > 2) {
+        pagination.append(createPageButton(String(totalPages - 1), totalPages - 1));
+      }
 
       if (currentPage < totalPages - 2) {
         const ellipsis = document.createElement("span");
@@ -356,9 +355,8 @@
         ellipsis.textContent = "...";
         pagination.append(ellipsis);
       }
-
-      pagination.append(createPageButton("끝", totalPages, { disabled: currentPage === totalPages }));
-      pagination.append(createPageButton(">", totalPages, { disabled: currentPage === totalPages }));
+      if (totalPages > 1) pagination.append(createPageButton(String(totalPages), totalPages, { current: currentPage === totalPages }));
+      pagination.append(createPageButton(">", currentPage + 1, { disabled: currentPage === totalPages }));
     }
 
     function renderRunes() {
@@ -392,8 +390,7 @@
         tableBody.appendChild(row);
       }
 
-      countLabel.textContent = `검색 결과 ${filtered.length}개`;
-      renderPagination(totalPages);
+renderPagination(totalPages);
     }
 
     document.querySelectorAll("[data-filter-group]").forEach(button => {
@@ -413,18 +410,13 @@
       renderRunes();
     });
 
-    sortAscButton.addEventListener("click", () => {
-      sortDirection = "asc";
-      sortAscButton.setAttribute("aria-pressed", "true");
-      sortDescButton.setAttribute("aria-pressed", "false");
-      currentPage = 1;
-      renderRunes();
-    });
-
-    sortDescButton.addEventListener("click", () => {
-      sortDirection = "desc";
-      sortAscButton.setAttribute("aria-pressed", "false");
-      sortDescButton.setAttribute("aria-pressed", "true");
+    sortToggleButton.addEventListener("click", () => {
+      sortDirection = sortDirection === "asc" ? "desc" : "asc";
+      sortTriangle.textContent = sortDirection === "asc" ? "▽" : "△";
+      sortToggleButton.setAttribute("aria-pressed", String(sortDirection === "desc"));
+      sortToggleButton.setAttribute("aria-label", sortDirection === "asc"
+        ? "정렬 순서: 가나다순. 눌러서 가나다 역순으로 변경"
+        : "정렬 순서: 가나다 역순. 눌러서 가나다순으로 변경");
       currentPage = 1;
       renderRunes();
     });
