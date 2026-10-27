@@ -68,13 +68,6 @@
       font-weight: 600;
     }
 
-    #rune-table .rune-grade,
-    #rune-table th:nth-child(3) {
-      width: 76px;
-      text-align: center;
-      white-space: nowrap;
-    }
-
     #rune-table tbody tr {
       cursor: pointer;
       transition: filter 140ms ease;
@@ -216,7 +209,6 @@
         <tr>
           <th scope="col">slot</th>
           <th scope="col">name</th>
-          <th scope="col">grade</th>
         </tr>
       </thead>
       <tbody id="rune-table-body"></tbody>
@@ -253,7 +245,7 @@
 
     function openDescription(rune) {
       dialogTitle.textContent = rune.name ?? "";
-      dialogMeta.textContent = [rune.slot, rune.grade].filter(Boolean).join(" · ");
+      dialogMeta.textContent = rune.slot ?? "";
       dialogText.textContent = rune.desc ?? "";
       overlay.hidden = false;
       closeButton.focus();
@@ -273,11 +265,7 @@
       nameCell.className = "rune-name";
       nameCell.textContent = rune.name ?? "";
 
-      const gradeCell = document.createElement("td");
-      gradeCell.className = "rune-grade";
-      gradeCell.textContent = rune.grade ?? "";
-
-      row.append(slotCell, nameCell, gradeCell);
+      row.append(slotCell, nameCell);
       row.addEventListener("click", () => openDescription(rune));
       row.addEventListener("keydown", event => {
         if (event.target !== row || (event.key !== "Enter" && event.key !== " ")) return;
