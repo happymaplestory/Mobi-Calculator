@@ -28,9 +28,11 @@
  .rune-test-box {
       box-sizing: border-box; display: flex; flex-direction: column; gap: 0;
       width: 350px; height: 750px; max-width: 100%; overflow: auto;
+      scrollbar-width: none; -ms-overflow-style: none;
       padding: 12px; border: 1px solid var(--border-color, #c9c9c9);
       border-radius: 10px; background: var(--surface-color, #fff);
     }
+    .rune-test-box::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .rune-controls { display: grid; gap: 10px; margin: 0 0 14px; flex: 0 0 auto; }
     .rune-filter-row { display: flex; flex-wrap: nowrap; gap: 5px; width: 100%; max-width: 350px; }
     .rune-filter {
@@ -48,7 +50,7 @@
     #rune-pagination {
       position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
       gap: 5px; flex: 0 0 auto; max-height: 80px; margin-top: 14px; overflow: visible;
-      transition: max-height 240ms ease, margin-top 240ms ease;
+      transition: max-height 260ms ease, margin-top 260ms ease;
     }
     #rune-pagination.is-empty { max-height: 0; margin-top: 0; pointer-events: none; }
     .rune-pagination-exit { position: absolute; z-index: 1; margin: 0; pointer-events: none; will-change: transform, opacity; }
@@ -384,15 +386,15 @@ const overlay = document.getElementById("rune-description-overlay");
       pagination.classList.toggle("is-empty", isEmpty);
       for (const clone of outgoing) {
         clone.animate(
-          [{ opacity: 1, transform: "translateY(0) scale(1)" }, { opacity: 0, transform: "translateY(-5px) scale(.94)" }],
-          { duration: 180, easing: "ease-out", fill: "forwards" }
+          [{ opacity: 1 }, { opacity: 0 }],
+          { duration: 260, easing: "ease-out", fill: "forwards" }
         ).onfinish = () => clone.remove();
       }
       for (const node of nextNodes) {
         if (!oldKeys.has(node.textContent + "|" + node.className)) {
           node.animate(
-            [{ opacity: 0, transform: "translateY(6px) scale(.94)" }, { opacity: 1, transform: "translateY(0) scale(1)" }],
-            { duration: 220, easing: "cubic-bezier(.2,.75,.25,1)", fill: "both" }
+            [{ opacity: 0 }, { opacity: 1 }],
+            { duration: 260, easing: "ease-out", fill: "both" }
           );
         }
       }
@@ -433,7 +435,7 @@ const overlay = document.getElementById("rune-description-overlay");
 
 renderPagination(totalPages);
 
-      // FLIP: animate controls/table/pagination into position when the pagination area expands or collapses.
+      // FLIP: only surrounding elements move smoothly when the pagination area expands or collapses.
       requestAnimationFrame(() => {
         for (const { element, rect } of layoutBefore) {
           if (!element.isConnected) continue;
@@ -443,7 +445,7 @@ renderPagination(totalPages);
           if (Math.abs(dx) < 1 && Math.abs(dy) < 1) continue;
           element.animate(
             [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "translate(0, 0)" }],
-            { duration: 240, easing: "cubic-bezier(.2,.75,.25,1)" }
+            { duration: 260, easing: "cubic-bezier(.22,.72,.22,1)" }
           );
         }
       });
