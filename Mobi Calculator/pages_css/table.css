@@ -132,7 +132,15 @@ h1[data-title-layout="three"] span {
   margin: 7px auto 0;
 }
 
-#runes-page { background-color: transparent; }
+#runes-page {
+  display: none;
+  background-color: transparent;
+}
+
+/* 룬 페이지는 룬 버튼이 aria-pressed="true"이고 패널이 hidden 상태가 아닐 때만 표시합니다. */
+body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-page:not([hidden]) {
+  display: flex;
+}
 
 /* 룬 페이지 콘텐츠 박스는 반응형 줄바꿈 및 260ms 이동 모션을 사용합니다. */
 .runes-page {
