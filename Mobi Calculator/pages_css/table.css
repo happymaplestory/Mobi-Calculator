@@ -133,7 +133,41 @@ h1[data-title-layout="three"] span {
   margin: 7px auto 0;
 }
 
-#runes-page { background-color: #bb8888; }
+#runes-page { background-color: transparent; }
+
+/* 룬 페이지 콘텐츠 박스는 반응형 줄바꿈 및 260ms 이동 모션을 사용합니다. */
+.runes-page {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  height: auto;
+  max-width: none;
+  margin: 0;
+  row-gap: 80px;
+}
+
+.runes-content-box {
+  box-sizing: border-box;
+  flex: 0 0 350px;
+  width: 350px;
+  margin: 15px 25px 35px;
+  transition: margin 260ms cubic-bezier(.22,.72,.22,1), transform 260ms cubic-bezier(.22,.72,.22,1);
+}
+
+#runes-select-box {
+  height: 400px;
+  background-color: #888888;
+}
+
+#runes-search-box {
+  height: 750px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .runes-content-box { transition: none !important; }
+}
 #equipment-page { background-color: #88bb88; }
 #other-page { background-color: #8888bb; }
 
