@@ -364,12 +364,19 @@ const overlay = document.getElementById("rune-description-overlay");
       }
 
       const oldNodes = [...pagination.children].filter(node => !node.classList.contains("rune-pagination-exit"));
-      const oldKeys = new Set(oldNodes.map(node => node.textContent + "|" + node.className));
-      const nextKeys = new Set(nextNodes.map(node => node.textContent + "|" + node.className));
+      const getNodeKey = node => node.textContent + "|" + node.className;
+      const oldRectsByKey = new Map();
+      for (const node of oldNodes) {
+        const key = getNodeKey(node);
+        if (!oldRectsByKey.has(key)) oldRectsByKey.set(key, []);
+        oldRectsByKey.get(key).push(node.getBoundingClientRect());
+      }
+      const oldKeys = new Set(oldNodes.map(getNodeKey));
+      const nextKeys = new Set(nextNodes.map(getNodeKey));
       const outgoing = [];
 
       for (const node of oldNodes) {
-        if (nextKeys.has(node.textContent + "|" + node.className)) continue;
+        if (nextKeys.has(getNodeKey(node))) continue;
         const rect = node.getBoundingClientRect();
         const clone = node.cloneNode(true);
         const computed = getComputedStyle(node);
@@ -390,14 +397,29 @@ const overlay = document.getElementById("rune-description-overlay");
           { duration: 260, easing: "ease-out", fill: "forwards" }
         ).onfinish = () => clone.remove();
       }
-      for (const node of nextNodes) {
-        if (!oldKeys.has(node.textContent + "|" + node.className)) {
-          node.animate(
-            [{ opacity: 0 }, { opacity: 1 }],
-            { duration: 260, easing: "ease-out", fill: "both" }
-          );
+      requestAnimationFrame(() => {
+        for (const node of nextNodes) {
+          const key = getNodeKey(node);
+          const previousRects = oldRectsByKey.get(key);
+          if (previousRects?.length) {
+            const previousRect = previousRects.shift();
+            const nextRect = node.getBoundingClientRect();
+            const dx = previousRect.left - nextRect.left;
+            const dy = previousRect.top - nextRect.top;
+            if (Math.abs(dx) >= 1 || Math.abs(dy) >= 1) {
+              node.animate(
+                [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "translate(0, 0)" }],
+                { duration: 260, easing: "cubic-bezier(.22,.72,.22,1)" }
+              );
+            }
+          } else if (!oldKeys.has(key)) {
+            node.animate(
+              [{ opacity: 0 }, { opacity: 1 }],
+              { duration: 260, easing: "ease-out", fill: "both" }
+            );
+          }
         }
-      }
+      });
     }
 
     function renderRunes() {
