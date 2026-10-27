@@ -54,7 +54,7 @@
     }
     #rune-pagination.is-empty { max-height: 0; margin-top: 0; pointer-events: none; }
     .rune-pagination-exit { position: absolute; z-index: 1; margin: 0; pointer-events: none; will-change: transform, opacity; }
-    .rune-page-button { min-width: 32px; height: 32px; padding: 0 7px; border: 1px solid #d0d0d0; border-radius: 7px; background: #fff; color: #222; font: inherit; cursor: pointer; }\n    .rune-page-arrow-icon { display: block; width: 18px; height: 18px; margin: auto; }
+    .rune-page-button { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 7px; border: 1px solid #d0d0d0; border-radius: 7px; background: #fff; color: #222; font: inherit; line-height: 0; cursor: pointer; }\n    .rune-page-arrow-icon { display: block; width: 18px; height: 18px; flex: 0 0 18px; margin: 0; }
     .rune-page-button[aria-current="page"] { background: #e5e5e5; border-color: #777; font-weight: 700; }
     .rune-page-button:disabled { opacity: .38; cursor: default; }
     .rune-page-ellipsis { padding: 0 2px; color: #777; }
@@ -498,7 +498,7 @@ renderPagination(totalPages);
 
     sortToggleButton.addEventListener("click", () => {
       sortDirection = sortDirection === "asc" ? "desc" : "asc";
-      document.getElementById("rune-sort-direction").setAttribute("d", sortDirection === "asc" ? "M17 5v13m-4-4 4 4 4-4" : "M17 19V6m-4 4 4-4 4 4");
+      sortToggleButton.querySelector(".rune-sort-icon").style.transform = sortDirection === "desc" ? "scaleY(-1)" : "scaleY(1)";
       sortToggleButton.setAttribute("aria-pressed", String(sortDirection === "desc"));
       sortToggleButton.setAttribute("aria-label", sortDirection === "asc"
         ? "정렬 순서: 가나다순. 눌러서 가나다 역순으로 변경"
