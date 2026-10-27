@@ -227,7 +227,7 @@
 
       function updateRunesLayout(animate = true) {
         const before = boxes.map(box => box.getBoundingClientRect());
-        const stacked = Math.abs(before[0].top - before[1].top) > 1;
+        const stacked = runesPage.clientWidth < 800;
         if (previousStacked === null || stacked === previousStacked) {
           runesPage.classList.toggle("is-stacked", stacked);
           previousStacked = stacked;
