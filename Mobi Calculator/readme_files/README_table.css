@@ -13,7 +13,7 @@
 
 - 제목의 실제 측정 너비가 125px 이하이면 `h1[data-title-visibility="hidden"]`을 적용해 opacity를 0으로 전환하고, 125px를 초과하면 표시 상태로 복귀합니다. 기존 `.page-header h1`의 opacity transition을 사용해 260ms 동안 페이드아웃/페이드인하며, 제목의 레이아웃과 공간은 유지합니다.
 
-- `table-area`가 `is-stacked` 상태일 때는 `level-paladin-stack`과 `column-carousel` 사이의 간격을 기본 100px(행 간격 80px + carousel 상단 여백 20px)에서 50px로 줄이기 위해 `row-gap: 30px`을 적용합니다.
+- `.table-area.is-stacked`와 `.runes-page.is-stacked`는 하나의 공통 CSS 규칙에서 `row-gap: 30px`을 사용합니다. 룬 페이지의 기본 가로 배치 간격은 80px로 유지하고, 세로 배치에서만 공통 규칙으로 30px을 적용합니다.
 
 - `.page-content-stage`에는 상단 여백 `margin-top: 40px`과 기존 `padding-top: 20px`을 적용합니다.
 - 문서 전체의 세로 스크롤바는 `html { scrollbar-width: none; }` 및 `html::-webkit-scrollbar { display: none; }`로 숨기되, `overflow`를 비활성화하지 않아 휠·터치패드·키보드 스크롤은 유지합니다.
