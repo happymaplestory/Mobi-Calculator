@@ -430,9 +430,37 @@
 
     (() => {
       const box = document.getElementById("runes-search-box");
-      if (!box) return;
+      const selectBox = document.getElementById("runes-select-box");
+      if (!box || !selectBox) return;
       box.classList.add("runes-search-panel");
-      box.innerHTML = `
+      selectBox.classList.add("runes-select-panel");
+      selectBox.innerHTML = `
+        <section class="rune-selection-wrap" data-slot="무기" aria-label="무기 룬 선택"><h2 class="rune-selection-title">무기</h2><div class="rune-selection-rows"></div></section>
+        <section class="rune-selection-wrap" data-slot="방어구" aria-label="방어구 룬 선택"><h2 class="rune-selection-title">방어구</h2><div class="rune-selection-rows"></div></section>
+        <section class="rune-selection-wrap" data-slot="엠블럼" aria-label="엠블럼 룬 선택"><h2 class="rune-selection-title">엠블럼</h2><div class="rune-selection-rows"></div></section>`;
+      const selectedRunes = { "무기": [], "방어구": [], "엠블럼": [] };
+      const slotLimits = { "무기": 1, "방어구": 5, "엠블럼": 1 };
+      const selectionIcons = {
+        off: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 3.5h14a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="m7 12 3.2 3.2L17.5 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        on: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 3.5h14a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5Z" fill="none" stroke="#2eaa59" stroke-width="2"/><path d="m7 12 3.2 3.2L17.5 8" fill="none" stroke="#2eaa59" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      };
+      function renderSelectedRunes() {
+        selectBox.querySelectorAll(".rune-selection-wrap").forEach(wrap => {
+          const slot = wrap.dataset.slot, rows = wrap.querySelector(".rune-selection-rows");
+          const values = selectedRunes[slot], limit = slotLimits[slot];
+          rows.replaceChildren();
+          for (let i = 0; i < limit; i++) {
+            const row = document.createElement("div"); row.className = "rune-selection-row"; row.tabIndex = 0;
+            row.setAttribute("aria-label", slot + " 룬 슬롯 " + (i + 1) + (values[i] ? ": " + values[i] : ": 비어 있음"));
+            const name = document.createElement("span"); name.className = "rune-selection-name"; name.textContent = values[i] || "";
+            const remove = document.createElement("button"); remove.type = "button"; remove.className = "rune-selection-remove"; remove.textContent = "×";
+            remove.setAttribute("aria-label", values[i] ? values[i] + " 선택 해제" : slot + " 빈 슬롯"); remove.disabled = !values[i];
+            remove.addEventListener("click", event => { event.stopPropagation(); if (!values[i]) return; selectedRunes[slot].splice(i, 1); renderSelectedRunes(); renderRunes(); });
+            row.append(name, remove); rows.appendChild(row);
+          }
+        });
+      }
+      renderSelectedRunes();
         <section class="rune-controls" aria-label="룬 검색 및 필터">
           <div class="rune-filter-row" aria-label="등급 및 부위 필터">
             <button class="rune-filter" type="button" data-filter-group="grade" data-filter-value="신화" aria-pressed="true">신화</button>
@@ -469,6 +497,7 @@
       const PAGE_SIZE=10, activeFilters={grade:new Set(["신화","전설"]),slot:new Set(["무기","방어구","엠블럼"])};
       let sortDirection="asc", currentPage=1;
       function closeDescription(){overlay.hidden=true;}
+      function showCapacityNotice(){dialogTitle.textContent="방어구 룬 선택";dialogMeta.textContent="선택 제한";dialogText.textContent="방어구 룬은 최대 5개까지 선택할 수 있습니다.";overlay.hidden=false;closeButton.focus();}
       function openDescription(rune){dialogTitle.textContent=rune.name??"";dialogMeta.textContent=rune.slot??"";dialogText.textContent=rune.desc??"";overlay.hidden=false;closeButton.focus();}
       function getFilteredRunes(){
         const query=searchInput.value.trim().toLocaleLowerCase("ko-KR");
@@ -519,7 +548,22 @@
         for(const rune of filtered.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE)){
           const row=document.createElement("tr");row.dataset.grade=rune.grade??"";row.tabIndex=0;row.setAttribute("aria-label",`${rune.name??"이름 없는 룬"} 설명 보기`);
           const slot=document.createElement("td");slot.className="rune-slot";slot.textContent=rune.slot??"";
-          const name=document.createElement("td");name.className="rune-name";name.textContent=rune.name??"";row.append(slot,name);
+          const name=document.createElement("td");name.className="rune-name";name.textContent=rune.name??"";
+          const actionCell=document.createElement("td");actionCell.className="rune-select-cell";
+          const selectButton=document.createElement("button");selectButton.type="button";selectButton.className="rune-select-toggle";
+          const values=selectedRunes[rune.slot]||[], isSelected=values.includes(rune.name);
+          selectButton.classList.toggle("is-selected",isSelected);selectButton.setAttribute("aria-pressed",String(isSelected));
+          selectButton.setAttribute("aria-label",isSelected?rune.name+" 선택 해제":rune.name+" 선택");selectButton.innerHTML=isSelected?selectionIcons.on:selectionIcons.off;
+          selectButton.addEventListener("click",event=>{
+            event.stopPropagation(); const list=selectedRunes[rune.slot]; if(!list)return;
+            const index=list.indexOf(rune.name);
+            if(index>=0) list.splice(index,1);
+            else if(list.length>=slotLimits[rune.slot]) { if(rune.slot==="방어구") showCapacityNotice(); return; }
+            else if(rune.slot==="무기"||rune.slot==="엠블럼") list.splice(0,list.length,rune.name);
+            else list.push(rune.name);
+            renderSelectedRunes();renderRunes();
+          });
+          actionCell.appendChild(selectButton);row.append(slot,name,actionCell);
           row.addEventListener("click",()=>openDescription(rune));row.addEventListener("keydown",event=>{if(event.target!==row||(event.key!=="Enter"&&event.key!==" "))return;event.preventDefault();openDescription(rune);});tableBody.appendChild(row);
         }
         renderPagination(totalPages);
