@@ -213,62 +213,7 @@
 
   <script>
     (() => {
-  <script>
-    (() => {
-      const runesPage = document.getElementById("runes-page");
-      const selectBox = document.getElementById("runes-select-box");
-      const searchBox = document.getElementById("runes-search-box");
-      if (!runesPage || !selectBox || !searchBox) return;
 
-      const boxes = [selectBox, searchBox];
-      const duration = 260;
-      let previousStacked = null;
-      let activeAnimations = [];
-
-      function updateRunesLayout(animate = true) {
-        const before = boxes.map(box => box.getBoundingClientRect());
-        const stacked = runesPage.clientWidth < 800;
-        if (previousStacked === null || stacked === previousStacked) {
-          runesPage.classList.toggle("is-stacked", stacked);
-          previousStacked = stacked;
-          return;
-        }
-
-        activeAnimations.forEach(animation => animation.cancel());
-        activeAnimations = [];
-        runesPage.classList.toggle("is-stacked", stacked);
-        const after = boxes.map(box => box.getBoundingClientRect());
-        if (!animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          previousStacked = stacked;
-          return;
-        }
-
-        boxes.forEach((box, index) => {
-          const dx = before[index].left - after[index].left;
-          const dy = before[index].top - after[index].top;
-          if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
-          const animation = box.animate(
-            [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "translate(0, 0)" }],
-            { duration, easing: "cubic-bezier(.22,.72,.22,1)" }
-          );
-          animation.onfinish = () => {
-            animation.cancel();
-            activeAnimations = activeAnimations.filter(item => item !== animation);
-          };
-          activeAnimations.push(animation);
-        });
-        previousStacked = stacked;
-      }
-
-      const observer = new MutationObserver(() => {
-        if (!runesPage.hidden) requestAnimationFrame(() => updateRunesLayout(false));
-      });
-      observer.observe(runesPage, { attributes: true, attributeFilter: ["hidden"] });
-      window.addEventListener("resize", () => {
-        if (!runesPage.hidden) requestAnimationFrame(() => updateRunesLayout(true));
-      });
-    })();
-  </script>
 
       const pagination = document.getElementById("full-page-pagination");
       const stage = document.getElementById("page-content-stage");
@@ -372,6 +317,63 @@
             settlePage(nextPage);
           });
         });
+      });
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const runesPage = document.getElementById("runes-page");
+      const selectBox = document.getElementById("runes-select-box");
+      const searchBox = document.getElementById("runes-search-box");
+      if (!runesPage || !selectBox || !searchBox) return;
+
+      const boxes = [selectBox, searchBox];
+      const duration = 260;
+      let previousStacked = null;
+      let activeAnimations = [];
+
+      function updateRunesLayout(animate = true) {
+        const before = boxes.map(box => box.getBoundingClientRect());
+        const stacked = runesPage.clientWidth < 800;
+        if (previousStacked === null || stacked === previousStacked) {
+          runesPage.classList.toggle("is-stacked", stacked);
+          previousStacked = stacked;
+          return;
+        }
+
+        activeAnimations.forEach(animation => animation.cancel());
+        activeAnimations = [];
+        runesPage.classList.toggle("is-stacked", stacked);
+        const after = boxes.map(box => box.getBoundingClientRect());
+        if (!animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          previousStacked = stacked;
+          return;
+        }
+
+        boxes.forEach((box, index) => {
+          const dx = before[index].left - after[index].left;
+          const dy = before[index].top - after[index].top;
+          if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+          const animation = box.animate(
+            [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "translate(0, 0)" }],
+            { duration, easing: "cubic-bezier(.22,.72,.22,1)" }
+          );
+          animation.onfinish = () => {
+            animation.cancel();
+            activeAnimations = activeAnimations.filter(item => item !== animation);
+          };
+          activeAnimations.push(animation);
+        });
+        previousStacked = stacked;
+      }
+
+      const observer = new MutationObserver(() => {
+        if (!runesPage.hidden) requestAnimationFrame(() => updateRunesLayout(false));
+      });
+      observer.observe(runesPage, { attributes: true, attributeFilter: ["hidden"] });
+      window.addEventListener("resize", () => {
+        if (!runesPage.hidden) requestAnimationFrame(() => updateRunesLayout(true));
       });
     })();
   </script>
