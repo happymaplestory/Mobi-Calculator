@@ -1,5 +1,5 @@
 export const RUNES = Object.freeze({
- "count": 98,
+ "count": 89,
  "items": [
   {
    "name": "불꽃으로 새긴 문장",
@@ -1251,187 +1251,106 @@ export const RUNES = Object.freeze({
     "enhancement.rapidDamagePercent": 40
    }
   },
- {
-  "name": "작열",
-  "slot": "방어구",
-  "grade": "전설",
-  "desc": "공격 속도가 18%, 기본 공격으로 주는 피해와 기본 공격 추가타 확률이 18% 증가한다.\n재사용 대기 시간 회복 속도가 5% 감소한다.\n기본 공격 시, 장착한 빛 계열 룬의 수에 따라 10초 동안 치명타 확률이 3%/7%/12%/18% 증가한다.",
-  "alwaysOnAttackPercent": 0,
-  "alwaysOnDamagePercent": 0,
-  "skillTypeBonuses": [
-   {
-    "stat": "기본 공격으로 주는 피해",
-    "value": 18,
-    "conditional": false
-   },
-   {
-    "stat": "기본 공격 추가타 확률",
-    "value": 18,
-    "conditional": false
+  {
+   "name": "작열",
+   "slot": "방어구",
+   "grade": "전설",
+   "desc": "공격 속도가 18%, 기본 공격으로 주는 피해와 기본 공격 추가타 확률이 18% 증가한다.\n재사용 대기 시간 회복 속도가 5% 감소한다.\n기본 공격 시, 장착한 빛 계열 룬의 수에 따라 10초 동안 치명타 확률이 3%/7%/12%/18% 증가한다.",
+   "alwaysOnAttackPercent": 0,
+   "alwaysOnDamagePercent": 0,
+   "skillTypeBonuses": [
+    {
+     "stat": "기본 공격으로 주는 피해",
+     "value": 18,
+     "conditional": false
+    },
+    {
+     "stat": "기본 공격 추가타 확률",
+     "value": 18,
+     "conditional": false
+    }
+   ],
+   "uncountedEffects": [
+    {
+     "stat": "공격 속도",
+     "value": 18,
+     "direction": "증가",
+     "conditional": false
+    },
+    {
+     "stat": "재사용 대기 시간 회복 속도",
+     "value": 5,
+     "direction": "감소",
+     "conditional": false
+    }
+   ]
+  },
+  {
+   "name": "오팔 성배",
+   "slot": "방어구",
+   "grade": "전설",
+   "desc": "공격력이 17.5% 증가한다.\n빛, 어둠, 용 계열 룬을 각각 2개 이상 장착한 경우, 빠른 스킬 500마다 치명타 피해가 1.5% 증가한다 (최대 6%).\n추가로, 스킬 사용 시 8초 동안 치명타 피해가 1% 증가한다. 해당 효과는 최대 5회까지 중첩된다.",
+   "alwaysOnAttackPercent": 17.5,
+   "alwaysOnDamagePercent": 0
+  },
+  {
+   "name": "삼키는 모래",
+   "slot": "방어구",
+   "grade": "전설",
+   "desc": "연타 피해가 10% 증가하며, 연타 강화 500마다 적에게 주는 피해가 2% 증가한다. (최대 8%)\n침식 효과를 부여하는 룬 장착 시, 침식 수치가 100 미만이거나 오염 상태일 때 연타 피해가 추가로 17% 증가한다.",
+   "alwaysOnAttackPercent": 0,
+   "alwaysOnDamagePercent": 0,
+   "alwaysOnExtra": {
+    "enhancement.rapidDamagePercent": 10
    }
-  ],
-  "uncountedEffects": [
-   {
-    "stat": "공격 속도",
-    "value": 18,
-    "direction": "증가",
-    "conditional": false
-   },
-   {
-    "stat": "재사용 대기 시간 회복 속도",
-    "value": 5,
-    "direction": "감소",
-    "conditional": false
-   }
-  ]
- },
- {
-  "name": "오팔 성배",
-  "slot": "방어구",
-  "grade": "전설",
-  "desc": "공격력이 17.5% 증가한다.\n빛, 어둠, 용 계열 룬을 각각 2개 이상 장착한 경우, 빠른 스킬 500마다 치명타 피해가 1.5% 증가한다 (최대 6%).\n추가로, 스킬 사용 시 8초 동안 치명타 피해가 1% 증가한다. 해당 효과는 최대 5회까지 중첩된다.",
-  "alwaysOnAttackPercent": 17.5,
-  "alwaysOnDamagePercent": 0
- },
- {
-  "name": "삼키는 모래",
-  "slot": "방어구",
-  "grade": "전설",
-  "desc": "연타 피해가 10% 증가하며, 연타 강화 500마다 적에게 주는 피해가 2% 증가한다. (최대 8%)\n침식 효과를 부여하는 룬 장착 시, 침식 수치가 100 미만이거나 오염 상태일 때 연타 피해가 추가로 17% 증가한다.",
-  "alwaysOnAttackPercent": 0,
-  "alwaysOnDamagePercent": 0,
-  "alwaysOnExtra": {
-   "enhancement.rapidDamagePercent": 10
-  }
- },
- {
-  "name": "신기루",
-  "slot": "방어구",
-  "grade": "전설",
-  "desc": "강타 강화 500마다 적에게 주는 피해가 2.5% 증가한다. (최대 10%)\n전투 중 5초마다 신기루 효과를 얻어, 적에게 주는 피해가 1%, 강타 피해가 1% 증가한다.\n해당 효과는 최대 10회까지 중첩되며 전투 시작 시 즉시 5중첩을 얻는다. 적에게 피해를 입을 경우 중첩이 1 감소한다.",
-  "alwaysOnAttackPercent": 0,
-  "alwaysOnDamagePercent": 0
- },
- {
-  "name": "황혼 숨결",
-  "slot": "방어구",
-  "grade": "전설",
-  "desc": "용 계열 룬 2개 이상 장착 시 활성화된다.\n공격력이 10%, 스킬 사용 속도가 10% 증가한다. 스킬 위력 500마다 공격력이 1% 추가 증가한다. (최대 4%)\n공격 적중 시, 타겟 주변의 적 5명에게 바위 쐐기를 발사해 14941의 피해와 16808의 지속 피해 : 신성, 절망을 준다. (재사용 대기 시간 : 10초)",
-  "alwaysOnAttackPercent": 0,
-  "alwaysOnDamagePercent": 0,
-  "uncountedEffects": [
-   {
-    "stat": "스킬 사용 속도",
-    "value": 10,
-    "direction": "증가",
-    "conditional": true
-   }
-  ]
- },
- {
-  "name": "두 영웅",
-  "slot": "방어구",
-  "grade": "전설",
-  "desc": "동일한 무기를 양손에 장착한 클래스일 경우 활성화된다.\n적에게 주는 피해가 22% 증가한다.\n공격 적중 시, 타겟 주변의 적들을 끌어당기며 466 ~ 6069 의 피해를 2회 준다.\n피해량은 마도 저항에 비례하여 증가하며, 마도 저항 3000이상일 때 최대 피해를 준다. (재사용 대기 시간: 4초)\n(듀얼블레이드, 댄서, 격투가 클래스 전용)",
-  "alwaysOnAttackPercent": 0,
-  "alwaysOnDamagePercent": 0
- },
- {
-  "name": "쐐기돌",
-  "slot": "방어구",
-  "grade": "전설",
-  "desc": "적에게 주는 피해가 9% 증가한다. 서로 다른 계열의 룬을 장착했을 때, 1종마다 공격력이 5% 증가한다. (최대 15%)\n빛, 어둠, 용 계열 룬을 모두 장착한 경우, 치명타 500마다 공격력이 1% 추가 증가한다. (최대 4%)",
-  "alwaysOnAttackPercent": 0,
-  "alwaysOnDamagePercent": 9
- },
- {
-  "name": "원정대",
-  "slot": "엠블럼",
-  "grade": "전설",
-  "desc": "공격력이 34% 증가한다.",
-  "alwaysOnAttackPercent": 34,
-  "alwaysOnDamagePercent": 0
- },
-  {
-   "name": "간결함+",
-   "slot": "장신구",
-   "grade": "전설",
-   "desc": "댄서의 피루엣 스킬에 변화를 준다.\n피루엣 사용 이후, 다음 스킬이 주는 피해가 증가한다.",
-   "alwaysOnAttackPercent": 0,
-   "alwaysOnDamagePercent": 0,
-   "class": "댄서"
   },
   {
-   "name": "갈채+",
-   "slot": "장신구",
+   "name": "신기루",
+   "slot": "방어구",
    "grade": "전설",
-   "desc": "댄서의 애드리브 스킬에 변화를 준다.\n일정 범위 내의 아군에게 스킬 공격 시 추가 공격 효과를 부여한다.",
+   "desc": "강타 강화 500마다 적에게 주는 피해가 2.5% 증가한다. (최대 10%)\n전투 중 5초마다 신기루 효과를 얻어, 적에게 주는 피해가 1%, 강타 피해가 1% 증가한다.\n해당 효과는 최대 10회까지 중첩되며 전투 시작 시 즉시 5중첩을 얻는다. 적에게 피해를 입을 경우 중첩이 1 감소한다.",
    "alwaysOnAttackPercent": 0,
-   "alwaysOnDamagePercent": 0,
-   "class": "댄서"
+   "alwaysOnDamagePercent": 0
   },
   {
-   "name": "나비+",
-   "slot": "장신구",
+   "name": "황혼 숨결",
+   "slot": "방어구",
    "grade": "전설",
-   "desc": "댄서의 내추럴 턴 스킬에 변화를 준다.\n내추럴 턴 사용 시, 적을 추적하는 3마리의 나비가 나타나 날아간다.\n추가로, 항상 타겟을 향해 돌진하는 형태로 사용한다.",
+   "desc": "용 계열 룬 2개 이상 장착 시 활성화된다.\n공격력이 10%, 스킬 사용 속도가 10% 증가한다. 스킬 위력 500마다 공격력이 1% 추가 증가한다. (최대 4%)\n공격 적중 시, 타겟 주변의 적 5명에게 바위 쐐기를 발사해 14941의 피해와 16808의 지속 피해 : 신성, 절망을 준다. (재사용 대기 시간 : 10초)",
    "alwaysOnAttackPercent": 0,
    "alwaysOnDamagePercent": 0,
-   "class": "댄서"
+   "uncountedEffects": [
+    {
+     "stat": "스킬 사용 속도",
+     "value": 10,
+     "direction": "증가",
+     "conditional": true
+    }
+   ]
   },
   {
-   "name": "다가옴+",
-   "slot": "장신구",
+   "name": "두 영웅",
+   "slot": "방어구",
    "grade": "전설",
-   "desc": "댄서의 프론트 스텝 스킬에 변화를 준다.\n프론트 스텝으로 이동한 거리에 비례하여 재사용 대기 시간이 감소한다.",
+   "desc": "동일한 무기를 양손에 장착한 클래스일 경우 활성화된다.\n적에게 주는 피해가 22% 증가한다.\n공격 적중 시, 타겟 주변의 적들을 끌어당기며 466 ~ 6069 의 피해를 2회 준다.\n피해량은 마도 저항에 비례하여 증가하며, 마도 저항 3000이상일 때 최대 피해를 준다. (재사용 대기 시간: 4초)\n(듀얼블레이드, 댄서, 격투가 클래스 전용)",
    "alwaysOnAttackPercent": 0,
-   "alwaysOnDamagePercent": 0,
-   "class": "댄서"
+   "alwaysOnDamagePercent": 0
   },
   {
-   "name": "발걸음+",
-   "slot": "장신구",
+   "name": "쐐기돌",
+   "slot": "방어구",
    "grade": "전설",
-   "desc": "댄서의 프론트 스텝 스킬에 변화를 준다.\n정열 상태 돌입 시, 더 강력한 범위 피해를 입히는 강화 : 프론트 스텝을 1회 사용할 수 있다.",
+   "desc": "적에게 주는 피해가 9% 증가한다. 서로 다른 계열의 룬을 장착했을 때, 1종마다 공격력이 5% 증가한다. (최대 15%)\n빛, 어둠, 용 계열 룬을 모두 장착한 경우, 치명타 500마다 공격력이 1% 추가 증가한다. (최대 4%)",
    "alwaysOnAttackPercent": 0,
-   "alwaysOnDamagePercent": 0,
-   "class": "댄서"
+   "alwaysOnDamagePercent": 9
   },
   {
-   "name": "산뜻함+",
-   "slot": "장신구",
+   "name": "원정대",
+   "slot": "엠블럼",
    "grade": "전설",
-   "desc": "댄서의 피루엣 스킬에 변화를 준다.\n피루엣으로 강화된 원거리 공격 피해량이 일정 횟수 동안 증가하며 해당 효과를 보유하는 동안 공격 속도가 빨라진다. 또한 강화된 기본 공격이 적중한 적은 일정 시간 동안 자신에게 더 큰 피해를 받는다.",
-   "alwaysOnAttackPercent": 0,
-   "alwaysOnDamagePercent": 0,
-   "class": "댄서"
-  },
-  {
-   "name": "전환+",
-   "slot": "장신구",
-   "grade": "전설",
-   "desc": "댄서의 내추럴 턴 스킬에 변화를 준다.\n내추럴 턴 스킬 사용 시, 현재 영감 상태에 따라서 지속 피해: 화상 혹은 지속 피해: 빙결을 적용시키고 상태를 전환한다.",
-   "alwaysOnAttackPercent": 0,
-   "alwaysOnDamagePercent": 0,
-   "class": "댄서"
-  },
-  {
-   "name": "정열+",
-   "slot": "장신구",
-   "grade": "전설",
-   "desc": "댄서의 윈드밀 스킬에 변화를 준다.\n윈드밀 사용 시 적에게 지속 피해를 주며 해당 효과는 정열 타입의 스킬로 지속 시간이 연장된다.",
-   "alwaysOnAttackPercent": 0,
-   "alwaysOnDamagePercent": 0,
-   "class": "댄서"
-  },
-  {
-   "name": "환호+",
-   "slot": "장신구",
-   "grade": "전설",
-   "desc": "댄서의 애드리브 스킬에 변화를 준다.\n애드리브 스킬 사용 시, 하나의 자세만을 취하는 스킬로 변화시킨다. 마지막 포즈를 취할 때, 취한 포즈에 따라서 다른 효과를 가진다.",
-   "alwaysOnAttackPercent": 0,
-   "alwaysOnDamagePercent": 0,
-   "class": "댄서"
+   "desc": "공격력이 34% 증가한다.",
+   "alwaysOnAttackPercent": 34,
+   "alwaysOnDamagePercent": 0
   }
  ]
 });
