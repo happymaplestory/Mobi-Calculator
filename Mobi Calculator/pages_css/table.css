@@ -246,6 +246,7 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 [data-theme="dark"] .rune-table th { background:#303238; }
 [data-theme="dark"] .rune-table tbody tr[data-grade="전설"] { --rune-background:#493d34; --rune-border:#9b795c; }
 [data-theme="dark"] .rune-table tbody tr[data-grade="신화"] { --rune-background:#49452e; --rune-border:#9b8c4d; }
+[data-theme="dark"] .rune-table tbody tr:hover { background:var(--rune-filter-hover,var(--rune-background)); }
 .rune-pagination { position:relative; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:5px; flex:0 0 auto; max-height:80px; margin-top:14px; overflow:visible; transition:max-height 260ms ease,margin-top 260ms ease; }
 .rune-pagination.is-empty { max-height:0; margin-top:0; pointer-events:none; }
 .rune-pagination-exit { position:absolute; z-index:1; margin:0; pointer-events:none; will-change:transform,opacity; }
