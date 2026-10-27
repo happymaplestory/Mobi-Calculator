@@ -4,10 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mobi Calculator 개발 테스트</title>
+  <style>
+    td { white-space: pre-wrap; }
+  </style>
 </head>
 <body>
   <h1>마비노기 모바일 계산기 개발 테스트</h1>
   <p>이 페이지는 다른 웹페이지의 기능을 실제 페이지에 반영하기 전에 HTML, CSS, JavaScript 및 브라우저 동작을 테스트하기 위한 개발 테스트 환경입니다.</p>
-  <p>구체적인 테스트 기능과 UI는 각 개발 작업에 따라 이 페이지에 추가하여 사용합니다.</p>
+
+  <h2>룬 데이터 목록</h2>
+  <p id="rune-count">룬 데이터를 불러오는 중입니다.</p>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>name</th>
+        <th>slot</th>
+        <th>grade</th>
+        <th>desc</th>
+      </tr>
+    </thead>
+    <tbody id="rune-table-body"></tbody>
+  </table>
+
+  <script type="module">
+    import { RUNES } from "./pages_js/runes-data.js";
+
+    const tableBody = document.getElementById("rune-table-body");
+    const countLabel = document.getElementById("rune-count");
+
+    for (const rune of RUNES.items) {
+      const row = document.createElement("tr");
+
+      for (const field of ["name", "slot", "grade", "desc"]) {
+        const cell = document.createElement("td");
+        cell.textContent = rune[field] ?? "";
+        row.appendChild(cell);
+      }
+
+      tableBody.appendChild(row);
+    }
+
+    countLabel.textContent = `총 ${RUNES.items.length}개 룬`;
+  </script>
 </body>
 </html>
