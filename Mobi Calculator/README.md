@@ -84,14 +84,14 @@ JSON 파일 다운로드·불러오기와 별개로, 웹페이지의 저장/불�
 
 ## 4-2. 시즌 2 룬 참고 데이터
 
-룬 계산 기능을 검토하기 위한 외부 참고 자료를 원본 형태로 보관한다.
+룬 계산 기능 검토를 위한 외부 참고 자료는 `pages_js/`에 JavaScript 모듈로 보관한다.
 
-- `runes-data.mjs`: 룬 이름, 장착 부위, 등급, 게임 내 설명 및 파생 수치가 포함된 데이터
-- `rune-conditionals.json`: 조건부 효과, 룬 계열 및 특수 계산 규칙 데이터
+- `pages_js/runes-data.js`: 룬 기본 정보와 계산 참고 필드. `RUNES`를 named/default export 한다.
+- `pages_js/rune-conditionals.js`: 조건부 효과 및 특수 규칙. `RUNE_CONDITIONALS`를 named/default export 한다.
 - 원본 출처: [mobinogi-tools/rune-optimizer](https://github.com/mobinogi-tools/rune-optimizer)
 - 원본 경로: `src/runes-data.mjs`, `data/rune-conditionals.json`
-- 이 파일들은 참고용 원본 보관본이며, 현재 계산기 기능에 연결하거나 데이터를 변환하지 않았다.
-- 원본 저장소는 시즌 2 룬 데이터를 표방한다. 데이터의 라이선스나 재배포 허용 범위가 명시적으로 확인되지 않았으므로, 사용·재배포 시 원본 저장소의 권리 및 조건을 별도로 확인한다.
+- 두 파일은 참고용 원본 보관본이며, 현재 계산기 기능에 연결하거나 계산에 사용하지 않는다.
+- 원본 저장소의 라이선스 및 재배포 허용 범위는 별도로 확인한다.
 
 ## 5. 계산 기능
 
