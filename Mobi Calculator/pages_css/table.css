@@ -221,7 +221,7 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-search-input::placeholder { color:color-mix(in srgb,var(--text-color) 60%,transparent); }
 .rune-sort-button { display:inline-flex; align-items:center; justify-content:center; flex:0 0 44px; min-width:44px; padding:0; border:2px solid var(--border-color); border-radius:10px; background:var(--background-color); transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease; }
 .rune-sort-icon { display:block; width:22px; height:22px; flex:0 0 22px; transition:transform 160ms ease; }
-.rune-table-wrap { width:100%; overflow:hidden; }
+.rune-table-wrap { flex:1 1 auto; min-height:0; width:100%; overflow:hidden; }
 .rune-table { width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; }
 .rune-table thead { display:none; }
 .rune-table-body { display:block; border:0; border-radius:12px; overflow:hidden; }
@@ -248,7 +248,7 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 [data-theme="dark"] .rune-table tbody tr[data-grade="신화"] { --rune-background:#49452e; --rune-border:#9b8c4d; --rune-filter-hover:color-mix(in srgb,#49452e 84%,#fff 16%); --rune-filter-hover-border:#c2b36a; }
 [data-theme="dark"] .rune-table tbody tr[data-grade="전설"]:hover,
 [data-theme="dark"] .rune-table tbody tr[data-grade="신화"]:hover { background:var(--rune-filter-hover); --rune-border:var(--rune-filter-hover-border); filter:none; }
-.rune-pagination { position:relative; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:5px; flex:0 0 auto; max-height:80px; margin-top:14px; padding:0 37px; overflow:visible; transition:max-height 260ms ease,margin-top 260ms ease; }
+.rune-pagination { position:relative; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:5px; flex:0 0 auto; max-height:80px; margin-top:auto; padding:0 37px; overflow:visible; transition:max-height 260ms ease,margin-top 260ms ease; }
 .rune-pagination > .rune-page-button[aria-label="이전"],.rune-pagination > .rune-page-button[aria-label="다음"] { position:absolute; top:0; }
 .rune-pagination > .rune-page-button[aria-label="이전"] { left:0; }
 .rune-pagination > .rune-page-button[aria-label="다음"] { right:0; }
