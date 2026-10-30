@@ -488,18 +488,18 @@
         <section class="rune-description-dialog delete-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="rune-description-title" aria-describedby="rune-description-text">
           <div class="rune-description-heading">
             <div><h2 class="delete-confirm-title rune-description-title" id="rune-description-title"></h2><p class="rune-description-meta"></p></div>
-            <button class="rune-description-close" type="button" aria-label="설명 팝업 닫기">×</button>
+            <button class="rune-description-close" type="button" aria-label="설명 팝업 닫기"><svg class="rune-description-close-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6 18 18M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/></svg></button>
           </div>
           <p class="delete-confirm-message rune-description-text" id="rune-description-text"></p>
         </section>`;
       document.body.appendChild(overlay);
-      const dialogTitle=overlay.querySelector(".rune-description-title"), dialogMeta=overlay.querySelector(".rune-description-meta"), dialogText=overlay.querySelector(".rune-description-text"), closeButton=overlay.querySelector(".rune-description-close");
+      const dialog=overlay.querySelector(".rune-description-dialog"), dialogTitle=overlay.querySelector(".rune-description-title"), dialogMeta=overlay.querySelector(".rune-description-meta"), dialogText=overlay.querySelector(".rune-description-text"), closeButton=overlay.querySelector(".rune-description-close");
       const searchInput=box.querySelector(".rune-search-input"), pagination=box.querySelector(".rune-pagination"), sortToggleButton=box.querySelector(".rune-sort-button");
       const PAGE_SIZE=10, activeFilters={grade:new Set(["신화","전설"]),slot:new Set(["무기","방어구","엠블럼"])};
       let sortDirection="asc", currentPage=1;
       function closeDescription(){overlay.hidden=true;}
-      function showCapacityNotice(){dialogTitle.textContent="방어구 룬 선택";dialogMeta.textContent="선택 제한";dialogText.textContent="방어구 룬은 최대 5개까지 선택할 수 있습니다.";overlay.hidden=false;closeButton.focus();}
-      function openDescription(rune){dialogTitle.textContent=rune.name??"";dialogMeta.textContent=rune.slot??"";dialogText.textContent=rune.desc??"";overlay.hidden=false;closeButton.focus();}
+      function showCapacityNotice(){delete dialog.dataset.grade;dialogTitle.textContent="방어구 룬 선택";dialogMeta.textContent="선택 제한";dialogText.textContent="방어구 룬은 최대 5개까지 선택할 수 있습니다.";overlay.hidden=false;closeButton.focus();}
+      function openDescription(rune){dialog.dataset.grade=rune.grade??"";dialogTitle.textContent=rune.name??"";dialogMeta.textContent=rune.slot??"";dialogText.textContent=rune.desc??"";overlay.hidden=false;closeButton.focus();}
       function getFilteredRunes(){
         const query=searchInput.value.trim().toLocaleLowerCase("ko-KR");
         return RUNES.items.filter(rune=>activeFilters.grade.has(rune.grade)&&activeFilters.slot.has(rune.slot))
