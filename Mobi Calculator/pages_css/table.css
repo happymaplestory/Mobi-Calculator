@@ -218,7 +218,7 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-filter[aria-pressed="false"]:hover { border-color:var(--border-color); }
 .rune-filter[aria-pressed="true"] { background:var(--rune-filter-base,var(--background-color)); border-color:var(--rune-filter-border,var(--border-color)); }
 .rune-filter:hover,.rune-filter[aria-pressed="true"]:hover { background:var(--rune-filter-hover,var(--hover-color)); border-color:var(--rune-filter-hover-border,var(--rune-filter-border,var(--border-color))); }
-.rune-sort-button:hover,.rune-page-button:not(:disabled):hover,.rune-description-close:hover { background:var(--hover-color); }
+.rune-sort-button:hover,.rune-page-button:not(:disabled):hover,.rune-description-close:hover { background:var(--rune-filter-hover,var(--hover-color)); }
 [data-theme="light"] .rune-sort-button:hover { background:color-mix(in srgb,var(--background-color) 80%,#000000 20%); }
 [data-theme="light"] .rune-page-button:not(:disabled):hover { background:color-mix(in srgb,var(--background-color) 80%,#000000 20%); }
 .rune-sort-button[aria-pressed="true"],.rune-page-button[aria-current="page"] { background:var(--hover-color); border-color:var(--border-color); font-weight:700; }
@@ -259,13 +259,13 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-select-toggle:focus-visible { outline:2px solid var(--border-color); outline-offset:-2px; }
 .rune-table tbody .rune-name { border-left-width:1px; }
 .rune-table tbody tr { cursor:pointer; transition:background-color 160ms ease, filter 140ms ease; }
-.rune-table tbody tr[data-grade="전설"] { --rune-background:#fff0df; --rune-border:#e9bd91; --rune-filter-hover:color-mix(in srgb,#fff0df 78%,#000 22%); --rune-filter-hover-border:#d49b69; }
-.rune-table tbody tr[data-grade="신화"] { --rune-background:#fffbd8; --rune-border:#e6d77b; --rune-filter-hover:color-mix(in srgb,#fffbd8 78%,#000 22%); --rune-filter-hover-border:#c9b64e; }
+:is(.rune-table tbody tr, .rune-description-dialog)[data-grade="전설"] { --rune-background:#fff0df; --rune-border:#e9bd91; --rune-filter-hover:color-mix(in srgb,#fff0df 78%,#000 22%); --rune-filter-hover-border:#d49b69; }
+:is(.rune-table tbody tr, .rune-description-dialog)[data-grade="신화"] { --rune-background:#fffbd8; --rune-border:#e6d77b; --rune-filter-hover:color-mix(in srgb,#fffbd8 78%,#000 22%); --rune-filter-hover-border:#c9b64e; }
 .rune-table tbody tr { background:var(--rune-background,var(--surface-color)); }
 .rune-table tbody tr:hover { filter:brightness(.96); }
 [data-theme="dark"] .rune-table th { background:#303238; }
-[data-theme="dark"] .rune-table tbody tr[data-grade="전설"] { --rune-background:#493d34; --rune-border:#9b795c; --rune-filter-hover:color-mix(in srgb,#493d34 84%,#fff 16%); --rune-filter-hover-border:#c29b78; }
-[data-theme="dark"] .rune-table tbody tr[data-grade="신화"] { --rune-background:#49452e; --rune-border:#9b8c4d; --rune-filter-hover:color-mix(in srgb,#49452e 84%,#fff 16%); --rune-filter-hover-border:#c2b36a; }
+[data-theme="dark"] :is(.rune-table tbody tr, .rune-description-dialog)[data-grade="전설"] { --rune-background:#493d34; --rune-border:#9b795c; --rune-filter-hover:color-mix(in srgb,#493d34 84%,#fff 16%); --rune-filter-hover-border:#c29b78; }
+[data-theme="dark"] :is(.rune-table tbody tr, .rune-description-dialog)[data-grade="신화"] { --rune-background:#49452e; --rune-border:#9b8c4d; --rune-filter-hover:color-mix(in srgb,#49452e 84%,#fff 16%); --rune-filter-hover-border:#c2b36a; }
 [data-theme="dark"] .rune-table tbody tr[data-grade="전설"]:hover,
 [data-theme="dark"] .rune-table tbody tr[data-grade="신화"]:hover { background:var(--rune-filter-hover); --rune-border:var(--rune-filter-hover-border); filter:none; }
 .rune-pagination { position:relative; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:5px; flex:0 0 auto; max-height:80px; margin-top:auto; padding:0 37px; overflow:visible; transition:max-height 260ms ease,margin-top 260ms ease; }
@@ -280,13 +280,13 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-page-ellipsis { padding:0 2px; color:var(--text-color); }
 .rune-description-overlay[hidden] { display: none !important; }
 .rune-description-overlay { position:fixed; inset:0; z-index:10000; display:grid; place-items:center; padding:20px; background:rgba(0,0,0,.42); animation:delete-confirm-backdrop-in 220ms ease-out both; }
-.rune-description-dialog { width:min(100%,420px); max-height:min(80vh,680px); overflow-y:auto; }
+.rune-description-dialog { width:min(100%,420px); max-height:min(80vh,680px); overflow-y:auto; background:var(--rune-background,var(--surface-color)); border-color:var(--rune-border,var(--border-color)); transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease; }
 .rune-description-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px; }
 .rune-description-title { overflow-wrap:anywhere; margin-bottom:0; }
 .rune-description-meta { margin:5px 0 0; color:color-mix(in srgb,var(--text-color) 65%,transparent); font-size:13px; }
 .rune-description-text { max-height:min(55vh,480px); overflow-y:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
 .rune-description-close { flex:0 0 auto; width:32px; height:32px; padding:0; border:0; border-radius:10px; background:inherit; line-height:1; font-size:20px; transition:background-color 160ms ease,color 160ms ease; }
-[data-theme="dark"] .rune-description-dialog { border-color:#666a73; background:#383a41; color:#cccccc; }
+[data-theme="dark"] .rune-description-dialog { color:var(--dark-text-color,#cccccc); }
 [data-theme="dark"] .rune-description-close { background:inherit; }
 .rune-filter:focus-visible,.rune-search-input:focus-visible,.rune-sort-button:focus-visible,.rune-page-button:focus-visible,.rune-description-close:focus-visible { outline:2px solid #777; outline-offset:2px; }
 @media (prefers-reduced-motion:reduce) { #runes-search-box.runes-search-panel *,.rune-description-overlay,.rune-description-dialog { animation:none!important; transition:none!important; } }
