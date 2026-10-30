@@ -285,8 +285,9 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-description-title { overflow-wrap:anywhere; margin-bottom:0; }
 .rune-description-meta { margin:5px 0 0; color:color-mix(in srgb,var(--text-color) 65%,transparent); font-size:13px; }
 .rune-description-text { max-height:min(55vh,480px); overflow-y:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
-.rune-description-close { flex:0 0 auto; width:32px; height:32px; padding:0; border:2px solid var(--border-color); border-radius:10px; background:var(--background-color); line-height:1; font-size:20px; transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease; }
+.rune-description-close { flex:0 0 auto; width:32px; height:32px; padding:0; border:0; border-radius:10px; background:inherit; line-height:1; font-size:20px; transition:background-color 160ms ease,color 160ms ease; }
 [data-theme="dark"] .rune-description-dialog { border-color:#666a73; background:#383a41; color:#cccccc; }
+[data-theme="dark"] .rune-description-close { background:inherit; }
 .rune-filter:focus-visible,.rune-search-input:focus-visible,.rune-sort-button:focus-visible,.rune-page-button:focus-visible,.rune-description-close:focus-visible { outline:2px solid #777; outline-offset:2px; }
 @media (prefers-reduced-motion:reduce) { #runes-search-box.runes-search-panel *,.rune-description-overlay,.rune-description-dialog { animation:none!important; transition:none!important; } }
 
