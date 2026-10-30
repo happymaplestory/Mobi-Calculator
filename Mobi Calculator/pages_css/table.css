@@ -175,7 +175,7 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
   transition: margin 260ms cubic-bezier(.22,.72,.22,1), transform 260ms cubic-bezier(.22,.72,.22,1);
 }
 
-#runes-select-box { height: 470px; background-color: transparent; }
+#runes-select-box { height: 410px; background-color: transparent; }
 #runes-select-box.runes-select-panel { display:flex; flex-direction:column; gap:12px; padding:12px; overflow:hidden; border:2px solid var(--border-color); border-radius:14px; background:transparent; color:var(--text-color); box-shadow:0 0 18px rgba(0,0,0,.10); transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease,box-shadow 160ms ease; }
 .rune-selection-wrap { display:grid; grid-template-columns:80px minmax(0,1fr); align-items:center; gap:10px; flex:0 0 auto; min-height:0; }
 .rune-selection-title { align-self:center; margin:0; padding:0 2px; font-size:14px; line-height:1.4; font-weight:700; white-space:nowrap; }
@@ -252,9 +252,10 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-table tbody .rune-slot { border-right-width:1px; }
 .rune-table .rune-name { width:auto; font-weight:600; }
 .rune-table .rune-select-cell { width:42px; min-width:42px; max-width:42px; padding:0; text-align:center; }
-.rune-select-toggle { display:flex; align-items:center; justify-content:center; box-sizing:border-box; width:100%; height:100%; min-height:34px; padding:3px; border:0; border-radius:0; background:transparent; color:#888888; cursor:pointer; transition:background-color 160ms ease,color 160ms ease; -webkit-tap-highlight-color:transparent; }
+.rune-table .rune-select-cell { background:var(--rune-background,var(--surface-color)); transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease; }
+.rune-table .rune-select-cell:hover { background:var(--rune-filter-hover,var(--hover-color)); }
+.rune-select-toggle { display:flex; align-items:center; justify-content:center; box-sizing:border-box; width:100%; height:100%; min-height:34px; padding:3px; border:0; border-radius:0; background:transparent; color:#888888; cursor:pointer; transition:color 160ms ease; -webkit-tap-highlight-color:transparent; }
 .rune-select-toggle svg { display:block; width:20px; height:20px; }
-.rune-select-cell:hover .rune-select-toggle { background:var(--rune-filter-hover,var(--hover-color)); }
 .rune-select-toggle:focus-visible { outline:2px solid var(--border-color); outline-offset:-2px; }
 .rune-table tbody .rune-name { border-left-width:1px; }
 .rune-table tbody tr { cursor:pointer; transition:background-color 160ms ease, filter 140ms ease; }
