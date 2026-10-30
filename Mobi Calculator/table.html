@@ -552,6 +552,7 @@
           const name=document.createElement("td");name.className="rune-name";name.textContent=rune.name??"";
           const actionCell=document.createElement("td");actionCell.className="rune-select-cell";
           const selectButton=document.createElement("button");selectButton.type="button";selectButton.className="rune-select-toggle";
+          selectButton.dataset.slot=rune.slot??"";selectButton.dataset.runeName=rune.name??"";
           const values=selectedRunes[rune.slot]||[], isSelected=values.includes(rune.name);
           selectButton.classList.toggle("is-selected",isSelected);selectButton.setAttribute("aria-pressed",String(isSelected));
           selectButton.setAttribute("aria-label",isSelected?rune.name+" 선택 해제":rune.name+" 선택");selectButton.innerHTML=isSelected?selectionIcons.on:selectionIcons.off;
@@ -562,7 +563,14 @@
             else if(list.length>=slotLimits[rune.slot]) { if(rune.slot==="방어구") showCapacityNotice(); return; }
             else if(rune.slot==="무기"||rune.slot==="엠블럼") list.splice(0,list.length,rune.name);
             else list.push(rune.name);
-            renderSelectedRunes();renderRunes();
+            renderSelectedRunes();
+            tableBody.querySelectorAll(".rune-select-toggle").forEach(button=>{
+              const selected=(selectedRunes[button.dataset.slot]||[]).includes(button.dataset.runeName);
+              button.classList.toggle("is-selected",selected);
+              button.setAttribute("aria-pressed",String(selected));
+              button.setAttribute("aria-label",selected?button.dataset.runeName+" 선택 해제":button.dataset.runeName+" 선택");
+              button.innerHTML=selected?selectionIcons.on:selectionIcons.off;
+            });
           });
           actionCell.appendChild(selectButton);row.append(slot,name,actionCell);
           row.addEventListener("click",()=>openDescription(rune));row.addEventListener("keydown",event=>{if(event.target!==row||(event.key!=="Enter"&&event.key!==" "))return;event.preventDefault();openDescription(rune);});tableBody.appendChild(row);
