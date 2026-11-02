@@ -444,14 +444,12 @@
         off: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 3.5h14a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="m7 12 3.2 3.2L17.5 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
         on: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 3.5h14a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5Z" fill="none" stroke="#2eaa59" stroke-width="2"/><path d="m7 12 3.2 3.2L17.5 8" fill="none" stroke="#2eaa59" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
       };
-      function renderSelectedRunes() {
+      function renderSelectedRunes(enteringRuneName = null) {
         selectBox.querySelectorAll(".rune-selection-wrap").forEach(wrap => {
           const slot = wrap.dataset.slot, rows = wrap.querySelector(".rune-selection-rows");
           const values = selectedRunes[slot], limit = slotLimits[slot];
-          rows.replaceChildren();
           const labels = wrap.querySelector(".rune-selection-labels");
-          if (labels) {
-            labels.replaceChildren();
+          if (labels && !labels.childElementCount) {
             for (let i = 0; i < limit; i++) {
               const label = document.createElement("h2");
               label.className = "rune-selection-title";
@@ -459,23 +457,60 @@
               labels.appendChild(label);
             }
           }
-          for (let i = 0; i < limit; i++) {
-            const row = document.createElement("div"); row.className = "rune-selection-row"; row.tabIndex = 0; if (values[i]) row.classList.add("is-entering");
-            row.setAttribute("aria-label", slot + " 룬 슬롯 " + (i + 1) + (values[i] ? ": " + values[i] : ": 비어 있음"));
-            const name = document.createElement("span"); name.className = "rune-selection-name"; name.textContent = values[i] || "";
-            const selectedRune = values[i] ? RUNES.items.find(rune => rune.name === values[i]) : null;
+          while (rows.children.length < limit) {
+            const index = rows.children.length;
+            const row = document.createElement("div");
+            row.className = "rune-selection-row";
+            row.tabIndex = 0;
+            const name = document.createElement("span");
+            name.className = "rune-selection-name";
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "rune-selection-remove";
+            remove.textContent = "×";
+            remove.addEventListener("click", event => {
+              event.stopPropagation();
+              if (!selectedRunes[slot][index]) return;
+              selectedRunes[slot].splice(index, 1);
+              renderSelectedRunes();
+              renderRunes();
+            });
+            row.addEventListener("click", () => {
+              if (row._selectedRune) openDescription(row._selectedRune);
+            });
+            row.addEventListener("keydown", event => {
+              if (event.target !== row || (event.key !== "Enter" && event.key !== " ")) return;
+              if (!row._selectedRune) return;
+              event.preventDefault();
+              openDescription(row._selectedRune);
+            });
+            row.append(name, remove);
+            rows.appendChild(row);
+          }
+          [...rows.children].forEach((row, i) => {
+            const value = values[i] || "";
+            const previousValue = row.dataset.runeName || "";
+            const selectedRune = value ? RUNES.items.find(rune => rune.name === value) : null;
+            row.querySelector(".rune-selection-name").textContent = value;
+            row.dataset.runeName = value;
+            row._selectedRune = selectedRune;
+            row.setAttribute("aria-label", slot + " 룬 슬롯 " + (i + 1) + (value ? ": " + value : ": 비어 있음"));
             if (selectedRune) {
               row.dataset.grade = selectedRune.grade ?? "";
               row.setAttribute("role", "button");
               row.setAttribute("aria-haspopup", "dialog");
-              row.addEventListener("click", () => openDescription(selectedRune));
-              row.addEventListener("keydown", event => { if (event.target !== row || (event.key !== "Enter" && event.key !== " ")) return; event.preventDefault(); openDescription(selectedRune); });
+            } else {
+              delete row.dataset.grade;
+              row.removeAttribute("role");
+              row.removeAttribute("aria-haspopup");
             }
-            const remove = document.createElement("button"); remove.type = "button"; remove.className = "rune-selection-remove"; remove.textContent = "×";
-            remove.setAttribute("aria-label", values[i] ? values[i] + " 선택 해제" : slot + " 빈 슬롯"); remove.disabled = !values[i];
-            remove.addEventListener("click", event => { event.stopPropagation(); if (!values[i]) return; selectedRunes[slot].splice(i, 1); renderSelectedRunes(); renderRunes(); });
-            row.append(name, remove); rows.appendChild(row); if (row.classList.contains("is-entering")) requestAnimationFrame(() => row.classList.remove("is-entering"));
-          }
+            const remove = row.querySelector(".rune-selection-remove");
+            remove.setAttribute("aria-label", value ? value + " 선택 해제" : slot + " 빈 슬롯");
+            remove.disabled = !value;
+            const shouldAnimate = Boolean(enteringRuneName && value === enteringRuneName && value !== previousValue);
+            row.classList.toggle("is-entering", shouldAnimate);
+            if (shouldAnimate) requestAnimationFrame(() => row.classList.remove("is-entering"));
+          });
         });
       }
       renderSelectedRunes();
@@ -581,7 +616,7 @@
             else if(list.length>=slotLimits[rune.slot]) { if(rune.slot==="방어구") showCapacityNotice(); return; }
             else if(rune.slot==="무기"||rune.slot==="엠블럼") list.splice(0,list.length,rune.name);
             else list.push(rune.name);
-            renderSelectedRunes();
+            renderSelectedRunes(index < 0 ? rune.name : null);
             tableBody.querySelectorAll(".rune-select-toggle").forEach(button=>{
               const selected=(selectedRunes[button.dataset.slot]||[]).includes(button.dataset.runeName);
               button.classList.toggle("is-selected",selected);
