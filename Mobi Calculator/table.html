@@ -453,6 +453,13 @@
             const row = document.createElement("div"); row.className = "rune-selection-row"; row.tabIndex = 0;
             row.setAttribute("aria-label", slot + " 룬 슬롯 " + (i + 1) + (values[i] ? ": " + values[i] : ": 비어 있음"));
             const name = document.createElement("span"); name.className = "rune-selection-name"; name.textContent = values[i] || "";
+            const selectedRune = values[i] ? RUNES.items.find(rune => rune.name === values[i]) : null;
+            if (selectedRune) {
+              row.setAttribute("role", "button");
+              row.setAttribute("aria-haspopup", "dialog");
+              row.addEventListener("click", () => openDescription(selectedRune));
+              row.addEventListener("keydown", event => { if (event.target !== row || (event.key !== "Enter" && event.key !== " ")) return; event.preventDefault(); openDescription(selectedRune); });
+            }
             const remove = document.createElement("button"); remove.type = "button"; remove.className = "rune-selection-remove"; remove.textContent = "×";
             remove.setAttribute("aria-label", values[i] ? values[i] + " 선택 해제" : slot + " 빈 슬롯"); remove.disabled = !values[i];
             remove.addEventListener("click", event => { event.stopPropagation(); if (!values[i]) return; selectedRunes[slot].splice(i, 1); renderSelectedRunes(); renderRunes(); });
