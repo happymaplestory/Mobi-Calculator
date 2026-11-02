@@ -183,8 +183,8 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-selection-row { display:flex; box-sizing:border-box; align-items:center; gap:7px; min-width:0; width:100%; height:45px !important; min-height:45px !important; max-height:45px; padding:0 7px; border:2px solid var(--rune-border,var(--border-color)); border-radius:10px; background:var(--rune-background,var(--surface-color)); color:var(--text-color); cursor:default; transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease; }
 .rune-selection-row:hover { filter:brightness(.96); border-color:var(--rune-border,var(--border-color)); }
 .rune-selection-name { flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; }
-.rune-selection-remove { display:flex; align-items:center; justify-content:center; flex:0 0 24px; width:24px; height:24px; padding:0; border:2px solid var(--border-color); border-radius:7px; background:var(--background-color); color:var(--text-color); font:inherit; font-size:20px; line-height:1; cursor:pointer; transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease; }
-.rune-selection-remove:hover:not(:disabled) { background:color-mix(in srgb,#e94b4b 14%,var(--background-color)); border-color:#d95757; color:#d95757; }
+.rune-selection-remove { display:flex; align-items:center; justify-content:center; flex:0 0 24px; width:24px; height:24px; padding:0; border:0; border-radius:7px; background:transparent; color:var(--text-color); font:inherit; font-size:20px; line-height:1; cursor:pointer; transition:background-color 160ms ease,color 160ms ease; }
+.rune-selection-remove:hover:not(:disabled) { background:color-mix(in srgb,#e94b4b 14%,var(--background-color)); color:#d95757; }
 .rune-selection-remove:disabled { opacity:.35; cursor:default; }
 
 #runes-search-box {
