@@ -280,7 +280,8 @@ body:has(#full-page-pagination [data-page="runes"][aria-pressed="true"]) #runes-
 .rune-page-ellipsis { padding:0 2px; color:var(--text-color); }
 .rune-description-overlay[hidden] { display: none !important; }
 .rune-description-overlay { position:fixed; inset:0; z-index:10000; display:grid; place-items:center; padding:20px; background:rgba(0,0,0,.42); animation:delete-confirm-backdrop-in 220ms ease-out both; }
-.rune-description-dialog { width:min(100%,420px); max-height:min(80vh,680px); overflow-y:auto; background:var(--rune-background,var(--surface-color)); border-color:var(--rune-border,var(--border-color)); transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease; }
+.rune-description-dialog { width:min(100%,420px); max-height:min(80vh,680px); overflow-y:auto; transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease; }
+.delete-confirm-dialog.rune-description-dialog { background:var(--rune-background,var(--surface-color,#fff)); border-color:var(--rune-border,#d5d5d5); }
 .rune-description-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px; }
 .rune-description-title { overflow-wrap:anywhere; margin-bottom:0; }
 .rune-description-meta { margin:5px 0 0; color:color-mix(in srgb,var(--text-color) 65%,transparent); font-size:13px; }
