@@ -455,6 +455,7 @@
             const name = document.createElement("span"); name.className = "rune-selection-name"; name.textContent = values[i] || "";
             const selectedRune = values[i] ? RUNES.items.find(rune => rune.name === values[i]) : null;
             if (selectedRune) {
+              row.dataset.grade = selectedRune.grade ?? "";
               row.setAttribute("role", "button");
               row.setAttribute("aria-haspopup", "dialog");
               row.addEventListener("click", () => openDescription(selectedRune));
