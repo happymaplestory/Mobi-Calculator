@@ -450,7 +450,7 @@
           const values = selectedRunes[slot], limit = slotLimits[slot];
           rows.replaceChildren();
           for (let i = 0; i < limit; i++) {
-            const row = document.createElement("div"); row.className = "rune-selection-row"; row.tabIndex = 0;
+            const row = document.createElement("div"); row.className = "rune-selection-row"; row.tabIndex = 0; if (values[i]) row.classList.add("is-entering");
             row.setAttribute("aria-label", slot + " 룬 슬롯 " + (i + 1) + (values[i] ? ": " + values[i] : ": 비어 있음"));
             const name = document.createElement("span"); name.className = "rune-selection-name"; name.textContent = values[i] || "";
             const selectedRune = values[i] ? RUNES.items.find(rune => rune.name === values[i]) : null;
@@ -464,7 +464,7 @@
             const remove = document.createElement("button"); remove.type = "button"; remove.className = "rune-selection-remove"; remove.textContent = "×";
             remove.setAttribute("aria-label", values[i] ? values[i] + " 선택 해제" : slot + " 빈 슬롯"); remove.disabled = !values[i];
             remove.addEventListener("click", event => { event.stopPropagation(); if (!values[i]) return; selectedRunes[slot].splice(i, 1); renderSelectedRunes(); renderRunes(); });
-            row.append(name, remove); rows.appendChild(row);
+            row.append(name, remove); rows.appendChild(row); if (row.classList.contains("is-entering")) requestAnimationFrame(() => row.classList.remove("is-entering"));
           }
         });
       }
