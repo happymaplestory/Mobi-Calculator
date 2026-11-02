@@ -613,7 +613,8 @@
             event.stopPropagation(); const list=selectedRunes[rune.slot]; if(!list)return;
             const index=list.indexOf(rune.name);
             if(index>=0) list[index]=null;
-            else if(!list.includes(null)) { if(rune.slot==="방어구") showCapacityNotice(); return; }
+            else if(rune.slot==="무기"||rune.slot==="엠블럼") list[0]=rune.name;
+            else if(!list.includes(null)) { showCapacityNotice(); return; }
             else { const emptyIndex=list.indexOf(null); list[emptyIndex]=rune.name; }
             renderSelectedRunes(index < 0 ? rune.name : null);
             tableBody.querySelectorAll(".rune-select-toggle").forEach(button=>{
