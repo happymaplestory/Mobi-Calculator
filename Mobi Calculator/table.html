@@ -437,7 +437,7 @@
       selectBox.innerHTML = `
         <section class="rune-selection-wrap" data-slot="무기" aria-label="무기 룬 선택"><h2 class="rune-selection-title">무기</h2><div class="rune-selection-rows"></div></section>
         <section class="rune-selection-wrap" data-slot="엠블럼" aria-label="엠블럼 룬 선택"><h2 class="rune-selection-title">엠블럼</h2><div class="rune-selection-rows"></div></section>
-        <section class="rune-selection-wrap" data-slot="방어구" aria-label="방어구 룬 선택"><h2 class="rune-selection-title">방어구</h2><div class="rune-selection-rows"></div></section>`;
+        <section class="rune-selection-wrap rune-selection-armor-wrap" data-slot="방어구" aria-label="방어구 룬 선택"><div class="rune-selection-labels" aria-hidden="true"></div><div class="rune-selection-rows"></div></section>`;
       const selectedRunes = { "무기": [], "방어구": [], "엠블럼": [] };
       const slotLimits = { "무기": 1, "방어구": 5, "엠블럼": 1 };
       const selectionIcons = {
@@ -449,6 +449,16 @@
           const slot = wrap.dataset.slot, rows = wrap.querySelector(".rune-selection-rows");
           const values = selectedRunes[slot], limit = slotLimits[slot];
           rows.replaceChildren();
+          const labels = wrap.querySelector(".rune-selection-labels");
+          if (labels) {
+            labels.replaceChildren();
+            for (let i = 0; i < limit; i++) {
+              const label = document.createElement("h2");
+              label.className = "rune-selection-title";
+              label.textContent = "방어구" + (i + 1);
+              labels.appendChild(label);
+            }
+          }
           for (let i = 0; i < limit; i++) {
             const row = document.createElement("div"); row.className = "rune-selection-row"; row.tabIndex = 0; if (values[i]) row.classList.add("is-entering");
             row.setAttribute("aria-label", slot + " 룬 슬롯 " + (i + 1) + (values[i] ? ": " + values[i] : ": 비어 있음"));
