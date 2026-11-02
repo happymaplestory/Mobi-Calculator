@@ -438,7 +438,7 @@
         <section class="rune-selection-wrap" data-slot="무기" aria-label="무기 룬 선택"><h2 class="rune-selection-title">무기</h2><div class="rune-selection-rows"></div></section>
         <section class="rune-selection-wrap" data-slot="엠블럼" aria-label="엠블럼 룬 선택"><h2 class="rune-selection-title">엠블럼</h2><div class="rune-selection-rows"></div></section>
         <section class="rune-selection-wrap rune-selection-armor-wrap" data-slot="방어구" aria-label="방어구 룬 선택"><div class="rune-selection-labels" aria-hidden="true"></div><div class="rune-selection-rows"></div></section>`;
-      const selectedRunes = { "무기": [], "방어구": [], "엠블럼": [] };
+      const selectedRunes = { "무기": [null], "방어구": Array(5).fill(null), "엠블럼": [null] };
       const slotLimits = { "무기": 1, "방어구": 5, "엠블럼": 1 };
       const selectionIcons = {
         off: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 3.5h14a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="m7 12 3.2 3.2L17.5 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -471,7 +471,7 @@
             remove.addEventListener("click", event => {
               event.stopPropagation();
               if (!selectedRunes[slot][index]) return;
-              selectedRunes[slot].splice(index, 1);
+              selectedRunes[slot][index] = null;
               renderSelectedRunes();
               renderRunes();
             });
@@ -612,10 +612,9 @@
           selectButton.addEventListener("click",event=>{
             event.stopPropagation(); const list=selectedRunes[rune.slot]; if(!list)return;
             const index=list.indexOf(rune.name);
-            if(index>=0) list.splice(index,1);
-            else if(list.length>=slotLimits[rune.slot]) { if(rune.slot==="방어구") showCapacityNotice(); return; }
-            else if(rune.slot==="무기"||rune.slot==="엠블럼") list.splice(0,list.length,rune.name);
-            else list.push(rune.name);
+            if(index>=0) list[index]=null;
+            else if(!list.includes(null)) { if(rune.slot==="방어구") showCapacityNotice(); return; }
+            else { const emptyIndex=list.indexOf(null); list[emptyIndex]=rune.name; }
             renderSelectedRunes(index < 0 ? rune.name : null);
             tableBody.querySelectorAll(".rune-select-toggle").forEach(button=>{
               const selected=(selectedRunes[button.dataset.slot]||[]).includes(button.dataset.runeName);
